@@ -24,14 +24,16 @@ export default defineConfig({
     }),
     // 组件自动导入
     Components({
+      // 文件夹
       dirs: ['src/components'],
       extensions: ['vue'],
+      // 支持深度导入
       deep: true,
       include: [/\.vue$/, /\.vue\?vue/],
       exclude: [
         /[\\/]node_modules[\\/]/,
         /[\\/]\.git[\\/]/,
-        /[\\/]\.nuxt[\\/]/
+        /[\\/]\.nuxt[\\/]/,
       ],
       resolvers: [ElementPlusResolver()],
     })
@@ -43,5 +45,15 @@ export default defineConfig({
     },
     // import时可以省略的后缀文件名 from 'ABC.vue'可以写成 from 'ABC'
     extensions: ['.js',',ts','.json','.jsx','.tsx','.vue'],
+  },
+  build:{
+    minify: 'terser',
+    terserOptions:{
+      compress:{
+        // 生产环境中移除console.log()和debugger
+        drop_console:true,
+        drop_debugger:true,
+      }
+    }
   }
 })
