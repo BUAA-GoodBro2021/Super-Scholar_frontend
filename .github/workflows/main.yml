@@ -16,9 +16,9 @@ jobs:
     - name: Deploy
       uses: cross-the-world/scp-pipeline@master
       with:
-        host: ${{ secrets.USER_HOST }}
-        user: ${{ secrets.USER_NAME }}
-        pass: ${{ secrets.USER_PASS }}
+        host: ${{secrets.IP}}
+        user: ${{secrets.USER}}
+        pass: ${{secrets.PASSWORD}}
         connect_timeout: 10s
         local: './dist/*'
-        remote: /var/www/html/dist
+        remote: ${{secrets.DST_FOLDER}}
