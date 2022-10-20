@@ -8,8 +8,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: npm install
-      run: npm install
+    - name: pnpm install
+      run: pnpm install
     - name: npm run build
       run: npm run build
     - name: Deploy
@@ -20,4 +20,4 @@ jobs:
         pass: ${{ secrets.USER_PASS }}
         connect_timeout: 10s
         local: './dist/*'
-        remote: /root/www/dist
+        remote: /var/www/html/dist
