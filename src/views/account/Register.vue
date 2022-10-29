@@ -1,5 +1,5 @@
 <template>
-   Welcome.vue
+   Register.vue
 </template>
 <script setup>
 

@@ -1,5 +1,5 @@
 <template>
-   Welcome.vue
+   ADMIN-INDEX
 </template>
 <script setup>
 

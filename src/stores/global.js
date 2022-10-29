@@ -9,7 +9,11 @@ export const useGlobalStore = defineStore({
       language: useLocalStorage("language", "", localStorage),
     }
   },
-  getters: {},
+  getters: {
+    isAdmin(state){
+      return state.userInfo.is_super;
+    }
+  },
   actions: {
     setToken(token) {
       this.token = token;

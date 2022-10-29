@@ -1,5 +1,5 @@
 <template>
-   Welcome.vue
+   CLIENT-INDEX
 </template>
 <script setup>
 
