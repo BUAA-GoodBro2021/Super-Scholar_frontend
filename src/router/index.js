@@ -8,6 +8,11 @@ const router = createRouter({
       name: 'home',
       component: ()=>import('../views/Welcome.vue')
     },
+    {
+      path: '/user/:tokenid',
+      name: 'UserDetail',
+      component: ()=>import('../views/User/UserDetail.vue')
+    }
   ]
 })
 
