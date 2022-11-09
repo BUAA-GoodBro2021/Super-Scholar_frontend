@@ -12,7 +12,12 @@ const router = createRouter({
       path: '/user/:tokenid',
       name: 'UserDetail',
       component: ()=>import('../views/User/UserDetail.vue')
-    }
+    },
+    {
+      path: '/personal/account',
+      name: 'PersonalDetail',
+      component: ()=>import('../views/User/PersonalDetail.vue')
+    },
   ]
 })
 
