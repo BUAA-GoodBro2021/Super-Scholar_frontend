@@ -1,7 +1,7 @@
 <template>
     <div class="document-list-wrap">
         <el-table :data="processedDocumentList" style="width: 100%">
-            <el-table-column prop="display_name" label="文献" width="700">
+            <el-table-column prop="display_name" label="文献" min-width="70%">
                 <template #default="scope">
                     <span class="document_title">{{ scope.row.display_name }}</span>
                     <div class="authors_wrap">
@@ -11,8 +11,8 @@
                     </div>
                 </template>
             </el-table-column>
-            <el-table-column prop="publication_date" label="日期" width="180" sortable align="center" />
-            <el-table-column prop="cited_by_count" label="引用数量" sortable  align="center"/>
+            <el-table-column prop="publication_date" label="日期" min-width="17%" sortable align="center" />
+            <el-table-column prop="cited_by_count" label="引用" sortable  min-width="13%" align="center"/>
         </el-table>
     </div>
 </template>
@@ -86,7 +86,7 @@ onMounted(() => {
 })
 
 </script>
-<style>
+<style scoped>
 .article_and_data_main_wrap{
     width: 100%;
     background-color: white;
@@ -128,7 +128,7 @@ onMounted(() => {
     color: #409eff;
 }
 
-.el-table .cell{
+::v-deep .el-table .cell{
     font-size: 22px;
 }
 </style>

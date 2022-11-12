@@ -1,6 +1,6 @@
 <template>
     <div class="claim-portal" v-if="myAccountType == 1 || myAcountType == 3">
-        <ClaimPortalVue :accountType="myAccountType"/>
+        <ClaimPortalVue :claimType="myAccountType"/>
     </div>
     <div class="personal-wrap" v-else>
         <div class="avatar_wrap">
@@ -83,9 +83,9 @@ const getAccountType = () => {
 }
 
 </script>
-<style>
+<style scoped>
 .claim-portal{
-    width: 100%;
+    width: 100vw;
     height: 100vh;
     display: flex;
     flex-direction: column;

@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@vueuse/core": "^9.2.0",
+    "echarts": "^5.4.0",
     "element-plus": "^2.2.16",
     "pinia": "^2.0.21",
     "vue": "^3.2.38",

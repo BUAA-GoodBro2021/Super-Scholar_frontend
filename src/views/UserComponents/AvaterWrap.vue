@@ -17,7 +17,7 @@
                         </div>
                         <div class="areas" v-if="userInfo.x_concepts">
                             <el-icon><Menu /></el-icon> &nbsp;
-                            <span style="cursor: pointer;" v-for="(item, index) in userInfo.x_concepts" :key="index">{{item.display_name}}<span v-if="index != userInfo.x_concepts.length - 1">/</span></span>
+                            <span style="cursor: pointer;" v-for="(item, index) in userInfo.x_concepts" :key="index">{{item.display_name}}<span v-if="index != userInfo.x_concepts.length - 1">/&nbsp;</span></span>
                         </div>
                         <div class="areas" v-else>
                             <el-icon><Menu /></el-icon>
