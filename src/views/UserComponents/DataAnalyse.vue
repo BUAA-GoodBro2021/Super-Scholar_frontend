@@ -2,17 +2,34 @@
     <div class="data-wrap">
         <el-tabs v-model="activeName" type="card" class="tabs" @tab-click="handleClick">
             <el-tab-pane label="引用量" name="countByYear">
-                <div class="count" id="count" v-if="props.tabChange"></div>
+                <div class="count" id="count" v-if="chart1Show"></div>
             </el-tab-pane>
             <el-tab-pane label="专家关系网络" name="authorNetWork">
-                <div class="network" id="network"></div>
+                <div class="network" id="network" v-if="chart2Show"></div>
+                <el-dialog v-model="chart2Dialog" width="30%">
+                    <template #title>
+                        <span class="dialog-title">与{{ nodedata[choseLine].value }}合著作品如下</span>
+                    </template>
+                    <div class="dialog-wrap">
+                        <div v-for="(item, index) in chart2DialogData" :key="index">
+                            <span class="document_title">{{(index +1) + '. ' + item.display_name }}</span>
+                            <div class="authors_wrap">
+                                <span class="document_authors" v-for="(authoritem, authorindex) in item.authorList"
+                                    :key="authorindex">{{ authoritem.display_name }}
+                                    <span v-if="authorindex != item.authorList.length - 1">/&nbsp;</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </el-dialog>
             </el-tab-pane>
         </el-tabs>
+        {{ chart2DialogData }}
     </div>
 </template>
 <script setup>
 import * as echarts from 'echarts'
-import { nextTick, reactive } from "vue-demi"
+import { nextTick, reactive, readonly } from "vue-demi"
 
 const props = defineProps({
     dataCountByYear: Object,
@@ -50,36 +67,67 @@ const dataCount = reactive([
 ])
 let chart1, chart2;
 let x1data = [], countdata = [], citedata = []
-
-const handleClick = () => {
-    console.log('click');
-}
+let nodedata = [], linedata = []
+const chart1Show = ref(false)
+const chart2Show = ref(false)
+const chart2Dialog = ref(false)
+const chart2DialogData = ref([])
+const choseLine = ref()
 
 onMounted(() => {
     //todo
     //处理documentList 将publication_year与publication_date连接起来
     data1PreProcess(x1data, countdata, citedata)
     // initChart1(x1data, countdata, citedata)
-
-
+    data2PreProcess(nodedata, linedata)
 })
 
 watch(() => props.tabChange, (newVal) => {
-    if (newVal) {
+    if (newVal && chart1Show.value == false) {
         console.log('发表文献->数据分析')
-        // console.log(document.getElementById('count').style.height)
         nextTick(() => {
-            console.log(document.getElementById('count'))
-            initChart1(x1data, countdata, citedata)
+            chart1Show.value = true
+            nextTick(() => {
+                initChart1(x1data, countdata, citedata)
 
-            window.onresize = () => chart1.resize()
-            window.addEventListener('resize', () => {
-                chart1.resize()
+                window.onresize = () => chart1.resize()
+                window.addEventListener('resize', () => {
+                    chart1.resize()
+                })
             })
-            // window.onresize = () => chart1.resize()
+            console.log(document.getElementById('count'))
         })
     }
 })
+
+const handleClick = (tab) => {
+    if (tab.paneName == 'authorNetWork' && chart2Show.value == false) {
+        nextTick(() => {
+            chart2Show.value = true
+            nextTick(() => {
+                initChart2(nodedata, linedata)
+                window.onresize = () => chart2.resize()
+                window.addEventListener('resize', () => {
+                    chart2.resize()
+                })
+            })
+
+        })
+    } else if (tab.paneName == 'countByYear' && chart1Show.value == false) {
+        nextTick(() => {
+            chart1Show.value = true
+            nextTick(() => {
+                initChart1(x1data, countdata, citedata)
+
+                window.onresize = () => chart1.resize()
+                window.addEventListener('resize', () => {
+                    chart1.resize()
+                })
+            })
+            console.log(document.getElementById('count'))
+        })
+    }
+}
 
 const data1PreProcess = (xdata, countdata, citedata) => {
     dataCount.sort(function (a, b) {
@@ -89,6 +137,118 @@ const data1PreProcess = (xdata, countdata, citedata) => {
         xdata.push(item.year)
         countdata.push(item.work_count)
         citedata.push(item.cited_by_count)
+    })
+}
+
+const colors = reactive(['#ff8400', '#03fc62', '#aa61b2', '#0a95e6', '#00fff7', '#f06467', '#f06467', '#03fc62', '#00fff7', '#f06467'])
+
+const data2PreProcess = (nodedata, linedata) => {
+    let i
+    for (i = 0; i < 15; i++) {
+        nodedata.push(
+            {
+                "name": i,
+                "value": "学者姓名",
+                x: i == 0 ? 65 : 0,
+                y: i == 0 ? 6 : 0,
+                "symbolSize": i == 0 ? 120 : 80,
+                "draggable": true,
+                "itemStyle": {
+                    "normal": {
+                        "borderColor": colors[i % 10],
+                        "borderWidth": 4,
+                        "shadowBlur": 20,
+                        "shadowColor": colors[i % 10],
+                        "color": "#F0F8FF"
+                    }
+                },
+                tooltip: {
+                    formatter: '{c}',
+                },
+            }
+        )
+    }
+
+    for (i = 1; i < 15; i++) {
+        linedata.push({
+            source: 0,
+            target: i,
+            value: i,
+            tooltip: {
+                formatter: '合著数量 {c}',
+            },
+            //合著的作品
+            coArticles: [
+                {
+                    display_name: '鸡你太美鸡你太美迎面的你走来逐渐让我蠢蠢欲动，这种感觉从未有过cause I get a crash on you',
+                    publication_date: '2022-2-11',
+                    cited_by_count: '11',
+                    authorList: [
+                        {
+                            display_name: "harbour",
+                            id: '',
+                        },
+                        {
+                            display_name: "harbour",
+                            id: '',
+                        },
+                        {
+                            display_name: "harbour",
+                            id: '',
+                        },
+                    ]
+                },
+                {
+                    display_name: '你是我的，我是你的谁',
+                    publication_date: '2022-4-31',
+                    cited_by_count: '11',
+                    authorList: [
+                        {
+                            display_name: "harbour",
+                            id: '',
+                        },
+                        {
+                            display_name: "harbour",
+                            id: '',
+                        },
+                        {
+                            display_name: "harbour",
+                            id: '',
+                        },
+                    ]
+                },
+                {
+                    display_name: '再多一眼，看一眼就会爆炸，在近一点靠近点快被融化',
+                    publication_date: '2022-4-31',
+                    cited_by_count: '10',
+                    authorList: [
+                        {
+                            display_name: "harbour",
+                            id: '',
+                        },
+                        {
+                            display_name: "harbour",
+                            id: '',
+                        },
+                        {
+                            display_name: "harbour",
+                            id: '',
+                        },
+                    ]
+                },]
+        })
+    }
+
+    linedata.push({
+        source: 2,
+        target: 6,
+        value: 'articleName',
+    })
+
+    linedata.push({
+        source: 5,
+        target: 10,
+        value: 'articleName'
     })
 }
 
@@ -223,6 +383,54 @@ const initChart1 = (xdata, countdata, citedata) => {
     // window.addEventListener('resize', () => chart1.resize())
 }
 
+const initChart2 = (nodedata, linedata) => {
+    chart2 = document.getElementById('network')
+    chart2 = echarts.init(chart2)
+    let option = {
+
+        backgroundColor: 'white',
+        tooltip: {
+            // formatter: '合著数量{c}',
+        },
+        animationDurationUpdate: function (idx) {
+            // 越往后的数据延迟越大
+            return idx * 100;
+        },
+        animationEasingUpdate: 'bounceIn',
+        color: ['#fff', '#fff', '#fff'],
+        series: [{
+            type: 'graph',
+            layout: 'force',
+            force: {
+                repulsion: 30,
+                edgeLength: 10
+            },
+            roam: true,
+            label: {
+                normal: {
+                    show: true,
+                    position: 'inside',
+                    formatter: '{c}',
+                    fontSize: 16,
+                    fontStyle: '400',
+                }
+            },
+            data: nodedata,
+            links: linedata
+        }]
+    }
+
+    option && chart2.setOption(option)
+    chart2.on('click', function (node) {
+        console.log(node)
+        if (node.dataType == 'edge') {
+            chart2DialogData.value = node.data.coArticles
+            choseLine.value = node.data.target
+            chart2Dialog.value = true
+        }
+    })
+}
+
 </script>
 <style>
 .data-wrap {
@@ -239,6 +447,11 @@ const initChart1 = (xdata, countdata, citedata) => {
     width: 600px; */
     height: 100%;
     width: 100%;
+}
+
+.network {
+    width: 100%;
+    height: 100%;
 }
 
 
@@ -272,5 +485,40 @@ const initChart1 = (xdata, countdata, citedata) => {
 .authorNetWork {
     height: 100%;
     width: 100%;
+}
+
+.dialog-wrap {
+    padding: 0px 10px 10px 10px;
+}
+
+.dialog-title {
+    font-size: 24px;
+    text-align: center;
+    font-weight: 600;
+}
+
+.document_title {
+    margin-top: 5px;
+    font-size: 20px;
+    line-height: 30px;
+    text-align: left;
+    height: auto;
+    display: block;
+    word-break: break-all;
+    word-wrap: break-word;
+    color: #409eff;
+    cursor: pointer;
+}
+
+.authors_wrap {
+    word-break: break-all;
+    word-wrap: break-word;
+    line-height: 30px;
+}
+
+.document_authors {
+    font-size: 17px;
+    color: grey;
+    cursor: pointer;
 }
 </style>
