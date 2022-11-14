@@ -7,6 +7,7 @@ import router from './router'
 import "./assets/reset.css"
 // 导入element plus的CSS
 import 'element-plus/dist/index.css'
+import 'element-plus/theme-chalk/dark/css-vars.css'
 // 导入element plus的图标
 import * as ElementPlusIconsVue from "@element-plus/icons-vue";
 import I18n from "./language"
