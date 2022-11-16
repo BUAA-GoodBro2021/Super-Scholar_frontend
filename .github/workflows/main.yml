@@ -1,0 +1,24 @@
+name: Frontend deploy
+on:
+  push:
+    branches:
+    - master
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: get env
+      run: |
+        npm install pnpm -g
+        pnpm install
+        npm run build
+    - name: Deploy
+      uses: cross-the-world/scp-pipeline@master
+      with:
+        host: ${{secrets.IP}}
+        user: ${{secrets.USER}}
+        pass: ${{secrets.PASSWORD}}
+        connect_timeout: 10s
+        local: './dist/*'
+        remote: ${{secrets.DST_FOLDER}}
