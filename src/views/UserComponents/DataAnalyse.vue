@@ -29,7 +29,7 @@
 </template>
 <script setup>
 import * as echarts from 'echarts'
-import { nextTick, reactive, readonly } from "vue-demi"
+// import { nextTick, reactive, readonly } from "vue-demi"
 
 const props = defineProps({
     dataCountByYear: Object,
