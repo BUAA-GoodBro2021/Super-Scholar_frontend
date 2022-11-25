@@ -18,7 +18,7 @@
                     <template #dropdown>
                         <el-dropdown-menu>
                             <el-dropdown-item :icon="Plus">
-                                Action 1
+                                {{$t("header.action1")}}
                             </el-dropdown-item>
                             <el-dropdown-item :icon="CirclePlusFilled">
                                 Action 2
@@ -49,12 +49,14 @@ const circleUrl = 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1ep
 </script>
 <style scoped>
 .header {
-    margin: 0 5%;
-    background-color: transparent;
+    background-color: white;
     text-align: center;
+    width: 100%;
+    position: fixed;
 }
 
 .logo {
+    margin-left: 40px;
     width: 120px;
     height: 64px;
 }

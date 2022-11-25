@@ -40,12 +40,12 @@ const router = createRouter({
       },
       children: [
         {
-          path: 'user/:tokenid',
+          path: '/user/:tokenid',
           name: 'UserDetail',
           component: ()=>import('../views/User/UserDetail.vue'),
         },
         {
-          path: 'personal/account',
+          path: '/personal/account',
           name: 'PersonalDetail',
           component: ()=>import('../views/User/PersonalDetail.vue'),
         },
