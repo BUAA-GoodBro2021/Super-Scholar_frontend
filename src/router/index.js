@@ -28,7 +28,23 @@ const router = createRouter({
         requiresAdmin: true,
         requiresAuth: true,
       },
-      children: [],
+      children: [
+        {
+          path: 'ClaimApplication',
+          name: 'ClaimApplication',
+          component: ()=>import('../views/admin/ClaimApplication.vue'),
+        },
+        {
+          path: 'SettledScholars',
+          name: 'SettledScholars',
+          component: ()=>import('../views/admin/SettledScholars.vue'),
+        },
+        {
+          path: 'UploadArticle',
+          name: 'UploadArticle',
+          component: ()=>import('../views/admin/UploadArticle.vue'),
+        },
+      ],
     },
     // 客户端
     {
