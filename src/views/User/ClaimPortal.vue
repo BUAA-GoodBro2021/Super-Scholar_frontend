@@ -298,6 +298,7 @@ const StepOneToTwo = async () => {
 .author-article-list {
     width: 95%;
     margin-left: 2.5%;
+    transition: 2s;
 }
 
 .right-arrow {
