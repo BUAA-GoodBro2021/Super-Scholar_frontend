@@ -1,7 +1,7 @@
 <template>
     <div class="coauthors-wrap">
         <div class="coauthors-title">合著作者</div>
-        <div class="author-list">
+        <div class="author-list" v-if="claimed == 1">
             <div class="author-card" v-for="(item, index) in authorList" :key="index">
                 <ul>
                     <li>
@@ -23,6 +23,9 @@
                 <el-divider v-if="index != authorList.length - 1"></el-divider>
             </div>
         </div>
+        <div class="empty">
+            该用户尚未认证
+        </div>
     </div>
 </template>
 <script setup>
@@ -30,7 +33,8 @@ import {
     Right
 } from '@element-plus/icons-vue'
 const props = defineProps({
-    authorList: Object
+    authorList: Object,
+    claimed: Number,
 })
 
 const authorList = ref(
@@ -131,5 +135,11 @@ const authorList = ref(
     line-height: 100%;
     display: flex;
     align-items: center;
+}
+
+.empty{
+    color: grey;
+    font-size: 25px;
+    font-weight: 600;
 }
 </style>

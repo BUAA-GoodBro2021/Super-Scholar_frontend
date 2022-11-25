@@ -1,5 +1,5 @@
 <template>
-    <div class="claim-portal-wrap" v-if="accountType == 1">
+    <div class="claim-portal-wrap" v-if="accountType == 0">
         <div class="claim-portal-body">
             <el-steps :active="stepIndex" finish-status="success" class="steps">
                 <el-step title="填写个人信息" />
@@ -70,11 +70,18 @@
             </div>
         </div>
     </div>
-    <div class="wrap2" v-if="accountType == 3">
+    <div class="wrap2" v-if="accountType == 1">
         <el-icon class="step2-icon">
             <SuccessFilled />
         </el-icon>
         <span class="step2-message" style="margin-top: 20px;">管理员将在3天时间内完成审核，请耐心等待。</span>
+    </div>
+    <div class="wrap2" v-if="accountType == 2">
+        <el-icon class="step2-icon">
+            <SuccessFilled />
+        </el-icon>
+        <span class="step2-message" style="margin-top: 20px;">认证成功</span>
+        <el-button @click="Reclaim()">重新认证</el-button>
     </div>
 </template>
 <script setup>
@@ -83,15 +90,13 @@ import {
     ArrowUp,
     SuccessFilled
 } from '@element-plus/icons-vue'
+const claimType = ref(2) //0 个人账户没有认领 1 个人账户认证但是在审核中 2 个人账户已经成功认证
 const stepIndex = ref(0)
-const props = defineProps({
-    tokenid: Number,
-    claimType: Number //1->未认证 3->认证待审核
-})
 
 const accountType = ref()
 onMounted(() => {
-    accountType.value = props.claimType
+    //todo 请求后端
+    accountType.value = claimType.value
 })
 
 const formRef = ref()
@@ -170,7 +175,7 @@ const StepBack = () => {
 }
 
 const stepFinish = () => {
-    accountType.value = 3
+    accountType.value = 1
 }
 
 const lastIndex = ref(-1) //记录上一个勾选的框 勾选动作之前当下的选项
@@ -189,6 +194,11 @@ const StepOneToTwo = async () => {
         //todo 跟后端进行交互
         stepIndex.value++
     }
+}
+
+// 已经认领成功但是想要重新认证
+const Reclaim = async () => {
+    accountType.value = 0
 }
 </script>
 <style scoped>

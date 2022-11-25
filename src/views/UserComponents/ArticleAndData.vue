@@ -2,10 +2,12 @@
     <div class="article_and_data_main_wrap">
         <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
             <el-tab-pane label="发表文献" name="documents" class="tab-pane">
-                <DocumentListVue :documentList="documentList" />
+                <DocumentListVue :documentList="documentList" v-if="claimed == 1"/>
+                <div class="empty" v-else>该用户尚未认证</div>
             </el-tab-pane>
             <el-tab-pane label="数据分析" name="dataAnalyse" class="tab-pane">
-                <DataAnalyseVue :tabChange="tabChangeToData"/>
+                <DataAnalyseVue :tabChange="tabChangeToData" v-if="claimed == 1"/>
+                <div class="empty" v-else>该用户尚未认证</div>
             </el-tab-pane>
         </el-tabs>
     </div>
@@ -19,9 +21,11 @@ const props = defineProps({
     documentList: Object,
     dataCountByYear: Object,
     authorNetWork: Object,
+    claimed: Number
 })
-const getAccountType = () => {
-    //todo 获取id所对应的myAcountType与otherAccountType
+
+const getAccountType = function () {
+//todo 获取id所对应的myAcountType与otherAccountType
 }
 
 const handleClick = (tab) => {
@@ -65,4 +69,10 @@ const handleClick = (tab) => {
     width: 100%;
 }
 
+.empty{
+    margin-top: 10px;
+    color: grey;
+    font-size: 25px;
+    font-weight: 600;
+}
 </style>

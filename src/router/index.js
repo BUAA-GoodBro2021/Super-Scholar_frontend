@@ -49,6 +49,11 @@ const router = createRouter({
           name: 'PersonalDetail',
           component: ()=>import('../views/User/PersonalDetail.vue'),
         },
+        {
+          path: 'claimportal',
+          name: 'ClaimPortal',
+          component: ()=>import('../views/User/ClaimPortal.vue'),
+        },
       ],
     }
   ]

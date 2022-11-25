@@ -1,17 +1,14 @@
 <template>
-    <div class="claim-portal" v-if="myAccountType == 1 || myAcountType == 3">
-        <ClaimPortalVue :claimType="myAccountType"/>
-    </div>
-    <div class="personal-wrap" v-else>
+    <div class="personal-wrap">
         <div class="avatar_wrap">
-            <AvaterWrapVue :personAccount="2" :userInfo="userInfo" />
+            <AvaterWrapVue :personAccount="1" :userInfo="userInfo" :claimed="claimed"/>
         </div>
         <div class="article_data_wrap">
             <div class="left">
-                <ArticleAndDataVue :documentList="userInfo.documentList" />
+                <ArticleAndDataVue :documentList="userInfo.documentList" :claimed="claimed"/>
             </div>
             <div class="right">
-                <CoAuthorsVue />
+                <CoAuthorsVue :claimed="claimed"/>
             </div>
         </div>
     </div>
@@ -23,7 +20,7 @@ import ArticleAndDataVue from '../UserComponents/ArticleAndData.vue';
 import CoAuthorsVue from '../UserComponents/CoAuthors.vue';
 const route = useRoute()
 const tokenid = route.params.tokenid
-const myAccountType = ref(1) // 自己的账户标志 0 非个人账户 1 个人账户未认证 2 个人账户认证且认证通过 3 个人账户认证但是在审核中
+const claimed = ref(0) // 0 未认证 1 认证
 // const otherAcountType = ref() // 他人账户 0 未认证的网站用户 1 认证的网站用户或者是未认证的原生作者
 const userInfo = ref({
     id: "20373638",
@@ -74,8 +71,6 @@ const userInfo = ref({
 
 onMounted(() => {
     getAccountType()
-    myAccountType.value = 1
-    // otherAcountType.value = 0
 })
 
 const getAccountType = () => {
@@ -84,16 +79,7 @@ const getAccountType = () => {
 
 </script>
 <style scoped>
-.claim-portal{
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background-color: rgba(230, 230, 230, 0.234);
-}
-.peronal-wrap{
+.personal-wrap {
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -102,26 +88,26 @@ const getAccountType = () => {
     background-color: rgba(230, 230, 230, 0.234);
 }
 
-.avatar_wrap{
+.avatar_wrap {
     width: 70%;
     margin: 2vh 0 3vh 0;
     height: 25vh;
 }
 
-.article_data_wrap{
+.article_data_wrap {
     width: 70%;
-    min-height: 68vh;
+    min-height: 62vh;
     height: auto;
 
     display: flex;
 }
 
-.article_data_wrap .left{
+.article_data_wrap .left {
     width: 65%;
     margin-right: 5%;
 }
 
-.article_data_wrap .right{
+.article_data_wrap .right {
     width: 30%;
 }
 </style>

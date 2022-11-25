@@ -1,14 +1,14 @@
 <template>
     <div class="wrap">
         <div class="avatar_wrap">
-            <AvaterWrapVue :personAccount="2" :userInfo="userInfo" />
+            <AvaterWrapVue :personAccount="2" :userInfo="userInfo" :claimed="claimed"/>
         </div>
         <div class="article_data_wrap">
             <div class="left">
-                <ArticleAndDataVue :documentList="userInfo.documentList" />
+                <ArticleAndDataVue :documentList="userInfo.documentList" :claimed="claimed"/>
             </div>
             <div class="right">
-                <CoAuthorsVue />
+                <CoAuthorsVue :claimed="claimed"/>
             </div>
         </div>
     </div>
@@ -19,8 +19,7 @@ import ArticleAndDataVue from '../UserComponents/ArticleAndData.vue';
 import CoAuthorsVue from '../UserComponents/CoAuthors.vue';
 const route = useRoute()
 const tokenid = route.params.tokenid
-const myAcountType = ref() // 自己的账户标志 0 非个人账户 1 个人账户未认证 2 个人账户认证且认证通过 3 个人账户认证但是在审核中
-// const otherAcountType = ref() // 他人账户 0 未认证的网站用户 1 认证的网站用户或者是未认证的原生作者
+const claimed = ref(0)  // 0 未认证 1 已认证
 const userInfo = ref({
     id: "20373638",
     display_name: 'Harbour',
