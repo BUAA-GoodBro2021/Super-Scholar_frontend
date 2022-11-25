@@ -8,7 +8,7 @@ import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 // https://vitejs.dev/config/
 export default defineConfig({
 
-  // plugins中配置了各种插件 
+  // 在plugins中配置插件 
   plugins: [
     vue(),
     // VueAPI的自动导入
