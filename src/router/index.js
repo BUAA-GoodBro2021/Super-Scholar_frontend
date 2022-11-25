@@ -32,24 +32,25 @@ const router = createRouter({
     },
     // 客户端
     {
-      path: '/index',
+      path: '/client',
       component: ()=>import('../views/client/Index.vue'),
       meta:{
         requiresAdmin: false,
         requiresAuth: true,
       },
-      children: [],
-    },
-    {
-      path: '/user/:tokenid',
-      name: 'UserDetail',
-      component: ()=>import('../views/User/UserDetail.vue')
-    },
-    {
-      path: '/personal/account',
-      name: 'PersonalDetail',
-      component: ()=>import('../views/User/PersonalDetail.vue')
-    },
+      children: [
+        {
+          path: 'user/:tokenid',
+          name: 'UserDetail',
+          component: ()=>import('../views/User/UserDetail.vue'),
+        },
+        {
+          path: 'personal/account',
+          name: 'PersonalDetail',
+          component: ()=>import('../views/User/PersonalDetail.vue'),
+        },
+      ],
+    }
   ]
 })
 // 全局前置守卫

@@ -83,7 +83,6 @@ import {
     ArrowUp,
     SuccessFilled
 } from '@element-plus/icons-vue'
-import { onMounted } from 'vue-demi'
 const stepIndex = ref(0)
 const props = defineProps({
     tokenid: Number,
