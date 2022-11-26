@@ -1,4 +1,5 @@
 import axios from 'axios';
+import {useGlobalStore} from "../stores/global";
 const service = axios.create({
     baseURL: "https://scholar.super2021.com/api",
     // 不进行超时中断
@@ -7,8 +8,9 @@ const service = axios.create({
 // 请求拦截器
 service.interceptors.request.use(
     (config)=>{
-        const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo4LCJleHAiOjE2Njk0NDUwNDUuNjgyMTI3fQ.QuMrX6IrAMgNMn9UzG9Jw4jadUusJR4IGoW73z3ZGi8";
-        if (token && token != "undefined") {
+        const globalStore = useGlobalStore();
+        const token = globalStore.token;
+        if (token && token .length>0) {
             // 问了下fgg,不需要Bearer
             config.headers.Authorization = token;
         }
