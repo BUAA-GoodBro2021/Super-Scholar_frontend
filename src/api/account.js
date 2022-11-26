@@ -34,9 +34,6 @@ export class Account {
   static async checkClaim(data) {
     return service(url.CAGetList, {
       method: "post",
-      headers: {
-        'Authorization': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo4LCJleHAiOjE2Njk0NDUwNDUuNjgyMTI3fQ.QuMrX6IrAMgNMn9UzG9Jw4jadUusJR4IGoW73z3ZGi8',
-      },
       data,
     });
   }
