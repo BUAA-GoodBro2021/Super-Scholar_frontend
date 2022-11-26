@@ -29,8 +29,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
-import { reactive } from '@vue/reactivity'
+import { ref,reactive } from 'vue';
 import {Account} from "../../api/account";
 const currentDate = ref(new Date())
 const requestData = reactive({
