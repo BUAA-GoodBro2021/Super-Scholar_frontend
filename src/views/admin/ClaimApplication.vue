@@ -29,9 +29,8 @@
     </div>
 </template>
 
-<script lang="ts" setup>
-import { ref } from 'vue';
-import { reactive } from '@vue/reactivity'
+<script setup>
+import { ref,reactive } from 'vue';
 import {Account} from "../../api/account";
 const currentDate = ref(new Date())
 const requestData = reactive({
@@ -44,18 +43,18 @@ const func1= () => {
     Account.checkClaim({}).then((res)=>{
             alert('请求成功!');
             console.log(res.data.form_handling_dic_list);
-            for(i; i<Object.keys(res.data.form_handling_dic_list).length; i++){
-                console.log("i", res.data.form_handling_dic_list[i])
-                Account.getSingleData({
-                    "entity_type": "authors",
-                    "params": {
-                        "id": res.data.form_handling_dic_list[i].author_id,
-                    }
-                }).then((res)=>{
-                    console.log("author")
-                    console.log(res)
-                });
-            }
+            // for(i; i<Object.keys(res.data.form_handling_dic_list).length; i++){
+            //     console.log("i", res.data.form_handling_dic_list[i])
+            //     Account.getSingleData({
+            //         "entity_type": "authors",
+            //         "params": {
+            //             "id": res.data.form_handling_dic_list[i].author_id,
+            //         }
+            //     }).then((res)=>{
+            //         console.log("author")
+            //         console.log(res)
+            //     });
+            // }
         });
 }
 func1();  //因为setup即相当于created:
