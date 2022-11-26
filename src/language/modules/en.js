@@ -8,6 +8,8 @@ export default {
         CAAllPass: "Pass All",
         CARefuseAll: "Refuse All",
         UATitle1: "At present, ",
-        UATitle2: " scholars have settled in the platform"
+        UATitle2: " scholars have settled in the platform",
+        action1:"logout",
+        welcome:"Welcome",
     }
 }

@@ -12,6 +12,9 @@ export const useGlobalStore = defineStore({
   getters: {
     isAdmin(state){
       return state.userInfo.is_super;
+    },
+    isAuth(state){
+      return state.token.length > 0;
     }
   },
   actions: {

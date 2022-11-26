@@ -8,6 +8,8 @@ export default {
         CAAllPass: "一键通过",
         CARefuseAll: "一键拒绝",
         UATitle1: "当前已有 ",
-        UATitle2: " 位学者入驻平台"
+        UATitle2: " 位学者入驻平台",
+        action1:"退出登录",
+        welcome:"欢迎登录",
     }
 }
