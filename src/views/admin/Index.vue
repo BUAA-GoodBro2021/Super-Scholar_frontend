@@ -130,7 +130,7 @@ const handleClose = (key: string, keyPath: string[]) => {
   color: #46c1fa;
 }
 #PC_main {
-  background-image: url("../../assets/PCM/BG16.webp"); /*68 12*/
+  /* background-image: url("../../assets/PCM/BG16.webp"); 68 12 */
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-size: 100%;
