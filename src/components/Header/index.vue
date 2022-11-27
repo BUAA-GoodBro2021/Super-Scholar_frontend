@@ -40,7 +40,7 @@ const linkColor = computed(()=>{
     text-align: center;
     width: 100%;
     position: fixed;
-    z-index: 114514;
+    z-index: 1145;
 }
 
 .logo {
