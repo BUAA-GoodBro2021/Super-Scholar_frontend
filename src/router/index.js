@@ -1,5 +1,6 @@
+import { ElMessage } from 'element-plus';
 import { createRouter, createWebHistory } from 'vue-router'
-
+import {useGlobalStore} from "../stores/global"
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -40,12 +41,12 @@ const router = createRouter({
       },
       children: [
         {
-          path: 'user/:tokenid',
+          path: '/user/:tokenid',
           name: 'UserDetail',
           component: ()=>import('../views/User/UserDetail.vue'),
         },
         {
-          path: 'personal/account',
+          path: '/personal/account',
           name: 'PersonalDetail',
           component: ()=>import('../views/User/PersonalDetail.vue'),
         },
@@ -61,5 +62,9 @@ const router = createRouter({
 // 全局前置守卫
 router.beforeEach((to,from)=>{
     // TODO: 权限
+    const globalStore = useGlobalStore();
+    if(!globalStore.isAuth&&to.name!="Login"){
+      return{name:"Login"};
+    }
 })
 export default router
