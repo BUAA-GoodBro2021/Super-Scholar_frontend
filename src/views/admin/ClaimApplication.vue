@@ -58,8 +58,8 @@
                             </div>
                         </div>
                         <div class="bottomButton">
-                            <el-button type="primary" style="margin-bottom: 0.2vh; height: 3vh">{{$t('header.CAPass')}}</el-button>
-                            <el-button type="info" plain style="margin-bottom: 0.2vh; height: 3vh">{{$t('header.CARefuse')}}</el-button>
+                            <el-button type="primary" style="margin-bottom: 0.2vh; height: 3vh" @click="pass(o.user_id, pages.currentPage*6 - 6 + index)">{{$t('header.CAPass')}}</el-button>
+                            <el-button type="info" plain style="margin-bottom: 0.2vh; height: 3vh" @click="refuse(o.user_id, pages.currentPage*6 - 6 + index)">{{$t('header.CARefuse')}}</el-button>
                         </div>
                     </el-card>
                 </el-col>
@@ -95,49 +95,28 @@ const requestData = reactive({
     totalApply: 0,
     totalPage: 0
 });
-var i = 0;
+
 const pages = reactive({
     currentPage : 1
 })
 const func1= () => {
     Account.checkClaim({}).then((res)=>{
-            alert('请求成功!');
-            console.log(res.data.form_handling_dic_list);
             requestData.list = res.data.form_handling_dic_list;
-            requestData.list.push(requestData.dead);
-            requestData.list.push(requestData.dead);
-            requestData.list.push(requestData.dead);
-            requestData.list.push(requestData.dead);
-            requestData.list.push(requestData.dead);
-            requestData.list.push(requestData.dead);
-            requestData.list.push(requestData.dead);
-            requestData.list.push(requestData.dead);
-            requestData.list.push(requestData.dead);
-            requestData.list.push(requestData.dead);
-            requestData.list.push(requestData.dead);
-            requestData.list.push(requestData.dead);
-            requestData.list.push(requestData.dead);
-            requestData.list.push(requestData.dead);
-            console.log(requestData.list)
             requestData.totalApply = Object.keys(requestData.list).length;
             requestData.totalPage = Math.floor(requestData.totalApply / 6) + 1;
-            console.log(requestData.totalPage)
-            for(i; i<Object.keys(requestData.list).length; i++){
+            for(let i = 0; i<Object.keys(requestData.list).length; i = i + 1){
                 Account.getSingleData({
                     "entity_type": "authors",
                     "params": {
                         "id": res.data.form_handling_dic_list[i].author_id
                     }
                 }).then((res)=>{
-                    Object.assign(requestData.list[0], {"author_name": res.data.single_data.display_name});
-                    Object.assign(requestData.list[0], {"works_count": res.data.single_data.works_count});
-                    Object.assign(requestData.list[0], {"cited_by_count": res.data.single_data.cited_by_count});
-                    Object.assign(requestData.list[0], {"author_url": res.data.single_data.id});
-                    Object.assign(requestData.list[4], {"author_name": res.data.single_data.display_name});
-                    Object.assign(requestData.list[4], {"works_count": res.data.single_data.works_count});
-                    Object.assign(requestData.list[4], {"cited_by_count": res.data.single_data.cited_by_count});
-                    Object.assign(requestData.list[4], {"author_url": res.data.single_data.id});
-                    console.log(requestData.list)
+                    console.log("i",i);
+                    Object.assign(requestData.list[i], {"author_name": res.data.single_data.display_name});
+                    Object.assign(requestData.list[i], {"works_count": res.data.single_data.works_count});
+                    Object.assign(requestData.list[i], {"cited_by_count": res.data.single_data.cited_by_count});
+                    Object.assign(requestData.list[i], {"author_url": res.data.single_data.id});
+                    console.log(requestData.list);
                 });
             }
         });
@@ -146,7 +125,24 @@ func1();  //因为setup即相当于created:
 
 function pageCurrentChange(val){
     pages.currentPage = val;
-    console.log(pages.currentPage);
+}
+
+function pass(uid, num){
+    Account.dealApply({
+        "user_id": uid,
+        "deal_result": 1
+    }).then((res)=>{
+        requestData.list.splice(num, 1);
+    });
+}
+
+function refuse(uid, num){
+    Account.dealApply({
+        "user_id": uid,
+        "deal_result": -1
+    }).then((res)=>{
+        requestData.list.splice(num, 1);
+    });
 }
 </script>
 

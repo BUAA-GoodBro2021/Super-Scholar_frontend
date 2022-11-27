@@ -4,7 +4,9 @@ const url = {
   register: "/user/register",
   findPassword: "/user/find_password",
   CAGetList: "/form/manager_check_claim",
-  getSingleData: "/search/get_single_data_view"
+  getSingleData: "/search/get_single_data_view",
+  dealApply: "/form/manager_deal_claim",
+  managerGetAllUser: "/form/manager_look_all_user"
 }
 // 详细参考见：https://www.axios-http.cn/docs/req_config
 export class Account {
@@ -39,6 +41,12 @@ export class Account {
   }
   static async getSingleData(data) {
     return service(url.getSingleData, {
+      method: "post",
+      data,
+    });
+  }
+  static async dealApply(data) {
+    return service(url.dealApply, {
       method: "post",
       data,
     });
