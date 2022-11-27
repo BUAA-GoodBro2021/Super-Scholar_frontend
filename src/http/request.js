@@ -1,4 +1,6 @@
 import axios from 'axios';
+import {useGlobalStore} from "../stores/global";
+const globalStore = useGlobalStore();
 const service = axios.create({
     baseURL: "https://scholar.super2021.com/api",
     // 不进行超时中断
@@ -7,8 +9,8 @@ const service = axios.create({
 // 请求拦截器
 service.interceptors.request.use(
     (config)=>{
-        const token = window.localStorage.getItem("token");
-        if (token && token != "undefined") {
+        const token = globalStore.token;
+        if (token && token .length>0) {
             // 问了下fgg,不需要Bearer
             config.headers.Authorization = token;
         }

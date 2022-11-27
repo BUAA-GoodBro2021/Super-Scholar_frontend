@@ -8,16 +8,27 @@
 				<div class="login-logo">
 					<img class="login-icon" src="/icon.png" alt="" />
 				</div>
-				<LoginForm />
+				<router-view v-slot="{route,Component}">
+					<transition name="fade" mode="out-in">
+						<component :is="Component"></component>
+					</transition>
+				</router-view>
 			</div>
 		</div>
 	</div>
 </template>
 <script setup>
-
-import LoginForm from "./LoginForm.vue";
 </script>
 <style lang="scss">
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
 .login-container {
 	position: relative;
 	min-width: 550px;
@@ -28,6 +39,11 @@ import LoginForm from "./LoginForm.vue";
 	background-position: 50%;
 	background-size: 100% 100%;
 	background-size: cover;
+}
+.login-register {
+	font-size: 12px;
+	color:#409eff;
+	margin-left: 10px;
 }
 .flx-center {
     display: flex;
@@ -85,6 +101,16 @@ import LoginForm from "./LoginForm.vue";
 				white-space: nowrap;
 				.el-button {
 					width: 185px;
+				}
+			}
+			.register-btn{
+				display: flex;
+				justify-content: space-between;
+				width: 100%;
+				margin-top: 40px;
+				white-space: nowrap;
+				.el-button {
+					width: 350px;
 				}
 			}
 		}

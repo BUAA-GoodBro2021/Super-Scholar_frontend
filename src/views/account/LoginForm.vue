@@ -1,5 +1,6 @@
 <template>
-   <el-form ref="loginFormRef" :model="loginForm" :rules="loginRules" size="large">
+   <div>
+	<el-form ref="loginFormRef" :model="loginForm" :rules="loginRules" size="large">
 		<el-form-item prop="username">
 			<el-input v-model="loginForm.username" placeholder="用户名">
 				<template #prefix>
@@ -19,11 +20,12 @@
 		<el-button :icon="UserFilled" round @click="login(loginFormRef)" size="large" type="primary" :loading="loading">
 			登录
 		</el-button>
-		<el-button :icon="CircleClose" round @click="resetForm(loginFormRef)" size="large">重置</el-button>
+		<el-button :icon="CirclePlus" round @click="register()" size="large">注册</el-button>
 	</div>
+   </div>
 </template>
 <script setup>
-import { CircleClose, UserFilled } from "@element-plus/icons-vue";
+import { CirclePlus, UserFilled } from "@element-plus/icons-vue";
 import { ElNotification } from "element-plus";
 import {useGlobalStore} from "../../stores/global.js";
 import { Account } from "../../api/account";
@@ -55,11 +57,31 @@ const login = ()=>{
 			});
 			router.push(`/user/${res.data.token}`);
 		}
+		else{
+			ElNotification({
+				title: "很遗憾",
+				message: res.data.message,
+				type: "error",
+				duration: 3000
+			})
+			loginFormRef.value.resetFields();
+		}
+	}).catch((err)=>{
+		ElNotification({
+				title: "很遗憾",
+				message: err.message,
+				type: "error",
+				duration: 3000
+			})
 	})
 }
 const resetForm = (formEl)=>{
     if(!formEl) return;
     formEl.resetFields();
+}
+const register = ()=>{
+	console.log("register")
+	router.push({name:"Register"});
 }
 onMounted(() => {
 	// 监听enter事件
