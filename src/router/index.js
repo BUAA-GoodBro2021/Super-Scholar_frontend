@@ -49,6 +49,11 @@ const router = createRouter({
           name: 'PersonalDetail',
           component: ()=>import('../views/User/PersonalDetail.vue'),
         },
+        {
+          path: 'paper/:paperid',
+          name: 'PaperDetail',
+          component: ()=>import('../views/paper/PaperDetail.vue'),
+        },
       ],
     }
   ]
