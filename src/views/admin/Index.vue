@@ -1,7 +1,7 @@
 <template>
   <div id="PC_main">
     <el-container>
-      <el-aside width="20vw">
+      <el-aside width="19vw">
         <div style="text-align: left">
           <el-radio-group v-model="isCollapse" style="margin-bottom: 20px">
             <el-radio-button :label="false">expand</el-radio-button>
@@ -30,14 +30,14 @@
             </el-menu-item>
          </el-menu>
       </el-aside>
-      <el-main width="60vw">
+      <el-main width="70vw">
         <el-col :span="24" class="content-wrapper">
           <transition name="fade" mode="out-in">
             <router-view></router-view>
           </transition>
         </el-col>
       </el-main>
-      <el-aside width="20vw"></el-aside>
+      <el-aside width="11vw"></el-aside>
     </el-container>
   </div>
 </template>

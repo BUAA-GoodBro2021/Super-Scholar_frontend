@@ -9,7 +9,15 @@ export default {
         CARefuseAll: "Refuse All",
         UATitle1: "At present, ",
         UATitle2: " scholars have settled in the platform",
-        action1:"logout",
-        welcome:"Welcome",
+        action1: "logout",
+        welcome: "Welcome",
+        claimTime: "claim time",
+        institution: "insititution",
+        claimReason: "reason",
+        worksCount: "works count",
+        citedByCount: "cited by count",
+        authorUrl: "Author Homepage",
+        CAPass: "Pass",
+        CARefuse: "Refuse",
     }
 }

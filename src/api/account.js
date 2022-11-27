@@ -39,7 +39,7 @@ export class Account {
   }
   static async getSingleData(data) {
     return service(url.getSingleData, {
-      method: "get",
+      method: "post",
       data,
     });
   }
