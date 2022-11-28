@@ -1,6 +1,7 @@
 <template>
    <div class="welcome">
       <Header/>
+      这里是主页
    </div>
 </template>
 <script setup>

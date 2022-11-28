@@ -9,17 +9,30 @@ const router = createRouter({
       name: 'Welcome',
       component: ()=>import('../views/Welcome.vue'),
     },
-    // 登录
     {
-      path: '/login',
-      name: 'Login',
+      path: '/account',
+      name: 'Account',
       component: ()=>import('../views/account/Login.vue'),
-    },
-    // 注册
-    {
-      path: '/register',
-      name: 'Register',
-      component: ()=>import('../views/account/Register.vue'),
+      children:[
+        // 登录
+        {
+          path: 'login',
+          name: 'Login',
+          meta:{
+            transition: "animate__fadeInDown"
+          },
+          component: ()=>import('../views/account/LoginForm.vue'),
+        },
+        // 注册
+        {
+          path: 'register',
+          name: 'Register',
+          meta:{
+            transition: "animate__fadeInDown"
+          },
+          component: ()=>import('../views/account/RegisterForm.vue'),
+        },
+      ]
     },
     // 管理端
     {
@@ -50,6 +63,11 @@ const router = createRouter({
           name: 'PersonalDetail',
           component: ()=>import('../views/User/PersonalDetail.vue'),
         },
+        {
+          path: 'paper/:paperid',
+          name: 'PaperDetail',
+          component: ()=>import('../views/paper/PaperDetail.vue'),
+        },
       ],
     }
   ]
@@ -58,7 +76,7 @@ const router = createRouter({
 router.beforeEach((to,from)=>{
     // TODO: 权限
     const globalStore = useGlobalStore();
-    if(!globalStore.isAuth&&to.name!="Login"){
+    if(!globalStore.isAuth&&to.name!="Login"&&to.name!="Welcome"&&to.name!="Register"){
       return{name:"Login"};
     }
 })

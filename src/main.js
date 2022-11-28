@@ -10,6 +10,7 @@ import 'element-plus/theme-chalk/dark/css-vars.css'
 import "./assets//styles/reset.css"
 // 导入element plus的图标
 import * as ElementPlusIconsVue from "@element-plus/icons-vue";
+// 多语言
 import I18n from "./language"
 
 /**

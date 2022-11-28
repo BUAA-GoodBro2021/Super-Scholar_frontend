@@ -1,31 +1,33 @@
 <template>
-   <el-form ref="loginFormRef" :model="loginForm" :rules="loginRules" size="large">
-		<el-form-item prop="username">
-			<el-input v-model="loginForm.username" placeholder="用户名">
-				<template #prefix>
-					<el-icon class="el-input__icon"><user /></el-icon>
-				</template>
-			</el-input>
-		</el-form-item>
-		<el-form-item prop="password">
-			<el-input type="password" v-model="loginForm.password" placeholder="密码" show-password autocomplete="new-password">
-				<template #prefix>
-					<el-icon class="el-input__icon"><lock /></el-icon>
-				</template>
-			</el-input>
-		</el-form-item>
-	</el-form>
-	<div class="login-btn">
-		<el-button :icon="UserFilled" round @click="isSliderCaptchaShow = true" size="large" type="primary" :loading="loading">
-			登录
-		</el-button>
-		<el-button :icon="CircleClose" round @click="resetForm(loginFormRef)" size="large">重置</el-button>
+	<div>
+		<el-form ref="loginFormRef" :model="loginForm" :rules="loginRules" size="large">
+			<el-form-item prop="username">
+				<el-input v-model="loginForm.username" placeholder="用户名">
+					<template #prefix>
+						<el-icon class="el-input__icon"><user /></el-icon>
+					</template>
+				</el-input>
+			</el-form-item>
+			<el-form-item prop="password">
+				<el-input type="password" v-model="loginForm.password" placeholder="密码" show-password autocomplete="new-password">
+					<template #prefix>
+						<el-icon class="el-input__icon"><lock /></el-icon>
+					</template>
+				</el-input>
+			</el-form-item>
+		</el-form>
+		<div class="login-btn">
+			<el-button :icon="UserFilled" round @click="isSliderCaptchaShow = true" size="large" type="primary" :loading="loading">
+				登录
+			</el-button>
+			<el-button :icon="CirclePlus" round @click="register()" size="large">注册</el-button>
+		</div>
+		<SliderCaptcha 
+			v-if="isSliderCaptchaShow"
+			@success="onSliderCaptchaSuccess"
+			@close="isSliderCaptchaShow = false"
+		/>
 	</div>
-	<SliderCaptcha 
-		v-if="isSliderCaptchaShow"
-		@success="onSliderCaptchaSuccess"
-		@close="isSliderCaptchaShow = false"
-	/>
 </template>
 <script setup>
 import SliderCaptcha from "./SliderCaptcha.vue";
@@ -69,18 +71,38 @@ const login = ()=>{
 			});
 			router.push(`/user/${res.data.token}`);
 		}
+		else{
+			ElNotification({
+				title: "很遗憾",
+				message: res.data.message,
+				type: "error",
+				duration: 3000
+			})
+			loginFormRef.value.resetFields();
+		}
+	}).catch((err)=>{
+		ElNotification({
+				title: "很遗憾",
+				message: err.message,
+				type: "error",
+				duration: 3000
+			})
 	})
 }
 const resetForm = (formEl)=>{
     if(!formEl) return;
     formEl.resetFields();
 }
+const register = ()=>{
+	console.log("register")
+	router.push({name:"Register"});
+}
 onMounted(() => {
 	// 监听enter事件
 	document.onkeydown = (e) => {
 		e = window.event || e;
 		if (e.code === "Enter" || e.code === "enter" || e.code === "NumpadEnter") {
-			login(loginFormRef.value);
+			isSliderCaptchaShow.value = true;
 		}
 	};
 });
