@@ -16,13 +16,19 @@
 		</el-form-item>
 	</el-form>
 	<div class="login-btn">
-		<el-button :icon="UserFilled" round @click="login(loginFormRef)" size="large" type="primary" :loading="loading">
+		<el-button :icon="UserFilled" round @click="isSliderCaptchaShow = true" size="large" type="primary" :loading="loading">
 			登录
 		</el-button>
 		<el-button :icon="CircleClose" round @click="resetForm(loginFormRef)" size="large">重置</el-button>
 	</div>
+	<SliderCaptcha 
+		v-if="isSliderCaptchaShow"
+		@success="onSliderCaptchaSuccess"
+		@close="isSliderCaptchaShow = false"
+	/>
 </template>
 <script setup>
+import SliderCaptcha from "./SliderCaptcha.vue";
 import { CircleClose, UserFilled } from "@element-plus/icons-vue";
 import { ElNotification } from "element-plus";
 import {useGlobalStore} from "../../stores/global.js";
@@ -41,6 +47,14 @@ const loginForm = ref({
     password:""
 })
 const loading = ref(false);
+// 控制人类行为验证窗口显示
+const isSliderCaptchaShow = ref(false);
+// 人类行为验证通过事件
+const onSliderCaptchaSuccess = () => {
+	isSliderCaptchaShow.value = false;
+	login();
+}
+
 const login = ()=>{
 	Account.login(loginForm.value).then((res)=>{
 		if(res.data.result===1){

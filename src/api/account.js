@@ -3,6 +3,7 @@ const url = {
     login: "/user/login",
     register:"/user/register",
     findPassword:"/user/find_password",
+    humanVerification: "/user/human_verify"
 }
 // 详细参考见：https://www.axios-http.cn/docs/req_config
 export class Account{
@@ -28,5 +29,11 @@ export class Account{
           method: "post",
           data,
         });
+    }
+    static async humanVerification(data) {
+        return service(url.humanVerification, {
+          method: "POST",
+          data,
+        })
     }
 }

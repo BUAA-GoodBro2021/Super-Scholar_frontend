@@ -5,6 +5,19 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 // 支持自动导入elementPlus
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+
+/**
+ * @note   2022.11.28
+ * @author cloud-iris
+ * vite默认不会处理开发者在H5中主动导入的svg矢量图标，也就是说
+ * 虽然我们把 svg 图标放入了项目中，但是 vite “无法使用” 它们
+ * 需要按照 vite 的插件plugin,  vite-plugin-svg-icons
+ * pnpm i vite-plugin-svg-icons -D
+ * 并在 main.js vite.config.js 里面分别注册
+ */
+import path from 'path';
+import { createSvgIconsPlugin } from 'vite-plugin-svg-icons';
+
 // https://vitejs.dev/config/
 export default defineConfig({
 
@@ -36,6 +49,13 @@ export default defineConfig({
         /[\\/]\.nuxt[\\/]/,
       ],
       resolvers: [ElementPlusResolver()],
+    }),
+    // vite 项目的 template 使用 svg
+    createSvgIconsPlugin({
+      // 指定需要缓存的图标文件夹
+      iconDirs: [path.resolve(process.cwd(), 'src/assets/icons')],
+      // 指定 symbolId 格式，匹配 src/libs/svg-icon/index.vue 中的格式 `#icon-${props.svgName}`
+      symbolId: 'icon-[name]'
     })
   ],
   resolve: {
