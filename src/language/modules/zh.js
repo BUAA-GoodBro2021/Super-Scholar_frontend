@@ -7,8 +7,8 @@ export default {
         uploadArticle: "上传文章",
         CAAllPass: "一键通过",
         CARefuseAll: "一键拒绝",
-        UATitle1: "当前已有 ",
-        UATitle2: " 位学者入驻平台",
+        SSTitle1: "当前已有 ",
+        SSTitle2: " 位学者入驻平台",
         action1: "退出登录",
         welcome: "欢迎登录",
         claimTime: "申请时间",
@@ -19,5 +19,8 @@ export default {
         authorUrl: "作者主页",
         CAPass: "通过",
         CARefuse: "拒绝",
+        SSEmail: "邮箱",
+        SSCreatedTime: "入驻时间",
+        SSPassageNum: "发表文章数量"
     }
 }

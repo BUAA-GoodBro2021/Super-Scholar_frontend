@@ -51,4 +51,10 @@ export class Account {
       data,
     });
   }
+  static async managerGetAllUser(data) {
+    return service(url.managerGetAllUser, {
+      method: "post",
+      data,
+    });
+  }
 }
