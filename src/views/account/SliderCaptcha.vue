@@ -1,24 +1,26 @@
 <template>
-  <div class="slider-captcha-container">
-    <div class="slider-captcha-header">
-      <span class="slider-captcha-span">请完成安全验证</span>
-      <svg 
-        aria-hidden="true" 
-        class="slider-captcha-icon-refresh" 
-        @click="onReset"
-      >
-        <use xlink:href="#icon-refresh" />
-      </svg>
-      <svg 
-        aria-hidden="true" 
-        class="slider-captcha-icon-close" 
-        @click="onClose"
-      >
-        <use xlink:href="#icon-close" />
-      </svg>
+  <div class="slider-captcha-background" @click.self="onClose">
+    <div class="slider-captcha-container">
+      <div class="slider-captcha-header">
+        <span class="slider-captcha-span">请完成安全验证</span>
+        <svg 
+          aria-hidden="true" 
+          class="slider-captcha-icon-refresh" 
+          @click="onReset"
+        >
+          <use xlink:href="#icon-refresh" />
+        </svg>
+        <svg 
+          aria-hidden="true" 
+          class="slider-captcha-icon-close" 
+          @click="onClose"
+        >
+          <use xlink:href="#icon-close" />
+        </svg>
+      </div>
+      <!-- captcha 挂载点 -->
+      <div id="captcha"></div>
     </div>
-    <!-- captcha 挂载点 -->
-    <div id="captcha"></div>
   </div>
 </template>
 
@@ -97,12 +99,22 @@ const onClose = () => {
 </script>
 
 <style scoped>
+.slider-captcha-background{
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10000;
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
 .slider-captcha-container {
   
   position: fixed;
-  top: 20%;
+  top: 50%;
   left: 50%;
-  transform: translate(-50%, 0);
+  transform: translate(-50%, -50%);
 
   width: 340px;
   height: 270px;

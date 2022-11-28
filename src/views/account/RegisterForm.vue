@@ -1,43 +1,49 @@
 <template>
-   <div>
-	<el-form ref="registerFormRef" :model="registerForm" :rules="registerRules" size="large">
-		<el-form-item prop="email">
-			<el-input type="email" v-model="registerForm.email" placeholder="用户邮箱">
-				<template #prefix>
-					<el-icon class="el-input__icon"><Promotion /></el-icon>
-				</template>
-			</el-input>
-		</el-form-item>
-		<el-form-item prop="username">
-			<el-input v-model="registerForm.username" placeholder="用户名">
-				<template #prefix>
-					<el-icon class="el-input__icon"><user /></el-icon>
-				</template>
-			</el-input>
-		</el-form-item>
-		<el-form-item prop="password1">
-			<el-input type="password1" v-model="registerForm.password1" placeholder="密码" show-password autocomplete="new-password">
-				<template #prefix>
-					<el-icon class="el-input__icon"><lock /></el-icon>
-				</template>
-			</el-input>
-		</el-form-item>
-		<el-form-item prop="password2">
-			<el-input type="password2" v-model="registerForm.password2" placeholder="确认密码" show-password>
-				<template #prefix>
-					<el-icon class="el-input__icon"><lock /></el-icon>
-				</template>
-			</el-input>
-		</el-form-item>
-	</el-form>
-	<div class="register-btn">
-		<el-button :icon="CirclePlus" round @click="register(registerFormRef)" size="large" type="primary" :loading="loading">
-			注册
-		</el-button>
+	<div>
+		<el-form ref="registerFormRef" :model="registerForm" :rules="registerRules" size="large">
+			<el-form-item prop="email">
+				<el-input type="email" v-model="registerForm.email" placeholder="用户邮箱">
+					<template #prefix>
+						<el-icon class="el-input__icon"><Promotion /></el-icon>
+					</template>
+				</el-input>
+			</el-form-item>
+			<el-form-item prop="username">
+				<el-input v-model="registerForm.username" placeholder="用户名">
+					<template #prefix>
+						<el-icon class="el-input__icon"><user /></el-icon>
+					</template>
+				</el-input>
+			</el-form-item>
+			<el-form-item prop="password1">
+				<el-input type="password1" v-model="registerForm.password1" placeholder="密码" show-password autocomplete="new-password">
+					<template #prefix>
+						<el-icon class="el-input__icon"><lock /></el-icon>
+					</template>
+				</el-input>
+			</el-form-item>
+			<el-form-item prop="password2">
+				<el-input type="password2" v-model="registerForm.password2" placeholder="确认密码" show-password>
+					<template #prefix>
+						<el-icon class="el-input__icon"><lock /></el-icon>
+					</template>
+				</el-input>
+			</el-form-item>
+		</el-form>
+		<div class="register-btn">
+			<el-button :icon="CirclePlus" round @click="isSliderCaptchaShow = true" size="large" type="primary" :loading="loading">
+				注册
+			</el-button>
+		</div>
+		<SliderCaptcha 
+			v-if="isSliderCaptchaShow"
+			@success="onSliderCaptchaSuccess"
+			@close="isSliderCaptchaShow = false"
+		/>
 	</div>
-   </div>
 </template>
 <script setup>
+import SliderCaptcha from "./SliderCaptcha.vue";
 import { CirclePlus } from "@element-plus/icons-vue";
 import { ElNotification } from "element-plus";
 import {useGlobalStore} from "../../stores/global.js";
@@ -59,6 +65,14 @@ const registerForm = ref({
     email:"",
 })
 const loading = ref(false);
+// 控制人类行为验证窗口显示
+const isSliderCaptchaShow = ref(false);
+// 人类行为验证通过事件
+const onSliderCaptchaSuccess = () => {
+	isSliderCaptchaShow.value = false;
+	register();
+}
+
 const register = ()=>{
 	Account.register(registerForm.value).then((res)=>{
 		if(res.data.result===1){
@@ -95,11 +109,11 @@ const resetForm = (formEl)=>{
 }
 onMounted(() => {
 	// 监听enter事件
-	// document.onkeydown = (e) => {
-	// 	e = window.event || e;
-	// 	if (e.code === "Enter" || e.code === "enter" || e.code === "NumpadEnter") {
-	// 		register(registerFormRef.value);
-	// 	}
-	// };
+	document.onkeydown = (e) => {
+		e = window.event || e;
+		if (e.code === "Enter" || e.code === "enter" || e.code === "NumpadEnter") {
+			isSliderCaptchaShow.value = true;
+		}
+	};
 });
 </script>

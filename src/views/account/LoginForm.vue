@@ -22,11 +22,14 @@
 			</el-button>
 			<el-button :icon="CirclePlus" round @click="register()" size="large">注册</el-button>
 		</div>
-		<SliderCaptcha 
-			v-if="isSliderCaptchaShow"
-			@success="onSliderCaptchaSuccess"
-			@close="isSliderCaptchaShow = false"
-		/>
+		<!-- 该组件是要直接插入到 整个页面的 body中的，所以要利用 vue3 新组件 teleport -->
+		<teleport to="body">
+			<SliderCaptcha 
+				v-if="isSliderCaptchaShow"
+				@success="onSliderCaptchaSuccess"
+				@close="isSliderCaptchaShow = false"
+			/>
+		</teleport>
 	</div>
 </template>
 <script setup>
