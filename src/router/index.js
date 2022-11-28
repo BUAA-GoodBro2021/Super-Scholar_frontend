@@ -1,5 +1,6 @@
+import { ElMessage } from 'element-plus';
 import { createRouter, createWebHistory } from 'vue-router'
-
+import {useGlobalStore} from "../stores/global"
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -8,17 +9,30 @@ const router = createRouter({
       name: 'Welcome',
       component: ()=>import('../views/Welcome.vue'),
     },
-    // 登录
     {
-      path: '/login',
-      name: 'Login',
+      path: '/account',
+      name: 'Account',
       component: ()=>import('../views/account/Login.vue'),
-    },
-    // 注册
-    {
-      path: '/register',
-      name: 'Register',
-      component: ()=>import('../views/account/Register.vue'),
+      children:[
+        // 登录
+        {
+          path: 'login',
+          name: 'Login',
+          meta:{
+            transition: "animate__fadeInDown"
+          },
+          component: ()=>import('../views/account/LoginForm.vue'),
+        },
+        // 注册
+        {
+          path: 'register',
+          name: 'Register',
+          meta:{
+            transition: "animate__fadeInDown"
+          },
+          component: ()=>import('../views/account/RegisterForm.vue'),
+        },
+      ]
     },
     // 管理端
     {
@@ -40,12 +54,12 @@ const router = createRouter({
       },
       children: [
         {
-          path: 'user/:tokenid',
+          path: '/user/:tokenid',
           name: 'UserDetail',
           component: ()=>import('../views/User/UserDetail.vue'),
         },
         {
-          path: 'personal/account',
+          path: '/personal/account',
           name: 'PersonalDetail',
           component: ()=>import('../views/User/PersonalDetail.vue'),
         },
@@ -54,6 +68,11 @@ const router = createRouter({
           name: 'ClaimPortal',
           component: ()=>import('../views/User/ClaimPortal.vue'),
         },
+        {
+          path: 'paper/:paperid',
+          name: 'PaperDetail',
+          component: ()=>import('../views/paper/PaperDetail.vue'),
+        },
       ],
     }
   ]
@@ -61,5 +80,9 @@ const router = createRouter({
 // 全局前置守卫
 router.beforeEach((to,from)=>{
     // TODO: 权限
+    const globalStore = useGlobalStore();
+    if(!globalStore.isAuth&&to.name!="Login"&&to.name!="Welcome"&&to.name!="Register"){
+      return{name:"Login"};
+    }
 })
 export default router

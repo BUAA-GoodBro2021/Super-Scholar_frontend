@@ -82,6 +82,7 @@ const getAccountType = () => {
 .wrap{
     width: 100%;
     display: flex;
+    height: 95%;
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -90,13 +91,13 @@ const getAccountType = () => {
 
 .avatar_wrap{
     width: 70%;
-    margin: 2vh 0 3vh 0;
-    height: 25vh;
+    margin: 2% 0 3% 0;
+    height: 25%;
 }
 
 .article_data_wrap{
     width: 70%;
-    min-height: 68vh;
+    min-height: 68%;
     height: auto;
 
     display: flex;
