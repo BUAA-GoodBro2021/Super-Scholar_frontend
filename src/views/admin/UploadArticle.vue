@@ -17,7 +17,7 @@
         > -->
             <el-row>
                 <el-col
-                v-for.sync="(o, index) in requestData.list.slice((pages.currentPage*6 - 6), (pages.currentPage*6))"
+                v-for.sync="(o, index) in requestData.list.slice((pages.currentPage*9 - 9), (pages.currentPage*9))"
                 :key="o"
                 :span="7"
                 :offset="(index%3) > 0 ? 1 : 0"
@@ -25,41 +25,24 @@
                     <el-card :body-style="{ padding: '0px'}" style="margin-bottom: 1vh">
                         <!-- <el-checkbox :key="o.user_id" label="" class="checkbox"></el-checkbox> -->
                         <div style="padding: 14px">
-                            <span class="card_header">{{o.real_name}}</span>
+                            <span class="card_header">{{o.author_name}}</span>
                             <div class="bottom">
-                                    <span>{{$t('header.claimTime')}}</span>
-                                    <time class="time">{{ o.claim_time }}</time>
+                                    <span>{{$t('header.institution')}}</span>
+                                    <time class="time">{{ o.institution }}</time>
                             </div>
                             <div class="bottom">
-                                <span>{{$t('header.institution')}}</span>
-                                <span class="time">{{o.institution}}</span>
+                                <span>pdf</span>
+                                <a :href="o.url" target="_blank" class="time">{{$t('header.GlancePdf')}}</a>
                                 <!-- <el-button text class="button">Operating</el-button> -->
                             </div>
                             <div class="bottom">
-                                <span>{{$t('header.claimReason')}}</span>
-                                <span class="time">{{ o.content }}</span>
-                            </div>
-                        </div>
-                        <el-divider content-position="right"><el-icon><star-filled /></el-icon></el-divider>
-                        <div style="padding: 14px">
-                            <span class="card_header">{{ o.author_name }}</span>
-                            <div class="bottom">
-                                    <span>{{$t('header.worksCount')}}</span>
-                                    <span class="time">{{ o.works_count }}</span>
-                            </div>
-                            <div class="bottom">
-                                <span>{{$t('header.citedByCount')}}</span>
-                                <span class="time">{{o.cited_by_count}}</span>
-                                <!-- <el-button text class="button">Operating</el-button> -->
-                            </div>
-                            <div class="bottom">
-                                <span>{{$t('header.authorUrl')}}</span>
-                                <a class="time" :href="o.author_url" target="_blank">{{ o.author_url }}</a>
+                                <span>{{$t('header.UAApplyTime')}}</span>
+                                <span class="time">{{ o.send_time }}</span>
                             </div>
                         </div>
                         <div class="bottomButton">
-                            <el-button type="primary" style="margin-bottom: 0.2vh; height: 3vh">{{$t('header.CAPass')}}</el-button>
-                            <el-button type="info" plain style="margin-bottom: 0.2vh; height: 3vh">{{$t('header.CARefuse')}}</el-button>
+                            <el-button type="primary" style="margin-bottom: 0.2vh; height: 3vh" @click="pass(o.id, pages.currentPage*9 - 9 + index)">{{$t('header.CAPass')}}</el-button>
+                            <el-button type="info" plain style="margin-bottom: 0.2vh; height: 3vh" @click="refuse(o.id, pages.currentPage*9 - 9 + index)">{{$t('header.CARefuse')}}</el-button>
                         </div>
                     </el-card>
                 </el-col>
@@ -84,60 +67,57 @@ const requestData = reactive({
     msg: "",
     list:[],
     dead:{
+            "id": "W2613718673",
+            "work_name": "",
             "user_id": 2,
-            "content": "姐姐~",
             "author_id": "A2164292938",
-            "institution": "二次元",
-            "real_name": "ajk",
-            "is_pass": 0,
-            "claim_time": "2022-11-27T18:34:43.310"
+            "pdf": "W2613718673lOBBux.pdf",
+            "url": "https://pdf-1309504341.cos.ap-beijing.myqcloud.com/W2613718673lOBBux.pdf",
+            "has_pdf": 0,
+            "send_time": "2022-11-29T00:21:29.179",
+            "last_user_id": null,
+            "last_author_id": "",
+            "last_pdf": "",
+            "last_url": null,
+            "last_has_pdf": -1,
+            "last_send_time": null
         },
     totalApply: 0,
     totalPage: 0
 });
-var i = 0;
 const pages = reactive({
     currentPage : 1
 })
 const func1= () => {
-    Account.checkClaim({}).then((res)=>{
-            alert('请求成功!');
-            console.log(res.data.form_handling_dic_list);
-            requestData.list = res.data.form_handling_dic_list;
-            requestData.list.push(requestData.dead);
-            requestData.list.push(requestData.dead);
-            requestData.list.push(requestData.dead);
-            requestData.list.push(requestData.dead);
-            requestData.list.push(requestData.dead);
-            requestData.list.push(requestData.dead);
-            requestData.list.push(requestData.dead);
-            requestData.list.push(requestData.dead);
-            requestData.list.push(requestData.dead);
-            requestData.list.push(requestData.dead);
-            requestData.list.push(requestData.dead);
-            requestData.list.push(requestData.dead);
-            requestData.list.push(requestData.dead);
-            requestData.list.push(requestData.dead);
+    Account.managerCheckUploadPdf({}).then((res)=>{
+            requestData.list = res.data.upload_pdf_form_dic_list;
             console.log(requestData.list)
+            requestData.list.push(requestData.dead);
+            requestData.list.push(requestData.dead);
+            requestData.list.push(requestData.dead);
+            requestData.list.push(requestData.dead);
+            requestData.list.push(requestData.dead);
+            requestData.list.push(requestData.dead);
+            requestData.list.push(requestData.dead);
+            requestData.list.push(requestData.dead);
+            requestData.list.push(requestData.dead);
+            requestData.list.push(requestData.dead);
+            requestData.list.push(requestData.dead);
+            requestData.list.push(requestData.dead);
+            requestData.list.push(requestData.dead);
+            requestData.list.push(requestData.dead);
             requestData.totalApply = Object.keys(requestData.list).length;
-            requestData.totalPage = Math.floor(requestData.totalApply / 6) + 1;
-            console.log(requestData.totalPage)
-            for(i; i<Object.keys(requestData.list).length; i++){
+            requestData.totalPage = Math.floor(requestData.totalApply / 9) + 1;
+            for(let i = 0; i < Object.keys(requestData.list).length; i++){
                 Account.getSingleData({
                     "entity_type": "authors",
                     "params": {
-                        "id": res.data.form_handling_dic_list[i].author_id
+                        "id": requestData.list[i].author_id
                     }
                 }).then((res)=>{
+                    console.log(res.data)
                     Object.assign(requestData.list[0], {"author_name": res.data.single_data.display_name});
-                    Object.assign(requestData.list[0], {"works_count": res.data.single_data.works_count});
-                    Object.assign(requestData.list[0], {"cited_by_count": res.data.single_data.cited_by_count});
-                    Object.assign(requestData.list[0], {"author_url": res.data.single_data.id});
-                    Object.assign(requestData.list[4], {"author_name": res.data.single_data.display_name});
-                    Object.assign(requestData.list[4], {"works_count": res.data.single_data.works_count});
-                    Object.assign(requestData.list[4], {"cited_by_count": res.data.single_data.cited_by_count});
-                    Object.assign(requestData.list[4], {"author_url": res.data.single_data.id});
-                    console.log(requestData.list)
+                    Object.assign(requestData.list[0], {"institution": res.data.single_data.last_known_institution.display_name});
                 });
             }
         });
@@ -147,6 +127,25 @@ func1();  //因为setup即相当于created:
 function pageCurrentChange(val){
     pages.currentPage = val;
     console.log(pages.currentPage);
+}
+
+function pass(uid, num){
+    console.log(num)
+    Account.managerDealUploadPdf({
+        "work_id": uid,
+        "deal_result": 1
+    }).then((res)=>{
+        requestData.list.splice(num, 1);
+    });
+}
+
+function refuse(uid, num){
+    Account.managerDealUploadPdf({
+        "work_id": uid,
+        "deal_result": -1
+    }).then((res)=>{
+        requestData.list.splice(num, 1);
+    });
 }
 </script>
 

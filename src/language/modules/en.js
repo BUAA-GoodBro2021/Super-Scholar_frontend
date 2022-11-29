@@ -21,6 +21,8 @@ export default {
         CARefuse: "Refuse",
         SSEmail: "Email",
         SSCreatedTime: "Occupancy time",
-        SSPassageNum: "Number of published articles"
+        SSPassageNum: "Number of published articles",
+        UAApplyTime: "apply time",
+        GlancePdf: "glance pdf"
     }
 }

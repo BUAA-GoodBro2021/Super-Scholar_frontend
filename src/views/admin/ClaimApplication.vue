@@ -48,8 +48,8 @@
                                     <span class="time">{{ o.works_count }}</span>
                             </div>
                             <div class="bottom">
-                                <span>{{$t('header.citedByCount')}}</span>
-                                <span class="time">{{o.cited_by_count}}</span>
+                                <span>{{$t('header.institution')}}</span>
+                                <span class="time">{{o.institution}}</span>
                                 <!-- <el-button text class="button">Operating</el-button> -->
                             </div>
                             <div class="bottom">
@@ -114,7 +114,7 @@ const func1= () => {
                     console.log("i",i);
                     Object.assign(requestData.list[i], {"author_name": res.data.single_data.display_name});
                     Object.assign(requestData.list[i], {"works_count": res.data.single_data.works_count});
-                    Object.assign(requestData.list[i], {"cited_by_count": res.data.single_data.cited_by_count});
+                    Object.assign(requestData.list[i], {"institution": res.data.single_data.last_known_institution.display_name});
                     Object.assign(requestData.list[i], {"author_url": res.data.single_data.id});
                     console.log(requestData.list);
                 });

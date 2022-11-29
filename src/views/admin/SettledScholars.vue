@@ -73,6 +73,10 @@ const func1= () => {
     });
 }
 func1();  //因为setup即相当于created:
+
+function pageCurrentChange(val){
+    pages.currentPage = val;
+}
 </script>
 
 <style>

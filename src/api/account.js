@@ -6,7 +6,9 @@ const url = {
   CAGetList: "/form/manager_check_claim",
   getSingleData: "/search/get_single_data_view",
   dealApply: "/form/manager_deal_claim",
-  managerGetAllUser: "/form/manager_look_all_user"
+  managerGetAllUser: "/form/manager_look_all_user",
+  managerCheckUploadPdf: "/work/manager_check_upload_pdf",
+  managerDealUploadPdf: "/work/manager_deal_upload_pdf"
 }
 // 详细参考见：https://www.axios-http.cn/docs/req_config
 export class Account {
@@ -53,6 +55,18 @@ export class Account {
   }
   static async managerGetAllUser(data) {
     return service(url.managerGetAllUser, {
+      method: "post",
+      data,
+    });
+  }
+  static async managerCheckUploadPdf(data) {
+    return service(url.managerCheckUploadPdf, {
+      method: "post",
+      data,
+    });
+  }
+  static async managerDealUploadPdf(data) {
+    return service(url.managerDealUploadPdf, {
       method: "post",
       data,
     });

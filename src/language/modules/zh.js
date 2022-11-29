@@ -21,6 +21,8 @@ export default {
         CARefuse: "拒绝",
         SSEmail: "邮箱",
         SSCreatedTime: "入驻时间",
-        SSPassageNum: "发表文章数量"
+        SSPassageNum: "发表文章数量",
+        UAApplyTime: "申请时间",
+        GlancePdf: "查看pdf"
     }
 }
