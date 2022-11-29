@@ -39,6 +39,9 @@ const linkColor = computed(()=>{
     text-align: center;
     width: 100%;
     position: fixed;
+    /* 不是这两条也能不加的啊 */
+    top: 0;
+    left: 0;
     z-index: 1145;
 }
 
