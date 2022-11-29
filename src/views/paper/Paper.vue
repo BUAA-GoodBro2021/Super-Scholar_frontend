@@ -1,9 +1,14 @@
 <template>
     <div class="wrap">
-        <div class="article_brief_bg">
-            <div class="article_brief_wrap">
-                <PaperBriefVue :paperInfo="paperInfo" v-if="paperInfo"/>
-            </div>
+        <div class="article_top_bg">
+                <el-row class="article_top_warp">
+                    <el-col :span="18" class="article_brief_wrap">
+                        <PaperBriefVue :paperInfo="paperInfo" v-if="paperInfo"/>
+                    </el-col>
+                    <el-col :span="6" class="article_brief_wrap">
+                        
+                    </el-col>
+                </el-row>
         </div>
         <div class="article_data_bg">
             <div class="article_data_wrap">
@@ -99,16 +104,22 @@ onMounted(() => {
     justify-content: center;
     align-items: center;
 }
-.article_brief_bg{
+@keyframes dropdown{
+    0%{opacity: 0;}
+    100%{opacity: 1;}
+}
+.article_top_bg{
     box-shadow: 0px 2px 4px inset skyblue;
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-top: 60px;
+    animation: dropdown 1s 1;
+}
+.article_top_warp{
+    width: 80%;
 }
 .article_brief_wrap{
-    width: 80%;
-    margin: 2vh 0 3vh 0;
-    height: 25vh;
 }
 
 .article_data_wrap{

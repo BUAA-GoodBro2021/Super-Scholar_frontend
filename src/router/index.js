@@ -66,7 +66,7 @@ const router = createRouter({
         {
           path: 'paper/:paperid',
           name: 'PaperDetail',
-          component: ()=>import('../views/paper/PaperDetail.vue'),
+          component: ()=>import('../views/paper/Paper.vue'),
         },
       ],
     }
