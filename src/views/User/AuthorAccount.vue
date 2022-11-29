@@ -1,7 +1,7 @@
 <template>
-    <div class="personal-wrap">
+    <div class="wrap">
         <div class="avatar_wrap">
-            <AvaterWrapVue :personAccount="1" :userInfo="userInfo" :claimed="claimed" :openAlexAccount="0"/>
+            <AvaterWrapVue :personAccount="2" :userInfo="userInfo" :claimed="claimed"/>
         </div>
         <div class="article_data_wrap">
             <div class="left">
@@ -14,21 +14,16 @@
     </div>
 </template>
 <script setup>
-import ClaimPortalVue from './ClaimPortal.vue';
 import AvaterWrapVue from '../UserComponents/AvaterWrap.vue';
 import ArticleAndDataVue from '../UserComponents/ArticleAndData.vue';
 import CoAuthorsVue from '../UserComponents/CoAuthors.vue';
 const route = useRoute()
 const tokenid = route.params.tokenid
-const claimed = ref(1) // 0 未认证 1 认证 在openalexaccount为0时候有效 当网站用户认证的时候 发表文献和数据分析以合作作者采用openalex作者页面的数据
-const openAlexAccount = ref(0) // 0 网站用户 1 openalex作者
-// const otherAcountType = ref() // 他人账户 0 未认证的网站用户 1 认证的网站用户或者是未认证的原生作者
+const claimed = ref(0)  // 0 未认证 1 已认证
 const userInfo = ref({
     id: "20373638",
     display_name: 'Harbour',
     last_known_institution: "Hogwarts",
-    email: '2358272468@qq.com',
-    introduction: '中分头 背带裤 我是ikun你记住 山外青山楼外楼 唱跳rap打篮球 ',
     x_concepts: [
         {
             id: "",
@@ -57,19 +52,16 @@ const userInfo = ref({
             display_name: '鸡你太美鸡你太美迎面的你走来逐渐让我蠢蠢欲动，这种感觉从未有过cause I get a crash on you',
             publication_date: '2022-2-11',
             cited_by_count: '11',
-            pdf: 0,
         },
         {
             display_name: '你是我的，我是你的谁',
             publication_date: '2022-4-31',
             cited_by_count: '11',
-            pdf: 1,
         },
         {
             display_name: '再多一眼，看一眼就会爆炸，在近一点靠近点快被融化',
             publication_date: '2022-4-31',
             cited_by_count: '11',
-            pdf: -1,
         }
     ]
 })
@@ -77,6 +69,8 @@ const userInfo = ref({
 
 onMounted(() => {
     getAccountType()
+    myAcountType.value = 0
+    // otherAcountType.value = 0
 })
 
 const getAccountType = () => {
@@ -85,35 +79,36 @@ const getAccountType = () => {
 
 </script>
 <style scoped>
-.personal-wrap {
+.wrap{
     width: 100%;
     display: flex;
+    height: 95%;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     background-color: rgba(230, 230, 230, 0.234);
 }
 
-.avatar_wrap {
+.avatar_wrap{
     width: 70%;
-    margin: 2vh 0 3vh 0;
-    height: 25vh;
+    margin: 2% 0 3% 0;
+    height: 25%;
 }
 
-.article_data_wrap {
+.article_data_wrap{
     width: 70%;
-    min-height: 62vh;
+    min-height: 68%;
     height: auto;
 
     display: flex;
 }
 
-.article_data_wrap .left {
+.article_data_wrap .left{
     width: 65%;
     margin-right: 5%;
 }
 
-.article_data_wrap .right {
+.article_data_wrap .right{
     width: 30%;
 }
 </style>

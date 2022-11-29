@@ -1,7 +1,7 @@
 <template>
     <div class="document-list-wrap">
         <el-table :data="processedDocumentList" style="width: 100%">
-            <el-table-column prop="display_name" label="文献" min-width="70%">
+            <el-table-column prop="display_name" label="文献" min-width="60%">
                 <template #default="scope">
                     <span class="document_title">{{ scope.row.display_name }}</span>
                     <div class="authors_wrap">
@@ -13,6 +13,20 @@
             </el-table-column>
             <el-table-column prop="publication_date" label="日期" min-width="17%" sortable align="center" />
             <el-table-column prop="cited_by_count" label="引用" sortable  min-width="13%" align="center"/>
+            <el-table-column prop="pdf" label="状态" min-width="14%">
+                <template #default="scope">
+                    <el-tag style="font-size: 17px;" v-if="scope.row.pdf == -1" type="danger">暂无pdf</el-tag>
+                    <el-tag style="font-size: 17px;" v-if="scope.row.pdf == 0" type="warning">审核中</el-tag>
+                    <el-tag style="font-size: 17px;" v-if="scope.row.pdf == 1" type="success">已有pdf</el-tag>
+                </template>
+            </el-table-column>
+            <el-table-column prop="pdf" label="操作" min-width="14%">
+                <template #default="scope">
+                    <el-button v-if="scope.row.pdf == -1">上传pdf</el-button>
+                    <el-button v-if="scope.row.pdf == 0">取消上传</el-button>
+                    <el-button v-if="scope.row.pdf == 1">删除pdf</el-button>
+                </template>
+            </el-table-column>
         </el-table>
     </div>
 </template>
@@ -39,12 +53,14 @@ const processedDocumentList = ref([
                 display_name: "harbour",
                 id: '',
             },
-        ]
+        ],
+        pdf: 0,
     },
     {
         display_name: '你是我的，我是你的谁',
         publication_date: '2022-4-31',
         cited_by_count: '11',
+        pdf: -1,
         authorList: [
             {
                 display_name: "harbour",
@@ -64,6 +80,7 @@ const processedDocumentList = ref([
         display_name: '再多一眼，看一眼就会爆炸，在近一点靠近点快被融化',
         publication_date: '2022-4-31',
         cited_by_count: '10',
+        pdf: 1,
         authorList: [
             {
                 display_name: "harbour",

@@ -23,7 +23,7 @@
                 <el-divider v-if="index != authorList.length - 1"></el-divider>
             </div>
         </div>
-        <div class="empty">
+        <div class="empty" v-else>
             该用户尚未认证
         </div>
     </div>
