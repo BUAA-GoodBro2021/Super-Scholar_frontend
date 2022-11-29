@@ -5,7 +5,7 @@
             <div class="author-card" v-for="(item, index) in authorList" :key="index">
                 <ul>
                     <li>
-                        <el-avatar :size="90"
+                        <el-avatar :size="70"
                             :src="item.avatar_url ? avatar_url : 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png'"
                             style="cursor: pointer;"></el-avatar>
                     </li>
@@ -72,7 +72,7 @@ const authorList = ref(
 }
 
 .coauthors-title {
-    font-size: 23px;
+    font-size: 18px;
     font-weight: 800;
     text-align: left;
     margin-top: 30px;
@@ -83,11 +83,12 @@ const authorList = ref(
 .author-list {
     width: 90%;
     height: auto;
+    overflow-y: auto;
 }
 
 .author-card {
     width: 100%;
-    height: 130px;
+    height: 100px;
     margin-top: 5px;
 }
 
@@ -110,7 +111,7 @@ const authorList = ref(
 }
 
 .author-card .coauthor-name {
-    font-size: 23px;
+    font-size: 15px;
     font-weight: 800;
     text-align: left;
     display: flex;

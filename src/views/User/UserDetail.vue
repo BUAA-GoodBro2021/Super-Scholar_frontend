@@ -19,8 +19,8 @@ import ArticleAndDataVue from '../../components/UserComponents/ArticleAndData.vu
 import CoAuthorsVue from '../../components/UserComponents/CoAuthors.vue';
 const route = useRoute()
 const tokenid = route.params.tokenid
-const claimed = ref(0)  // 0 未认证 1 已认证
-const openAlexAccount = ref(0) // 0 网站用户 1 openalex作者 一定是0 非0的都在AuthorAccount中
+const claimed = ref(1)  // 0 未认证 1 已认证
+const openAlexAccount = ref(1) // 0 网站用户 1 openalex作者 一定是0 非0的都在AuthorAccount中
 const userInfo = ref({
     id: "20373638",
     display_name: 'Harbour',
@@ -70,7 +70,7 @@ const userInfo = ref({
 
 onMounted(() => {
     getAccountType()
-    myAcountType.value = 0
+    // myAcountType.value = 0
     // otherAcountType.value = 0
 })
 
@@ -82,31 +82,32 @@ const getAccountType = () => {
 <style scoped>
 .wrap{
     width: 100%;
+    /* min-width: 1280px; */
     display: flex;
-    height: 95%;
+    height: 98%;
     flex-direction: column;
-    justify-content: center;
+    /* justify-content: center; */
     align-items: center;
     background-color: rgba(230, 230, 230, 0.234);
 }
 
 .avatar_wrap{
     width: 70%;
-    margin: 2% 0 3% 0;
+    min-width: 1280px;
+    margin: 2% 0 1% 0;
     height: 25%;
 }
 
 .article_data_wrap{
     width: 70%;
-    min-height: 68%;
-    height: auto;
-
+    min-width: 1280px;
+    height: 72%;
     display: flex;
 }
 
 .article_data_wrap .left{
-    width: 65%;
-    margin-right: 5%;
+    width: 68%;
+    margin-right: 2%;
 }
 
 .article_data_wrap .right{

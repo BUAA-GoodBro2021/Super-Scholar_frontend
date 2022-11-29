@@ -6,7 +6,7 @@
             </el-tab-pane>
             <el-tab-pane label="专家关系网络" name="authorNetWork">
                 <div class="network" id="network" v-if="chart2Show"></div>
-                <el-dialog v-model="chart2Dialog" width="30%">
+                <el-dialog v-model="chart2Dialog" width="50%" height="60%">
                     <template #title>
                         <span class="dialog-title">与{{ nodedata[choseLine].value }}合著作品如下</span>
                     </template>
@@ -24,7 +24,7 @@
                 </el-dialog>
             </el-tab-pane>
         </el-tabs>
-        {{ chart2DialogData }}
+        <!-- {{ chart2DialogData }} -->
     </div>
 </template>
 <script setup>
@@ -151,7 +151,7 @@ const data2PreProcess = (nodedata, linedata) => {
                 "value": "学者姓名",
                 x: i == 0 ? 65 : 0,
                 y: i == 0 ? 6 : 0,
-                "symbolSize": i == 0 ? 120 : 80,
+                "symbolSize": i == 0 ? 100 : 70,
                 "draggable": true,
                 "itemStyle": {
                     "normal": {
@@ -411,7 +411,7 @@ const initChart2 = (nodedata, linedata) => {
                     show: true,
                     position: 'inside',
                     formatter: '{c}',
-                    fontSize: 16,
+                    fontSize: 13,
                     fontStyle: '400',
                 }
             },
@@ -463,12 +463,12 @@ const initChart2 = (nodedata, linedata) => {
 }
 
 #tab-countByYear {
-    font-size: 20px;
+    font-size: 16px;
     font-weight: 600;
 }
 
 #tab-authorNetWork {
-    font-size: 20px;
+    font-size: 16px;
     font-weight: 600;
 }
 
@@ -489,17 +489,20 @@ const initChart2 = (nodedata, linedata) => {
 
 .dialog-wrap {
     padding: 0px 10px 10px 10px;
+    height: 400px;
+    overflow-y: scroll;
+    display: block;
 }
 
 .dialog-title {
-    font-size: 24px;
+    font-size: 18px;
     text-align: center;
     font-weight: 600;
 }
 
 .document_title {
     margin-top: 5px;
-    font-size: 20px;
+    font-size: 15px;
     line-height: 30px;
     text-align: left;
     height: auto;
@@ -517,7 +520,7 @@ const initChart2 = (nodedata, linedata) => {
 }
 
 .document_authors {
-    font-size: 17px;
+    font-size: 10px;
     color: grey;
     cursor: pointer;
 }

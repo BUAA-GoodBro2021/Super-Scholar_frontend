@@ -13,18 +13,18 @@
             </el-table-column>
             <el-table-column prop="publication_date" label="日期" min-width="17%" sortable align="center" />
             <el-table-column prop="cited_by_count" label="引用" sortable  min-width="13%" align="center"/>
-            <el-table-column prop="pdf" label="状态" min-width="14%">
+            <el-table-column prop="pdf" label="状态" min-width="16%">
                 <template #default="scope">
-                    <el-tag style="font-size: 17px;" v-if="scope.row.pdf == -1" type="danger">暂无pdf</el-tag>
-                    <el-tag style="font-size: 17px;" v-if="scope.row.pdf == 0" type="warning">审核中</el-tag>
-                    <el-tag style="font-size: 17px;" v-if="scope.row.pdf == 1" type="success">已有pdf</el-tag>
+                    <el-tag style="font-size: 10px;" v-if="scope.row.pdf == -1" type="danger">暂无pdf</el-tag>
+                    <el-tag style="font-size: 10px;" v-if="scope.row.pdf == 0" type="warning">审核中</el-tag>
+                    <el-tag style="font-size: 10px;" v-if="scope.row.pdf == 1" type="success">已有pdf</el-tag>
                 </template>
             </el-table-column>
-            <el-table-column prop="pdf" label="操作" min-width="14%">
+            <el-table-column prop="pdf" label="操作" min-width="16%">
                 <template #default="scope">
-                    <el-button v-if="scope.row.pdf == -1">上传pdf</el-button>
-                    <el-button v-if="scope.row.pdf == 0">取消上传</el-button>
-                    <el-button v-if="scope.row.pdf == 1">删除pdf</el-button>
+                    <el-button v-if="scope.row.pdf == -1" size="small">上传pdf</el-button>
+                    <el-button v-if="scope.row.pdf == 0" size="small">取消上传</el-button>
+                    <el-button v-if="scope.row.pdf == 1" size="small">删除pdf</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -118,7 +118,7 @@ onMounted(() => {
 
 .document_title {
     margin-top: 5px;
-    font-size: 20px;
+    font-size: 15px;
     line-height: 30px;
     text-align: left;
     height: auto;
@@ -136,7 +136,7 @@ onMounted(() => {
 }
 
 .document_authors{
-    font-size: 17px;
+    font-size: 15px;
     color: grey;
     cursor: pointer;
 }
@@ -146,6 +146,6 @@ onMounted(() => {
 }
 
 ::v-deep .el-table .cell{
-    font-size: 22px;
+    font-size: 15px;
 }
 </style>

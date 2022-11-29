@@ -134,7 +134,7 @@ const rules = reactive({
     ]
 })
 
-const authorList = reactive([
+let authorList = reactive([
     {
         id: '20373638',
         display_name: 'Harbour',
@@ -152,6 +152,7 @@ const authorList = reactive([
 const showArticleTag = reactive([])
 
 const resetShowArticleTag = () => {
+    let i = 0;
     for(i = 0; i < 100 ; i++) {
         showArticleTag.push(false);
     }
@@ -239,6 +240,10 @@ const Reclaim = async () => {
 }
 </script>
 <style scoped>
+:deep(.claim-portal-body .steps) {
+    margin-top: 0px;
+    margin-bottom: 10px;
+}
 .wrap2 {
     height: 50%;
     width: 100%;
@@ -261,12 +266,13 @@ const Reclaim = async () => {
 }
 
 .claim-portal-body {
-    margin-top: 10%;
-    height: 50vh;
+    margin-top: 18vh;
+    height: 450px;
     width: 60vw;
 
     background-color: white;
     border-radius: 20px;
+    border: 1px solid black;
 
     padding: 30px 30px;
 }
@@ -305,7 +311,7 @@ const Reclaim = async () => {
 
 .table {
     width: 80%;
-    margin-top: 30px;
+    margin-top: 20px;
 }
 
 .el-form-item {

@@ -161,6 +161,7 @@ const getDocumentList = async () => {
 <style scoped>
 .personal-wrap {
     width: 100%;
+    height: 95%;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -168,26 +169,26 @@ const getDocumentList = async () => {
     background-color: rgba(230, 230, 230, 0.234);
 }
 
-.avatar_wrap {
+.avatar_wrap{
     width: 70%;
-    margin: 2vh 0 3vh 0;
-    height: 25vh;
+    min-width: 1280px;
+    margin: 2% 0 1% 0;
+    height: 25%;
 }
 
-.article_data_wrap {
+.article_data_wrap{
     width: 70%;
-    min-height: 62vh;
-    height: auto;
-
+    min-width: 1280px;
+    height: 72%;
     display: flex;
 }
 
-.article_data_wrap .left {
-    width: 65%;
-    margin-right: 5%;
+.article_data_wrap .left{
+    width: 68%;
+    margin-right: 2%;
 }
 
-.article_data_wrap .right {
+.article_data_wrap .right{
     width: 30%;
 }
 </style>

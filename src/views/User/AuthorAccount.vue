@@ -80,8 +80,10 @@ const getAccountType = () => {
 
 </script>
 <style scoped>
+
 .wrap{
     width: 100%;
+    /* min-width: 1280px; */
     display: flex;
     height: 95%;
     flex-direction: column;
@@ -92,21 +94,21 @@ const getAccountType = () => {
 
 .avatar_wrap{
     width: 70%;
-    margin: 2% 0 3% 0;
+    min-width: 1280px;
+    margin: 2% 0 1% 0;
     height: 25%;
 }
 
 .article_data_wrap{
     width: 70%;
-    min-height: 68%;
-    height: auto;
-
+    min-width: 1280px;
+    height: 72%;
     display: flex;
 }
 
 .article_data_wrap .left{
-    width: 65%;
-    margin-right: 5%;
+    width: 68%;
+    margin-right: 2%;
 }
 
 .article_data_wrap .right{

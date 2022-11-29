@@ -55,7 +55,7 @@ const handleClick = (tab) => {
 }
 
 :deep(.demo-tabs .el-tabs__item) {
-    font-size: 25px;
+    font-size: 18px;
     font-weight: 800;
 }
 
@@ -72,7 +72,7 @@ const handleClick = (tab) => {
 .empty{
     margin-top: 10px;
     color: grey;
-    font-size: 25px;
+    font-size: 18px;
     font-weight: 600;
 }
 </style>
