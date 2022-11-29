@@ -95,6 +95,7 @@ import {
     ArrowUp,
     SuccessFilled
 } from '@element-plus/icons-vue'
+import { reactive } from "vue-demi";
 const globalStore = useGlobalStore();
 const claimType = ref(2) //0 个人账户没有认领 1 个人账户认证但是在审核中 2 个人账户已经成功认证
 const stepIndex = ref(0)
@@ -102,6 +103,7 @@ const stepIndex = ref(0)
 const accountType = ref()
 onMounted(() => {
     //todo 请求后端
+    resetShowArticleTag()
     accountType.value = claimType.value
 })
 
@@ -137,31 +139,23 @@ const authorList = reactive([
         id: '20373638',
         display_name: 'Harbour',
         last_known_institution: 'Nature',
-        work_list: [
-            {
-                display_name: '论基因拟实载态酶在练习时长两年半中的催化作用',
-            },
-            {
-                display_name: '论基因拟实载态酶对中分头的催化作用',
-            }
-        ],
-        showArticle: false
+        // showArticle: false
     },
     {
         id: '20373638',
         display_name: 'Harbour',
         last_known_institution: 'Nature',
-        work_list: [
-            {
-                display_name: '论基因拟实载态酶在练习时长两年半中的催化作用',
-            },
-            {
-                display_name: '论基因拟实载态酶对中分头的催化作用',
-            }
-        ],
-        showArticle: false
+        // showArticle: false
     },
 ])
+
+const showArticleTag = reactive([])
+
+const resetShowArticleTag = () => {
+    for(i = 0; i < 100 ; i++) {
+        showArticleTag.push(false);
+    }
+}
 
 const showArticles = (index) => {
     authorList[index].value.showArticle = true
@@ -191,14 +185,6 @@ const StepZeroToOne = async () => {
     await formRef.value.validate((valid, fields) => {
         if (valid) {
             stepIndex.value++;
-            User.GetOpenAlexAuthorById({
-                "entity_type": "authors",
-                "params": {
-                    "id": "A2164292938"
-                }
-            }).then((res) => {
-                
-            })
             getAuthorsByName()
             //todo 根据输入的form传到后端进行检索 返回用户组 这里需要跟后端商量那个work_url的用法 更新authorList
         } else {
@@ -227,7 +213,16 @@ const getAuthorsByName = () => {
             "per_page": 100
         }
     }).then((res) => {
-        console.log(res)
+        if (res.data.result == 1) {
+            authorList = res.data.list_of_data[0].results
+        } else {
+            ElNotification({
+                title: "很遗憾",
+                message: res.message,
+                type: "error",
+                duration: 3000
+            })
+        }
     }).catch((err) => {
         ElNotification({
             title: "很遗憾",
