@@ -1,31 +1,40 @@
 <template>
-   <div>
-	<el-form ref="loginFormRef" :model="loginForm" :rules="loginRules" size="large">
-		<el-form-item prop="username">
-			<el-input v-model="loginForm.username" placeholder="用户名">
-				<template #prefix>
-					<el-icon class="el-input__icon"><user /></el-icon>
-				</template>
-			</el-input>
-		</el-form-item>
-		<el-form-item prop="password">
-			<el-input type="password" v-model="loginForm.password" placeholder="密码" show-password autocomplete="new-password">
-				<template #prefix>
-					<el-icon class="el-input__icon"><lock /></el-icon>
-				</template>
-			</el-input>
-		</el-form-item>
-	</el-form>
-	<div class="login-btn">
-		<el-button :icon="UserFilled" round @click="login(loginFormRef)" size="large" type="primary" :loading="loading">
-			登录
-		</el-button>
-		<el-button :icon="CirclePlus" round @click="register()" size="large">注册</el-button>
+	<div>
+		<el-form ref="loginFormRef" :model="loginForm" :rules="loginRules" size="large">
+			<el-form-item prop="username">
+				<el-input v-model="loginForm.username" placeholder="用户名">
+					<template #prefix>
+						<el-icon class="el-input__icon"><user /></el-icon>
+					</template>
+				</el-input>
+			</el-form-item>
+			<el-form-item prop="password">
+				<el-input type="password" v-model="loginForm.password" placeholder="密码" show-password autocomplete="new-password">
+					<template #prefix>
+						<el-icon class="el-input__icon"><lock /></el-icon>
+					</template>
+				</el-input>
+			</el-form-item>
+		</el-form>
+		<div class="login-btn">
+			<el-button :icon="UserFilled" round @click="isSliderCaptchaShow = true" size="large" type="primary" :loading="loading">
+				登录
+			</el-button>
+			<el-button :icon="CirclePlus" round @click="register()" size="large">注册</el-button>
+		</div>
+		<!-- 该组件是要直接插入到 整个页面的 body中的，所以要利用 vue3 新组件 teleport -->
+		<teleport to="body">
+			<SliderCaptcha 
+				v-if="isSliderCaptchaShow"
+				@success="onSliderCaptchaSuccess"
+				@close="isSliderCaptchaShow = false"
+			/>
+		</teleport>
 	</div>
-   </div>
 </template>
 <script setup>
-import { CirclePlus, UserFilled } from "@element-plus/icons-vue";
+import SliderCaptcha from "./SliderCaptcha.vue";
+import { CircleClose, UserFilled } from "@element-plus/icons-vue";
 import { ElNotification } from "element-plus";
 import {useGlobalStore} from "../../stores/global.js";
 import { Account } from "../../api/account";
@@ -43,6 +52,14 @@ const loginForm = ref({
     password:""
 })
 const loading = ref(false);
+// 控制人类行为验证窗口显示
+const isSliderCaptchaShow = ref(false);
+// 人类行为验证通过事件
+const onSliderCaptchaSuccess = () => {
+	isSliderCaptchaShow.value = false;
+	login();
+}
+
 const login = ()=>{
 	Account.login(loginForm.value).then((res)=>{
 		if(res.data.result===1){
@@ -88,7 +105,7 @@ onMounted(() => {
 	document.onkeydown = (e) => {
 		e = window.event || e;
 		if (e.code === "Enter" || e.code === "enter" || e.code === "NumpadEnter") {
-			login(loginFormRef.value);
+			isSliderCaptchaShow.value = true;
 		}
 	};
 });

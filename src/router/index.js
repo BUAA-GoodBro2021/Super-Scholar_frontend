@@ -78,8 +78,15 @@ const router = createRouter({
           name: 'PaperDetail',
           component: ()=>import('../views/paper/PaperDetail.vue'),
         },
+        // 临时加一个路由页面，用于调试搜索详情页面，后续调整其位置
+        {
+          path: '/search-detail',
+          name: 'SearchDetail',
+          component: ()=>import('../views/search/SearchDetail.vue'),
+        }
       ],
-    }
+    },
+    
   ]
 })
 // 全局前置守卫
