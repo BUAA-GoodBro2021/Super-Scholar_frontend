@@ -1,7 +1,7 @@
 <template>
     <div class="header">
         <el-row :gutter="20">
-            <el-col :span="6" class="left">
+            <el-col :span="14" class="left">
                 <img src="/icon.png" class="logo" />
                 <router-link to="/" class="link">
                     <span>高级检索</span>
@@ -10,12 +10,11 @@
                     <span>搜索学者</span>
                 </router-link>
             </el-col>
-            <el-col :span="3" :offset="12" class="avatar">
-                <UserInfo/>
-            </el-col>
-            <el-col :span="3">
-                <Language />
-                <FullScreen />
+            
+            <el-col :span="6">
+                <UserInfo class="avatar"/>
+                <Language  class="langswitch"/>
+                <FullScreen  class="fullscreenswitch"/>
             </el-col>
         </el-row>
     </div>
@@ -64,6 +63,18 @@ const linkColor = computed(()=>{
 }
 
 .avatar {
+    position: absolute;
     margin-top: 10px;
+    margin-right: 20px;
+    right: 180px;
+}
+
+.langswitch{
+    position: absolute;
+    right: 20px;
+}
+.fullscreenswitch{
+    position: absolute;
+    right: 80px;
 }
 </style>
