@@ -26,11 +26,11 @@ const globalStore = useGlobalStore();
 
 const route = useRoute()
 const tokenid = route.params.tokenid
-const claimed = ref(1) // 0 未认证 1 认证 在openalexaccount为0时候有效 当网站用户认证的时候 发表文献和数据分析以合作作者采用openalex作者页面的数据
+const claimed = ref(1) // 0 未认证 1 认证 2认证中 在openalexaccount为0时候有效 当网站用户认证的时候 发表文献和数据分析以合作作者采用openalex作者页面的数据
 const openAlexAccount = ref(0) // 0 网站用户 1 openalex作者
 // const otherAcountType = ref() // 他人账户 0 未认证的网站用户 1 认证的网站用户或者是未认证的原生作者
 const userInfo = ref({
-    id: "20373638",
+    user_id: "20373638",
     display_name: 'Harbour',
     last_known_institution: "Hogwarts",
     email: '2358272468@qq.com',
@@ -79,15 +79,74 @@ const userInfo = ref({
         }
     ]
 })
+const replyUser = ref()
 
 
 onMounted(() => {
     getAccountType()
 })
 
+const ConvertUserInfo = (data) => {
+    userInfo.value.display_name = data.username
+    userInfo.value.email = data.email
+    userInfo.value.user_id = data.user_id
+    userInfo.value.introduction = data.introduction ? data.introduction : null
+}
+
 const getAccountType = () => {
     //todo 获取id所对应的myAcountType与otherAccountType
     User.GetUserDetail().then((res) => {
+        if (res.data.result == 1) {
+            replyUser.value = res.data.user
+            claimed.value = res.data.user.is_professional == -1 ? 0 : res.data.user.is_professional == 0 ? 2 : 1
+            ConvertUserInfo(res.data.user)
+            if (claimed == 1) {// 已认证
+                getDocumentList()
+            }
+        } else {
+            ElNotification({
+                title: "很遗憾",
+                message: res.message,
+                type: "error",
+                duration: 3000
+            })
+        }
+    }).catch((err) => {
+        ElNotification({
+            title: "很遗憾",
+            message: err.message,
+            type: "error",
+            duration: 3000
+        })
+    })
+}
+const getDocumentList = async () => {
+    User.GetAuthorDocumentListById({
+        "entity_type": "works",
+        "params": {
+            "filter": {
+                "author.id": replyUser.open_alex_id
+            },
+            "page": 1,
+            "per_page": 25
+        }
+    }).then((res) => {
+        console.log(res)
+    }).catch((err) => {
+        ElNotification({
+            title: "很遗憾",
+            message: err.message,
+            type: "error",
+            duration: 3000
+        })
+    })
+
+    User.GetOpenAlexAuthorById({
+        "entity_type": "authors",
+        "params": {
+            "id": replyUser.open_alex_id
+        }
+    }).then((res) => {
         console.log(res)
     }).catch((err) => {
         ElNotification({
@@ -98,7 +157,6 @@ const getAccountType = () => {
         })
     })
 }
-
 </script>
 <style scoped>
 .personal-wrap {

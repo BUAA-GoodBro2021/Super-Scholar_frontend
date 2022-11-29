@@ -12,14 +12,15 @@
                     <el-form-item label="真实姓名" prop="name">
                         <el-input v-model="form.name" prop="name" />
                     </el-form-item>
-                    <el-form-item label="邮箱" prop="email">
-                        <el-input v-model="form.email" prop="email" />
-                    </el-form-item>
                     <el-form-item label="手机号码" prop="telephone">
                         <el-input v-model="form.telephone" prop="telephone" />
                     </el-form-item>
                     <el-form-item label="单位" prop="organization">
                         <el-input v-model="form.organization" prop="organization" />
+                    </el-form-item>
+                    <el-form-item label="申请理由" prop="content">
+                        <el-input v-model="form.content" prop="content" type="textarea" maxlength="200"
+                            show-word-limit />
                     </el-form-item>
                 </el-form>
                 <el-form-item>
@@ -85,11 +86,16 @@
     </div>
 </template>
 <script setup>
+import { useGlobalStore } from "../../stores/global.js";
+import { ClaimPortal } from "../../api/claimPortal"
+import { User } from "../../api/userDetail"
+import { ElNotification } from "element-plus";
 import {
     ArrowDown,
     ArrowUp,
     SuccessFilled
 } from '@element-plus/icons-vue'
+const globalStore = useGlobalStore();
 const claimType = ref(2) //0 个人账户没有认领 1 个人账户认证但是在审核中 2 个人账户已经成功认证
 const stepIndex = ref(0)
 
@@ -104,19 +110,25 @@ const form = reactive({
     name: 'Harbour',
     email: '2358272468@qq.com',
     telephone: '15112345678',
-    organization: '北京航空航天大学软件学院'
+    organization: '北京航空航天大学软件学院',
+    content: '',
 })
 const rules = reactive({
     name: [
         { required: true, message: '请输入您的真实姓名', trigger: 'blur' },
     ],
-    emial: [
+    email: [
         { required: true, message: '请输入您的邮箱', trigger: 'blur' },
         { regexp: "^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$", message: '请输入合法的邮箱', trigger: 'blur' },
     ],
     telephone: [
-        { required: true, message: '请输入您的手机号码', trigger: 'blur' },
         { regexp: "/^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\d{8}$/", message: '请输入合法的电话号码', trigger: 'blur' }
+    ],
+    organization: [
+        { required: true, message: '请输入您的手机号码', trigger: 'blur' },
+    ],
+    content: [
+
     ]
 })
 
@@ -159,17 +171,6 @@ const closeArticles = (index) => {
     authorList[index].value.showArticle = false
 }
 
-const StepZeroToOne = async () => {
-    await formRef.value.validate((valid, fields) => {
-        if (valid) {
-            stepIndex.value++;
-            //todo 根据输入的form传到后端进行检索 返回用户组 这里需要跟后端商量那个work_url的用法 更新authorList
-        } else {
-            console.log(fields)
-        }
-    })
-}
-
 const StepBack = () => {
     stepIndex.value--;
 }
@@ -186,6 +187,26 @@ const TurnLastToFalse = (index) => {
     lastIndex.value = index
 }
 
+const StepZeroToOne = async () => {
+    await formRef.value.validate((valid, fields) => {
+        if (valid) {
+            stepIndex.value++;
+            User.GetOpenAlexAuthorById({
+                "entity_type": "authors",
+                "params": {
+                    "id": "A2164292938"
+                }
+            }).then((res) => {
+                
+            })
+            getAuthorsByName()
+            //todo 根据输入的form传到后端进行检索 返回用户组 这里需要跟后端商量那个work_url的用法 更新authorList
+        } else {
+            console.log(fields)
+        }
+    })
+}
+
 const StepOneToTwo = async () => {
     //todo 将lastIndex对应的authorList的id传到后端
     if (lastIndex.value == -1) {
@@ -196,15 +217,36 @@ const StepOneToTwo = async () => {
     }
 }
 
+const getAuthorsByName = () => {
+    console.log('search author by name')
+    ClaimPortal.SearchAuthor({
+        "entity_type": "authors",
+        "params": {
+            "search": form.name,
+            "page": 1,
+            "per_page": 100
+        }
+    }).then((res) => {
+        console.log(res)
+    }).catch((err) => {
+        ElNotification({
+            title: "很遗憾",
+            message: err.message,
+            type: "error",
+            duration: 3000
+        })
+    })
+}
+
 // 已经认领成功但是想要重新认证
 const Reclaim = async () => {
     accountType.value = 0
 }
 </script>
 <style scoped>
-.wrap2{
+.wrap2 {
     height: 50%;
-    width: 60%;
+    width: 100%;
     /* margin-top: 25%;
     margin-left: 20%; */
     border-radius: 20px;
@@ -215,6 +257,7 @@ const Reclaim = async () => {
     justify-content: center;
     align-items: center;
 }
+
 .claim-portal-wrap {
     width: 100%;
     height: 100%;
@@ -259,7 +302,7 @@ const Reclaim = async () => {
     color: rgb(93, 228, 93);
 }
 
-.step2-message{
+.step2-message {
     font-size: 18px;
     font-weight: 600;
     margin-bottom: 20px;

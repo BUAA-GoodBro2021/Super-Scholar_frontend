@@ -18,6 +18,8 @@
                                 <el-tag style="margin-left: 20px; font-size: 20px;"
                                     v-if="openAlexAccount == 0 && claimed == 0" type="warning">未认证</el-tag>
                                 <el-tag style="margin-left: 20px; font-size: 20px;"
+                                    v-if="openAlexAccount == 0 && claimed == 2" type="warning">认证中</el-tag>
+                                <el-tag style="margin-left: 20px; font-size: 20px;"
                                     v-if="openAlexAccount == 0 && claimed == 1" type="success"
                                     @click="toOpenAlexAccount()">已认证</el-tag>
                             </div>
@@ -211,6 +213,7 @@ const cancelChange = () => {
 }
 
 const abandonPortal = () => {
+    //如果是审核中 无法放弃
     abandonPortalDialog.value = false;
 }
 /**************************** */
