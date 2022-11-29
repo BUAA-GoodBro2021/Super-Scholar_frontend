@@ -1,5 +1,5 @@
 <template>
-    <div class="claim-portal-wrap" v-if="accountType == 0">
+    <div class="claim-portal-wrap" v-if="accountType == -1">
         <div class="claim-portal-body">
             <el-steps :active="stepIndex" finish-status="success" class="steps">
                 <el-step title="填写个人信息" />
@@ -30,33 +30,48 @@
             <div class="step step1" v-show="stepIndex == 1">
                 <div class="alert-message-header">
                     <span class="alert-message">已根据您的姓名， 检索出<span class="alert-message alert-message-number">&nbsp;{{
-                            authorList.length
+                            allAuthors
                     }}&nbsp;</span>位科研人员</span>
                     <el-button type="primary" @click="StepBack()" style="float: right;">上一步</el-button>
                     <el-button type="primary" @click="StepOneToTwo()" style="float: right; margin-right: 10px;">确定
                     </el-button>
                 </div>
-                <div v-for="(item, index) in authorList" :key="index">
-                    <div class="author-name">
-                        <el-checkbox v-model="item.chose" :label="item.display_name" @click="TurnLastToFalse(index)" />
-                        <span v-show="!item.showArticle" class="right-arrow" @click="item.showArticle = true">
-                            <el-icon>
-                                <ArrowDown />
-                            </el-icon>
-                        </span>
-                        <span v-show="item.showArticle" class="right-arrow" @click="item.showArticle = false">
-                            <el-icon>
-                                <ArrowUp />
-                            </el-icon>
-                        </span>
-                    </div>
-                    <div class="author-article-list" v-show="item.showArticle">
-                        <div v-for="(article, articleIndex) in item.work_list" :key="articleIndex"
-                            class="author-article-name">
-                            <span class="">{{ (articleIndex + 1) + ". " + article.display_name }}</span>
-                            <!-- <el-divider v-if="articleIndex != item.work_list.length - 1"></el-divider> -->
+                <div class="authorlist-wrap">
+                    <div v-for="(item, index) in authorList" :key="index">
+                        <div class="author-name">
+                            <el-checkbox v-model="item.chose" :label="AuthorShowHeader(item)"
+                                @change="TurnLastToFalse(index)" />
+                            <span v-show="!item.showArticle && !item.loading" class="right-arrow"
+                                @click="authorWorkListDetail(item)">
+                                <el-icon>
+                                    <ArrowDown />
+                                </el-icon>
+                            </span>
+                            <span v-show="!item.showArticle && item.loading" class="right-arrow">
+                                <el-icon class="is-loading">
+                                    <Loading />
+                                </el-icon>
+                            </span>
+                            <span v-show="item.showArticle && !item.loading" class="right-arrow"
+                                @click="closeAuthorWorkList(item)">
+                                <el-icon>
+                                    <ArrowUp />
+                                </el-icon>
+                            </span>
+                        </div>
+                        <div class="author-article-list" v-if="item.showArticle && !item.loading">
+                            <div v-for="(article, articleIndex) in item.work_list" :key="articleIndex"
+                                class="author-article-name">
+                                <span class="">{{ (articleIndex + 1) + ". " + article.display_name }}</span>
+                                <!-- <el-divider v-if="articleIndex != item.work_list.length - 1"></el-divider> -->
+                            </div>
                         </div>
                     </div>
+                </div>
+                <div class="authorlist-footer">
+                    <el-pagination layout="prev, pager, next" :total="pageTotalSize" @current-change="PageChange()"
+                        v-model:current-page="pageCurrent" hide-on-single-page
+                        :page-sizes="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]" />
                 </div>
             </div>
             <div class="step step2" v-show="stepIndex == 2">
@@ -71,19 +86,29 @@
             </div>
         </div>
     </div>
-    <div class="wrap2" v-if="accountType == 1">
+    <div class="wrap2" v-if="accountType == 0">
         <el-icon class="step2-icon">
             <SuccessFilled />
         </el-icon>
         <span class="step2-message" style="margin-top: 20px;">管理员将在3天时间内完成审核，请耐心等待。</span>
+        <el-button @click="abandonPortalDialog = true">解除认证</el-button>
     </div>
-    <div class="wrap2" v-if="accountType == 2">
+    <div class="wrap2" v-if="accountType == 1">
         <el-icon class="step2-icon">
             <SuccessFilled />
         </el-icon>
         <span class="step2-message" style="margin-top: 20px;">认证成功</span>
-        <el-button @click="Reclaim()">重新认证</el-button>
+        <el-button @click="abandonPortalDialog = true">解除认证</el-button>
     </div>
+    <el-dialog v-model="abandonPortalDialog">
+        <template #title>
+            <span class="dialog-title">确定解除门户关系吗？</span>
+        </template>
+        <div style="display: flex; justify-content: center; ">
+            <el-button @click="Reclaim()" type="danger">确定</el-button>
+            <el-button @click="abandonPortalDialog = false">取消</el-button>
+        </div>
+    </el-dialog>
 </template>
 <script setup>
 import { useGlobalStore } from "../../stores/global.js";
@@ -93,18 +118,17 @@ import { ElNotification } from "element-plus";
 import {
     ArrowDown,
     ArrowUp,
-    SuccessFilled
+    SuccessFilled,
+    Loading
 } from '@element-plus/icons-vue'
 import { reactive } from "vue-demi";
 const globalStore = useGlobalStore();
-const claimType = ref(2) //0 个人账户没有认领 1 个人账户认证但是在审核中 2 个人账户已经成功认证
 const stepIndex = ref(0)
 
-const accountType = ref()
+const accountType = ref() //-1 个人账户没有认领 0 个人账户认证但是在审核中 1 个人账户已经成功认证
 onMounted(() => {
-    //todo 请求后端
-    resetShowArticleTag()
-    accountType.value = claimType.value
+    // accountType.value = globalStore.claimStatus 这里在认证之后更新localstorage里的东西  所以每次进入页面的时候都请求得到自己的状态
+    getUserType()
 })
 
 const formRef = ref()
@@ -134,88 +158,37 @@ const rules = reactive({
     ]
 })
 
-let authorList = reactive([
+const allAuthors = ref(0)
+const pageCurrent = ref(1)
+const pageTotalSize = ref(2)
+const abandonPortalDialog = ref(false)
+let authorList = ref([
     {
         id: '20373638',
         display_name: 'Harbour',
-        last_known_institution: 'Nature',
-        // showArticle: false
+        last_known_institution: {
+            display_name: 'Natrue',
+        },
+        showArticle: false,
+        loading: false,
+        work_list: []
     },
     {
         id: '20373638',
         display_name: 'Harbour',
-        last_known_institution: 'Nature',
-        // showArticle: false
+        last_known_institution: {
+            display_name: 'Natrue',
+        },
+        showArticle: false,
+        loading: false,
+        work_list: []
     },
 ])
 
-const showArticleTag = reactive([])
-
-const resetShowArticleTag = () => {
-    let i = 0;
-    for(i = 0; i < 100 ; i++) {
-        showArticleTag.push(false);
-    }
-}
-
-const showArticles = (index) => {
-    authorList[index].value.showArticle = true
-}
-
-const closeArticles = (index) => {
-    authorList[index].value.showArticle = false
-}
-
-const StepBack = () => {
-    stepIndex.value--;
-}
-
-const stepFinish = () => {
-    accountType.value = 1
-}
-
-const lastIndex = ref(-1) //记录上一个勾选的框 勾选动作之前当下的选项
-const TurnLastToFalse = (index) => {
-    if (lastIndex.value >= 0 && lastIndex.value != index) {
-        authorList[lastIndex.value].chose = false
-    }
-    lastIndex.value = index
-}
-
-const StepZeroToOne = async () => {
-    await formRef.value.validate((valid, fields) => {
-        if (valid) {
-            stepIndex.value++;
-            getAuthorsByName()
-            //todo 根据输入的form传到后端进行检索 返回用户组 这里需要跟后端商量那个work_url的用法 更新authorList
-        } else {
-            console.log(fields)
-        }
-    })
-}
-
-const StepOneToTwo = async () => {
-    //todo 将lastIndex对应的authorList的id传到后端
-    if (lastIndex.value == -1) {
-        ElMessage.warning('请选择一位学者')
-    } else {
-        //todo 跟后端进行交互
-        stepIndex.value++
-    }
-}
-
-const getAuthorsByName = () => {
-    console.log('search author by name')
-    ClaimPortal.SearchAuthor({
-        "entity_type": "authors",
-        "params": {
-            "search": form.name,
-            "page": 1,
-            "per_page": 100
-        }
-    }).then((res) => {
+const getUserType = () => {
+    User.GetUserDetail().then((res) => {
         if (res.data.result == 1) {
-            authorList = res.data.list_of_data[0].results
+            accountType.value = res.data.user.is_professional 
         } else {
             ElNotification({
                 title: "很遗憾",
@@ -234,9 +207,218 @@ const getAuthorsByName = () => {
     })
 }
 
+const AuthorShowHeader = (author) => {
+    // console.log(author)
+    return author.display_name + ` (${!author.last_known_institution ? '暂无机构' : author.last_known_institution.display_name ? author.last_known_institution.display_name : '暂无机构'})`
+}
+
+/*展示某一个作者的全部文章 */
+const authorWorkListDetail = (author) => {
+    if (author.work_list.length != 0) {
+        author.showArticle = true
+        return
+    }
+    author.loading = true
+    const data = {
+        "entity_type": "works",
+        "params": {
+            "filter": {
+                "author.id": author.id.substring(21)
+            },
+            "page": 1,
+            "per_page": 10000
+        }
+    }
+    User.GetAuthorDocumentListById(data).then((res) => {
+        if (res.data.result == 1) {
+            author.work_list = res.data.list_of_data[0].results
+            author.loading = false
+            author.showArticle = true
+        } else {
+            author.showArticle = false
+            author.loading = false
+            ElNotification({
+                title: "很遗憾",
+                message: res.message,
+                type: "error",
+                duration: 3000
+            })
+        }
+    }).catch((err) => {
+        author.showArticle = false
+        author.loading = false
+        ElNotification({
+            title: "很遗憾",
+            message: err.message,
+            type: "error",
+            duration: 3000
+        })
+    })
+}
+
+const closeAuthorWorkList = (item) => {
+    item.showArticle = false
+}
+
+const StepBack = () => {
+    // 第二步回到第一步(one to zero)
+    lastIndex.value = -1
+    pageCurrent.value = 1
+    stepIndex.value--;
+}
+
+const stepFinish = () => {
+    accountType.value = 0
+}
+
+let lastIndex = ref(-1) //记录上一个勾选的框 勾选动作之前当下的选项
+const TurnLastToFalse = (index) => {
+    //这个时候
+    console.log(index + " " + lastIndex.value)
+    if (lastIndex.value == -1) {
+        lastIndex.value = index
+        return
+    }
+    if (lastIndex.value == index) {
+        authorList.value[lastIndex.value].chose = false
+        lastIndex.value = -1
+        return
+    }
+    if (lastIndex.value >= 0 && lastIndex.value != index) {
+        authorList.value[lastIndex.value].chose = false
+
+    }
+    lastIndex.value = index
+}
+
+const StepZeroToOne = async () => {
+    await formRef.value.validate((valid, fields) => {
+        if (valid) {
+            getAuthorsByName(0)
+            //todo 根据输入的form传到后端进行检索 返回用户组 这里需要跟后端商量那个work_url的用法 更新authorList
+        } else {
+            console.log(fields)
+        }
+    })
+}
+
+const StepOneToTwo = async () => {
+    //todo 将lastIndex对应的authorList的id传到后端
+    if (lastIndex.value == -1) {
+        ElNotification({
+            title: "很遗憾",
+            message: err.message,
+            type: "error",
+            duration: 3000
+        })
+        return
+    }
+    const data = {
+        "author_id": authorList.value[lastIndex.value].id.substring(21),
+        "content": form.content,
+        "institution": form.organization,
+        "real_name": form.name
+    }
+    ClaimPortal.ClaimPortal(data).then((res) => {
+        if (res.data.result == 1) {
+            stepIndex.value++
+        } else {
+            ElNotification({
+                title: "很遗憾",
+                message: res.message,
+                type: "error",
+                duration: 3000
+            })
+        }
+    }).catch((err) => {
+        ElNotification({
+            title: "很遗憾",
+            message: err.message,
+            type: "error",
+            duration: 3000
+        })
+    })
+}
+
+const PageChange = (newpage) => {
+    // pageCurrent.value = newpage
+    // console.log(newpage + pageCurrent.value)
+    lastIndex.value = -1
+    getAuthorsByName(1)
+}
+
+/*
+根据名字筛选作者
+type 0 筛选结束后页面index++ 1由于页面切换引起的页面++
+
+ */
+const getAuthorsByName = (type) => {
+    console.log('search author by name')
+    ClaimPortal.SearchAuthor({
+        "entity_type": "authors",
+        "params": {
+            "search": form.name,
+            "page": pageCurrent.value,
+            "per_page": 10
+        }
+    }).then((res) => {
+        if (res.data.result == 1) {
+            allAuthors.value = res.data.list_of_data[0].meta.count
+            pageTotalSize.value = res.data.list_of_data[0].meta.count
+            PreProcess(res.data.list_of_data[0].results)
+            if (type == 0) stepIndex.value++;
+        } else {
+            ElNotification({
+                title: "很遗憾",
+                message: res.message,
+                type: "error",
+                duration: 3000
+            })
+        }
+    }).catch((err) => {
+        ElNotification({
+            title: "很遗憾",
+            message: err.message,
+            type: "error",
+            duration: 3000
+        })
+    })
+}
+
+const PreProcess = (data) => {
+    authorList.value = []
+    authorList.value.push(...data)
+    authorList.value.forEach((item) => {
+        item.showArticle = false
+        item.loading = false
+        item.work_list = []
+        item.chose = false
+    })
+    // console.log(authorList.value)
+}
+
 // 已经认领成功但是想要重新认证
 const Reclaim = async () => {
-    accountType.value = 0
+    ClaimPortal.AbandonPortal({}).then((res) => {
+        if (res.data.result == 1) {
+            abandonPortalDialog.value = false
+            accountType.value = -1
+        } else {
+            ElNotification({
+                title: "很遗憾",
+                message: res.message,
+                type: "error",
+                duration: 3000
+            })
+        }
+    }).catch((err) => {
+        ElNotification({
+            title: "很遗憾",
+            message: err.message,
+            type: "error",
+            duration: 3000
+        })
+    })
 }
 </script>
 <style scoped>
@@ -244,6 +426,7 @@ const Reclaim = async () => {
     margin-top: 0px;
     margin-bottom: 10px;
 }
+
 .wrap2 {
     height: 50%;
     width: 100%;
@@ -256,6 +439,7 @@ const Reclaim = async () => {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    padding-top: 10%;
 }
 
 .claim-portal-wrap {
@@ -287,6 +471,28 @@ const Reclaim = async () => {
     justify-content: center;
     flex-direction: column;
     align-items: center;
+}
+
+.step1 {
+    height: 100%;
+    /* overflow-y: auto; */
+}
+
+.alert-message-header {
+    width: 100%;
+    margin: 10px 0 10px 0;
+    height: 7%;
+}
+
+.authorlist-wrap {
+    height: 60%;
+    overflow-y: auto;
+}
+
+.authorlist-footer {
+    height: 10%;
+    display: flex;
+    justify-content: center;
 }
 
 .step2 {
@@ -325,12 +531,12 @@ const Reclaim = async () => {
 }
 
 .alert-message {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 800;
 }
 
 .alert-message-number {
-    font-size: 23px;
+    font-size: 20px;
     font-weight: 800;
     color: #409eff;
 }
@@ -349,20 +555,20 @@ const Reclaim = async () => {
 }
 
 .author-article-list {
-    width: 95%;
-    margin-left: 2.5%;
+    width: 93%;
+    margin-left: 4.5%;
     transition: 2s;
 }
 
 .right-arrow {
     float: right;
-    font-size: 20px;
+    font-size: 18px;
     margin-right: 10px;
     cursor: pointer;
 }
 
 .author-article-name {
-    font-size: 18px;
+    font-size: 15px;
     font-weight: 600;
     word-break: break-all;
     word-wrap: wrap;
@@ -372,10 +578,5 @@ const Reclaim = async () => {
 
 .el-divider--horizontal {
     margin: 0;
-}
-
-.alert-message-header {
-    width: 100%;
-    margin: 10px 0 10px 0;
 }
 </style>

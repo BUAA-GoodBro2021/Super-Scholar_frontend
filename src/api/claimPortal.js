@@ -29,7 +29,7 @@ export class ClaimPortal{
         });
     }
 
-    static async abandonPortal(data) {
+    static async AbandonPortal(data) {
         return service(url.abandonPortal, {
           // 方法，默认为 get
           method: "post",
