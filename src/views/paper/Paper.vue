@@ -1,14 +1,16 @@
 <template>
     <div class="wrap">
         <div class="article_top_bg">
-                <el-row class="article_top_warp">
-                    <el-col :span="18" class="article_brief_wrap">
+            <div class="article_top_warp">
+                <el-container>
+                    <el-main>
                         <PaperBriefVue :paperInfo="paperInfo" v-if="paperInfo"/>
-                    </el-col>
-                    <el-col :span="6" class="article_brief_wrap">
+                    </el-main>
+                    <el-aside style="border:1px solid">
                         
-                    </el-col>
-                </el-row>
+                    </el-aside>
+                </el-container>
+            </div>
         </div>
         <div class="article_data_bg">
             <div class="article_data_wrap">
@@ -90,7 +92,6 @@ onMounted(() => {
             }
         }
     ).then((res)=>{
-        console.log(res)
         paperInfo.value = res.data.single_data
         })
     })
@@ -113,7 +114,6 @@ onMounted(() => {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 60px;
     animation: dropdown 1s 1;
 }
 .article_top_warp{
