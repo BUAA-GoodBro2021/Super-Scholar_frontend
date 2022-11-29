@@ -59,6 +59,11 @@ const router = createRouter({
           component: ()=>import('../views/User/UserDetail.vue'),
         },
         {
+          path: 'openalex/author/:tokenid',
+          name: 'OpenAlexAuthorDetail',
+          component: ()=>import('../views/User/AuthorAccount.vue'),
+        },
+        {
           path: 'personal/account',
           name: 'PersonalDetail',
           component: ()=>import('../views/User/PersonalDetail.vue'),

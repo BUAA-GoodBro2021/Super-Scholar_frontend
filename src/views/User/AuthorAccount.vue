@@ -1,7 +1,7 @@
 <template>
     <div class="wrap">
         <div class="avatar_wrap">
-            <AvaterWrapVue :personAccount="2" :userInfo="userInfo" :claimed="claimed"/>
+            <AvaterWrapVue :personAccount="2" :userInfo="userInfo" :claimed="claimed" :openAlexAccount="openAlexAccount"/>
         </div>
         <div class="article_data_wrap">
             <div class="left">
@@ -14,12 +14,13 @@
     </div>
 </template>
 <script setup>
-import AvaterWrapVue from '../UserComponents/AvaterWrap.vue';
-import ArticleAndDataVue from '../UserComponents/ArticleAndData.vue';
-import CoAuthorsVue from '../UserComponents/CoAuthors.vue';
+import AvaterWrapVue from '../../components/UserComponents/AvaterWrap.vue';
+import ArticleAndDataVue from '../../components/UserComponents/ArticleAndData.vue';
+import CoAuthorsVue from '../../components/UserComponents/CoAuthors.vue';
 const route = useRoute()
 const tokenid = route.params.tokenid
-const claimed = ref(0)  // 0 未认证 1 已认证
+const claimed = ref(1) // 0 未认证 1 认证 在openalexaccount为0时候有效 当网站用户认证的时候 发表文献和数据分析以合作作者采用openalex作者页面的数据
+const openAlexAccount = ref(1) // 0 网站用户 1 openalex作者
 const userInfo = ref({
     id: "20373638",
     display_name: 'Harbour',

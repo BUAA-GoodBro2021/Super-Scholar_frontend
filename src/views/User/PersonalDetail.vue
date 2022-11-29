@@ -1,23 +1,29 @@
 <template>
     <div class="personal-wrap">
         <div class="avatar_wrap">
-            <AvaterWrapVue :personAccount="1" :userInfo="userInfo" :claimed="claimed" :openAlexAccount="0"/>
+            <AvaterWrapVue :personAccount="1" :userInfo="userInfo" :claimed="claimed" :openAlexAccount="0" />
         </div>
         <div class="article_data_wrap">
             <div class="left">
-                <ArticleAndDataVue :documentList="userInfo.documentList" :claimed="claimed"/>
+                <ArticleAndDataVue :documentList="userInfo.documentList" :claimed="claimed" />
             </div>
             <div class="right">
-                <CoAuthorsVue :claimed="claimed"/>
+                <CoAuthorsVue :claimed="claimed" />
             </div>
         </div>
     </div>
 </template>
 <script setup>
 import ClaimPortalVue from './ClaimPortal.vue';
-import AvaterWrapVue from '../UserComponents/AvaterWrap.vue';
-import ArticleAndDataVue from '../UserComponents/ArticleAndData.vue';
-import CoAuthorsVue from '../UserComponents/CoAuthors.vue';
+import AvaterWrapVue from '../../components/UserComponents/AvaterWrap.vue';
+import ArticleAndDataVue from '../../components/UserComponents/ArticleAndData.vue';
+import CoAuthorsVue from '../../components/UserComponents/CoAuthors.vue';
+import { useGlobalStore } from "../../stores/global.js";
+import { User } from "../../api/userDetail"
+import { ElNotification } from "element-plus";
+const globalStore = useGlobalStore();
+
+
 const route = useRoute()
 const tokenid = route.params.tokenid
 const claimed = ref(1) // 0 未认证 1 认证 在openalexaccount为0时候有效 当网站用户认证的时候 发表文献和数据分析以合作作者采用openalex作者页面的数据
@@ -81,6 +87,16 @@ onMounted(() => {
 
 const getAccountType = () => {
     //todo 获取id所对应的myAcountType与otherAccountType
+    User.GetUserDetail().then((res) => {
+        console.log(res)
+    }).catch((err) => {
+        ElNotification({
+            title: "很遗憾",
+            message: err.message,
+            type: "error",
+            duration: 3000
+        })
+    })
 }
 
 </script>
