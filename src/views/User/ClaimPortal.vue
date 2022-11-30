@@ -456,7 +456,7 @@ const Reclaim = async () => {
 
     background-color: white;
     border-radius: 20px;
-    border: 1px solid black;
+    border: 2px solid grey;
 
     padding: 30px 30px;
 }

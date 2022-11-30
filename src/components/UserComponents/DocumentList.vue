@@ -5,14 +5,14 @@
                 <el-table-column prop="display_name" label="文献" min-width="60%">
                     <template #default="scope">
                         <span class="document_title">{{ scope.row.display_name }}</span>
-                        <div class="authors_wrap">
+                        <!-- <div class="authors_wrap">
                             <span class="document_authors" v-for="(item, index) in scope.row.authorships"
                                 :key="index">{{
                                         item.author.display_name
                                 }}
                                 <span v-if="index != scope.row.authorships.length - 1">/&nbsp;</span>
                             </span>
-                        </div>
+                        </div> -->
                     </template>
                 </el-table-column>
                 <el-table-column prop="publication_date" label="日期" min-width="17%" align="center" />
