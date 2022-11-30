@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<el-form ref="registerFormRef" :model="registerForm" :rules="registerRules" size="large">
+		<el-form ref="registerFormRef" :model="registerForm" :rules="registerRules" status-icon size="large">
 			<el-form-item prop="email">
 				<el-input type="email" v-model="registerForm.email" placeholder="用户邮箱">
 					<template #prefix>
@@ -31,8 +31,11 @@
 			</el-form-item>
 		</el-form>
 		<div class="register-btn">
-			<el-button :icon="CirclePlus" round @click="isSliderCaptchaShow = true" size="large" type="primary" :loading="loading">
+			<el-button :icon="CirclePlus" round @click="submit(registerFormRef)" size="large" type="primary">
 				注册
+			</el-button>
+			<el-button :icon="RefreshLeft" round @click="login" size="large" type="primary">
+				返回
 			</el-button>
 		</div>
 		<SliderCaptcha 
@@ -44,19 +47,63 @@
 </template>
 <script setup>
 import SliderCaptcha from "./SliderCaptcha.vue";
-import { CirclePlus } from "@element-plus/icons-vue";
+import { CirclePlus, RefreshLeft } from "@element-plus/icons-vue";
 import { ElNotification } from "element-plus";
 import {useGlobalStore} from "../../stores/global.js";
 import { Account } from "../../api/account";
-import i18n from "../../language/index"
 const globalStore = useGlobalStore();
 const router = useRouter();
 const registerFormRef = ref();
+const validateName = (rule,value,callback)=>{
+	if(!value.length){
+		callback(new Error("请输入用户名"))
+	}else{
+		callback();
+	}
+}
+const validateEmail = (rule,value,callback)=>{
+	let reg = /^([A-z0-9]{6,18})(\w|\-)+@[A-z0-9]+\.([A-z]{2,3})$/;
+	if(!value.length){
+		callback(new Error("请输入邮箱"))
+	}else if(!reg.test(value)){
+		callback(new Error("邮箱不合法"))
+	}else{
+		callback();
+	}
+}
+const validatePassword = (rule,value,callback)=>{
+	let reg = /^[a-zA-Z0-9@\$\^\.\*\\?]{6,15}$/
+	if(!value.length){
+		callback(new Error("请输入密码"))
+	}else if(value.length<6){
+		callback(new Error("密码长度不得小于6位"))
+	}else if(!reg.test(value)){
+		callback(new Error("密码应包含数字和字母"))
+	}else{
+		callback();
+	}
+}
+const validatePassword2 = (rule,value,callback)=>{
+	if (!value.length){
+		callback(new Error("请确认密码"))
+	}else if(value!=registerForm.value.password1){
+		callback(new Error("两次密码不一致"))
+	}else{
+		callback();
+	}
+}
+
+const submit = (formRef)=>{
+	console.log(formRef);
+	formRef.validate((valid)=>{
+		if(valid) isSliderCaptchaShow.value = true
+	})
+}
 const registerRules = ref({
-	username: [{ required: true, message: "请输入用户名", trigger: "blur" }],
-	password1: [{ required: true, message: "请输入密码", trigger: "blur" }],
-	password2: [{ required: true, message: "请确认密码", trigger: "blur" }],
-   	email: [{ required: true, message: "请输入邮箱", trigger: "blur" }]
+	username: [{validator:validateName, trigger: "blur" }],
+	password1: [{validator:validatePassword, trigger: "blur" }],
+	password2: [{validator: validatePassword2,trigger: "blur" }],
+   	email: [{validator:validateEmail, trigger: "blur" }],
 });
 const registerForm = ref({
     username:"",
@@ -64,7 +111,6 @@ const registerForm = ref({
 	password2:"",
     email:"",
 })
-const loading = ref(false);
 // 控制人类行为验证窗口显示
 const isSliderCaptchaShow = ref(false);
 // 人类行为验证通过事件
@@ -72,7 +118,9 @@ const onSliderCaptchaSuccess = () => {
 	isSliderCaptchaShow.value = false;
 	register();
 }
-
+const login = ()=>{
+	router.push({name:"Login"})
+}
 const register = ()=>{
 	Account.register(registerForm.value).then((res)=>{
 		if(res.data.result===1){
@@ -101,6 +149,7 @@ const register = ()=>{
 				type: "error",
 				duration: 3000
 		})
+		resetForm();
 	})
 }
 const resetForm = (formEl)=>{
@@ -112,7 +161,7 @@ onMounted(() => {
 	document.onkeydown = (e) => {
 		e = window.event || e;
 		if (e.code === "Enter" || e.code === "enter" || e.code === "NumpadEnter") {
-			isSliderCaptchaShow.value = true;
+			submit(registerFormRef);
 		}
 	};
 });
