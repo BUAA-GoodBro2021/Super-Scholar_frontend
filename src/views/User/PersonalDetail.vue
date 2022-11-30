@@ -1,11 +1,14 @@
 <template>
     <div class="personal-wrap">
         <div class="avatar_wrap">
-            <AvaterWrapVue :personAccount="1" :userInfo="userInfo" :claimed="claimed" :openAlexAccount="0" />
+            <AvaterWrapVue :personAccount="1" :userInfo="userInfo" :claimed="claimed" :openAlexAccount="0"
+                @AbandonPortal="AbandonPortal" />
         </div>
         <div class="article_data_wrap">
             <div class="left">
-                <ArticleAndDataVue :documentList="userInfo.documentList" :claimed="claimed" />
+                <ArticleAndDataVue :documentList="userInfo.documentList" :claimed="claimed"
+                    :pageTotalSize="pageTotalSize" @pageChange="pageChange" @DocumentChange="DocumentChange"
+                    :dataCountByYear="userInfo.counts_by_year" :author_id="replyUser.open_alex_id" />
             </div>
             <div class="right">
                 <CoAuthorsVue :claimed="claimed" />
@@ -21,6 +24,7 @@ import CoAuthorsVue from '../../components/UserComponents/CoAuthors.vue';
 import { useGlobalStore } from "../../stores/global.js";
 import { User } from "../../api/userDetail"
 import { ElNotification } from "element-plus";
+import { UserFilled } from '@element-plus/icons-vue';
 const globalStore = useGlobalStore();
 
 
@@ -63,23 +67,29 @@ const userInfo = ref({
             display_name: '鸡你太美鸡你太美迎面的你走来逐渐让我蠢蠢欲动，这种感觉从未有过cause I get a crash on you',
             publication_date: '2022-2-11',
             cited_by_count: '11',
-            pdf: 0,
-        },
+            open_access: {
+                is_oa: 0,
+            },
+            authorships: [
+                {
+                    author: {
+                        display_name: 'Harbour'
+                    }
+                }
+            ]
+        }
+    ],
+    counts_by_year: [
         {
-            display_name: '你是我的，我是你的谁',
-            publication_date: '2022-4-31',
-            cited_by_count: '11',
-            pdf: 1,
-        },
-        {
-            display_name: '再多一眼，看一眼就会爆炸，在近一点靠近点快被融化',
-            publication_date: '2022-4-31',
-            cited_by_count: '11',
-            pdf: -1,
+            year: 2022, works_count: 8, cited_by_count: 1160
         }
     ]
 })
-const replyUser = ref()
+const replyUser = ref({
+    open_alex_id: "A12345678debug"
+})
+const pageTotalSize = ref(10)
+// const docummentList = ref([])
 
 
 onMounted(() => {
@@ -100,8 +110,19 @@ const getAccountType = () => {
             replyUser.value = res.data.user
             claimed.value = res.data.user.is_professional == -1 ? 0 : res.data.user.is_professional == 0 ? 2 : 1
             ConvertUserInfo(res.data.user)
-            if (claimed == 1) {// 已认证
-                getDocumentList()
+            if (claimed.value == 1) {// 已认证
+                let data = {
+                    "entity_type": "works",
+                    "params": {
+                        "filter": {
+                            "author.id": replyUser.value.open_alex_id
+                        },
+                        "page": 1,
+                        "per_page": 10
+                    }
+                }
+                getDocumentList(data)
+                getOpenAlexAuthor()
             }
         } else {
             ElNotification({
@@ -120,34 +141,24 @@ const getAccountType = () => {
         })
     })
 }
-const getDocumentList = async () => {
-    User.GetAuthorDocumentListById({
-        "entity_type": "works",
-        "params": {
-            "filter": {
-                "author.id": replyUser.open_alex_id
-            },
-            "page": 1,
-            "per_page": 25
-        }
-    }).then((res) => {
-        console.log(res)
-    }).catch((err) => {
-        ElNotification({
-            title: "很遗憾",
-            message: err.message,
-            type: "error",
-            duration: 3000
-        })
-    })
 
+const getOpenAlexAuthor = async () => {
     User.GetOpenAlexAuthorById({
         "entity_type": "authors",
         "params": {
-            "id": replyUser.open_alex_id
+            "id": replyUser.value.open_alex_id
         }
     }).then((res) => {
-        console.log(res)
+        if (res.data.result == 1) {
+            userInfo.value.counts_by_year = res.data.single_data.counts_by_year
+        } else {
+            ElNotification({
+                title: "很遗憾",
+                message: res.message,
+                type: "error",
+                duration: 3000
+            })
+        }
     }).catch((err) => {
         ElNotification({
             title: "很遗憾",
@@ -156,6 +167,62 @@ const getDocumentList = async () => {
             duration: 3000
         })
     })
+}
+
+const getDocumentList = async (data) => {
+    console.log('获取文献列表')
+    User.GetAuthorDocumentListById(data).then((res) => {
+        if (res.data.result == 1) {
+            pageTotalSize.value = res.data.list_of_data[0].meta.count
+            userInfo.value.documentList = res.data.list_of_data[0].results
+        } else {
+            ElNotification({
+                title: "很遗憾",
+                message: res.message,
+                type: "error",
+                duration: 3000
+            })
+        }
+    }).catch((err) => {
+        ElNotification({
+            title: "很遗憾",
+            message: err.message,
+            type: "error",
+            duration: 3000
+        })
+    })
+}
+
+const pageChange = async (page) => {
+    let data = {
+        "entity_type": "works",
+        "params": {
+            "filter": {
+                "author.id": replyUser.value.open_alex_id
+            },
+            "page": page,
+            "per_page": 10
+        }
+    }
+    getDocumentList(data)
+}
+
+const AbandonPortal = () => {
+    getAccountType()
+}
+
+const DocumentChange = async () => {
+    let data = {
+        "entity_type": "works",
+        "params": {
+            "filter": {
+                "author.id": replyUser.value.open_alex_id
+            },
+            "page": page,
+            "per_page": 10
+        }
+    }
+    getDocumentList(data)
 }
 </script>
 <style scoped>
@@ -169,26 +236,26 @@ const getDocumentList = async () => {
     background-color: rgba(230, 230, 230, 0.234);
 }
 
-.avatar_wrap{
+.avatar_wrap {
     width: 70%;
     min-width: 1280px;
     margin: 2% 0 1% 0;
     height: 25%;
 }
 
-.article_data_wrap{
+.article_data_wrap {
     width: 70%;
     min-width: 1280px;
     height: 72%;
     display: flex;
 }
 
-.article_data_wrap .left{
+.article_data_wrap .left {
     width: 68%;
     margin-right: 2%;
 }
 
-.article_data_wrap .right{
+.article_data_wrap .right {
     width: 30%;
 }
 </style>

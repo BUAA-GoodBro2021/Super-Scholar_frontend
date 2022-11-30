@@ -12,7 +12,7 @@
                     </template>
                     <div class="dialog-wrap">
                         <div v-for="(item, index) in chart2DialogData" :key="index">
-                            <span class="document_title">{{(index +1) + '. ' + item.display_name }}</span>
+                            <span class="document_title">{{ (index + 1) + '. ' + item.display_name }}</span>
                             <div class="authors_wrap">
                                 <span class="document_authors" v-for="(authoritem, authorindex) in item.authorList"
                                     :key="authorindex">{{ authoritem.display_name }}
@@ -28,7 +28,9 @@
     </div>
 </template>
 <script setup>
+import { refWithControl } from '@vueuse/shared';
 import * as echarts from 'echarts'
+import { watch } from 'vue-demi';
 // import { nextTick, reactive, readonly } from "vue-demi"
 
 const props = defineProps({
@@ -37,7 +39,7 @@ const props = defineProps({
     tabChange: Boolean
 })
 const activeName = ref('countByYear')
-const dataCount = reactive([
+const dataCount = refWithControl([
     {
         year: 2022,
         work_count: 12,
@@ -77,15 +79,17 @@ const choseLine = ref()
 onMounted(() => {
     //todo
     //处理documentList 将publication_year与publication_date连接起来
-    data1PreProcess(x1data, countdata, citedata)
-    // initChart1(x1data, countdata, citedata)
-    data2PreProcess(nodedata, linedata)
+    // data1PreProcess(x1data, countdata, citedata)
+    // // initChart1(x1data, countdata, citedata)
+    // data2PreProcess(nodedata, linedata)
 })
 
 watch(() => props.tabChange, (newVal) => {
     if (newVal && chart1Show.value == false) {
         console.log('发表文献->数据分析')
+        data1PreProcess(x1data, countdata, citedata)
         nextTick(() => {
+
             chart1Show.value = true
             nextTick(() => {
                 initChart1(x1data, countdata, citedata)
@@ -95,47 +99,63 @@ watch(() => props.tabChange, (newVal) => {
                     chart1.resize()
                 })
             })
-            console.log(document.getElementById('count'))
         })
     }
 })
 
+// watch(() => props.dataCountByYear, (newVal) => {
+//     console.log('props.dataCountbyYear changed')
+// })
+
 const handleClick = (tab) => {
-    if (tab.paneName == 'authorNetWork' && chart2Show.value == false) {
-        nextTick(() => {
-            chart2Show.value = true
+    if (tab.paneName == 'authorNetWork') {
+        if (chart2Show.value == false) {
             nextTick(() => {
-                initChart2(nodedata, linedata)
-                window.onresize = () => chart2.resize()
-                window.addEventListener('resize', () => {
-                    chart2.resize()
+                chart2Show.value = true
+                data2PreProcess(nodedata, linedata)
+                nextTick(() => {
+                    initChart2(nodedata, linedata)
+                    window.onresize = () => chart2.resize()
+                    window.addEventListener('resize', () => {
+                        chart2.resize()
+                        chart1.resize()
+                    })
                 })
-            })
 
-        })
+            })
+        } 
     } else if (tab.paneName == 'countByYear' && chart1Show.value == false) {
-        nextTick(() => {
-            chart1Show.value = true
+        if (chart1Show.value == false) {
             nextTick(() => {
-                initChart1(x1data, countdata, citedata)
+                chart1Show.value = true
+                data1PreProcess(x1data, countdata, citedata)
+                nextTick(() => {
+                    initChart1(x1data, countdata, citedata)
 
-                window.onresize = () => chart1.resize()
-                window.addEventListener('resize', () => {
-                    chart1.resize()
+                    window.onresize = () => chart1.resize()
+                    window.addEventListener('resize', () => {
+                        chart2.resize()
+                        chart1.resize()
+                    })
                 })
+                console.log(document.getElementById('count'))
             })
-            console.log(document.getElementById('count'))
-        })
+        } 
     }
 }
 
 const data1PreProcess = (xdata, countdata, citedata) => {
-    dataCount.sort(function (a, b) {
+    dataCount.value = []
+    // xdata = []
+    // countdata = []
+    // citedata = []
+    dataCount.value.push(...props.dataCountByYear)
+    dataCount.value.sort(function (a, b) {
         return a.year - b.year
     })
-    dataCount.forEach((item, index) => {
+    dataCount.value.forEach((item, index) => {
         xdata.push(item.year)
-        countdata.push(item.work_count)
+        countdata.push(item.works_count)
         citedata.push(item.cited_by_count)
     })
 }
@@ -143,6 +163,8 @@ const data1PreProcess = (xdata, countdata, citedata) => {
 const colors = reactive(['#ff8400', '#03fc62', '#aa61b2', '#0a95e6', '#00fff7', '#f06467', '#f06467', '#03fc62', '#00fff7', '#f06467'])
 
 const data2PreProcess = (nodedata, linedata) => {
+    // nodedata
+    // linedata = []
     let i
     for (i = 0; i < 15; i++) {
         nodedata.push(
@@ -265,7 +287,7 @@ const initChart1 = (xdata, countdata, citedata) => {
             }
         },
         grid: {
-            right: '15%',
+            right: '20%',
             left: '15%'
         },
         toolbox: {

@@ -140,7 +140,7 @@ const authorList = ref(
 
 .empty{
     color: grey;
-    font-size: 25px;
+    font-size: 18px;
     font-weight: 600;
 }
 </style>

@@ -107,13 +107,13 @@
                             <span class="change-label">邮箱:</span>
                             <el-input v-model="changeMessage.email"></el-input>
                         </div>
-                        <div class="dialog-right-item change-password">
+                        <!-- <div class="dialog-right-item change-password">
                             <span class="change-label">密码:</span>
                             <el-input v-model="changeMessage.password" type="password"></el-input>
-                        </div>
+                        </div> -->
                         <div class="dialog-right-item change-introduction">
                             <span class="change-label">自我介绍:</span>
-                            <el-input v-model="changeMessage.introduction" type="text-area"></el-input>
+                            <el-input v-model="changeMessage.introduction" type="textarea"></el-input>
                         </div>
                         <!-- <div class="dialog-right-item change-areas">
                         <span class="change-label" v-if="claimed == 0">确认密码:</span>
@@ -158,6 +158,9 @@ import {
     HomeFilled,
 } from '@element-plus/icons-vue'
 import { nextTick } from 'vue-demi'
+import { ClaimPortal } from '../../api/claimPortal'
+import { defineEmits } from 'vue';
+const emit = defineEmits(["pageChange"])
 const props = defineProps({
     tokenid: Number,
     personAccount: Number, // 1 自己的账号 2 别人的账号
@@ -220,6 +223,26 @@ const cancelChange = () => {
 
 const abandonPortal = () => {
     //如果是审核中 无法放弃
+    ClaimPortal.AbandonPortal().then((res) => {
+        if (res.data.result == 1) {
+            abandonPortalDialog.value = false;
+            emit("AbandonPortal")
+        } else {
+            ElNotification({
+                title: "很遗憾",
+                message: res.message,
+                type: "error",
+                duration: 3000
+            })
+        }
+    }).catch((err) => {
+        ElNotification({
+            title: "很遗憾",
+            message: err.message,
+            type: "error",
+            duration: 3000
+        })
+    })
     abandonPortalDialog.value = false;
 }
 /**************************** */
@@ -230,9 +253,9 @@ const is_follow = ref(false)
 onMounted(() => {
     is_follow.value = props.personAccount == 1 ? 0 : props.userInfo.is_follow
 
-    // changeMessage.value.name = props.userInfo.display_name
-    // changeMessage.value.organization = props.userInfo.last_known_institution
-    // changeMessage.value.areas = props.userInfo.x_concepts
+    changeMessage.value.name = props.userInfo.display_name
+    changeMessage.value.email = props.userInfo.email
+    changeMessage.value.introduction = props.userInfo.introduction
 })
 
 const toOpenAlexAccount = () => {
