@@ -11,7 +11,7 @@
                 </router-link>
             </el-col>
             <el-col :span="3" :offset="12" class="avatar">
-                <UserInfo/>
+                <UserInfo />
             </el-col>
             <el-col :span="3">
                 <Language />
@@ -21,17 +21,17 @@
     </div>
 </template>
 <script setup>
-
 import Language from './Language.vue';
 import FullScreen from "./FullScreen.vue";
-import Dark from "./Dark.vue";
 import UserInfo from "./UserInfo.vue";
-import { useDark } from '@vueuse/core';
+import { useDark, useToggle } from '@vueuse/core';
 const isDark = useDark();
-const linkColor = computed(()=>{
-    return isDark.value ? "#dadada":"black";
+const onDarkChange = useToggle(isDark);
+onMounted(()=>{
+    if(isDark.value){
+        onDarkChange();
+    }
 })
-
 
 </script>
 <style scoped>
@@ -62,7 +62,7 @@ const linkColor = computed(()=>{
     font-weight: 600;
     text-decoration: none;
     text-align: center;
-    color: v-bind(linkColor);
+    color: black;
     margin-left: 10px;
 }
 
