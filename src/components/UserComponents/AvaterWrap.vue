@@ -4,14 +4,13 @@
             <ul>
                 <li style="vertical-align: middle; ">
                     <div class="avatar_wrap">
-                        <el-avatar
-                            :size="110"
+                        <el-avatar :size="110"
                             :src="userInfo.avatar_url ? userInfo.avatar_url : 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png'"
                             style="cursor: pointer">
                         </el-avatar>
                     </div>
                 </li>
-                <li style="min-width: 60%; height: 100%;">
+                <li style="min-width: 60%; height: 100%; max-width: 70%;">
                     <div class="title_profile">
                         <div class="title-profile-block">
                             <span class="name">
@@ -41,10 +40,12 @@
                                 <el-icon>
                                     <Menu />
                                 </el-icon> &nbsp;
-                                <span style="cursor: pointer;" v-for="(item, index) in userInfo.x_concepts"
+                                <div class="areas-content">
+                                    <span style="cursor: pointer;" v-for="(item, index) in userInfo.x_concepts"
                                     :key="index">{{
                                             item.display_name
                                     }}<span v-if="index != userInfo.x_concepts.length - 1">/&nbsp;</span></span>
+                                </div>
                             </div>
                             <div class="areas" v-if="openAlexAccount == 1 && !userInfo.x_concepts">
                                 <el-icon>
@@ -63,24 +64,24 @@
                     </div>
                 </li>
                 <li class="right-btn-wrap" style="float: right; vertical-align: middle;" v-if="personAccount == 1">
-                    <el-button class="right-btn" type="primary" size="sma1l" plain @click="changeDialogShow = true"
+                    <el-button class="right-btn" type="primary" plain @click="changeDialogShow = true"
                         :icon="Edit">编辑
                     </el-button>
                 </li>
                 <li class="right-btn-wrap" v-if="personAccount != 1 && openAlexAccount == 1 && is_follow"
                     style="float: right; vertical-align: middle;">
-                    <el-button class="right-btn" type="primary" size="small" plain @click="cancelFollow()">取消关注
+                    <el-button class="right-btn" type="primary" plain @click="cancelFollow()">取消关注
                     </el-button>
                 </li>
 
                 <li class="right-btn-wrap" v-if="personAccount != 1 && openAlexAccount == 1 && !is_follow"
                     style="float: right; vertical-align: middle;">
-                    <el-button class="right-btn" type="primary" size="sma1l" plain @click="follow()">关注</el-button>
+                    <el-button class="right-btn" type="primary" plain @click="follow()">关注</el-button>
                 </li>
             </ul>
         </div>
         <el-dialog v-model="changeDialogShow">
-            <template #title>
+            <template #header>
                 <span class="dialog-title">修改个人信息</span>
             </template>
             <template #default>
@@ -101,19 +102,20 @@
                     <div class="dialog-right">
                         <div class="dialog-right-item change-name">
                             <span class="change-label">昵称:</span>
-                            <el-input v-model="changeMessage.name"></el-input>
+                            <el-input v-model="changeMessage.name" maxlength="20" show-word-limit></el-input>
                         </div>
-                        <div class="dialog-right-item change-organization">
+                        <!-- <div class="dialog-right-item change-organization">
                             <span class="change-label">邮箱:</span>
                             <el-input v-model="changeMessage.email"></el-input>
-                        </div>
+                        </div> -->
                         <!-- <div class="dialog-right-item change-password">
                             <span class="change-label">密码:</span>
                             <el-input v-model="changeMessage.password" type="password"></el-input>
                         </div> -->
                         <div class="dialog-right-item change-introduction">
                             <span class="change-label">自我介绍:</span>
-                            <el-input v-model="changeMessage.introduction" type="textarea"></el-input>
+                            <el-input v-model="changeMessage.introduction" type="textarea" maxlength="120"
+                                show-word-limit></el-input>
                         </div>
                         <!-- <div class="dialog-right-item change-areas">
                         <span class="change-label" v-if="claimed == 0">确认密码:</span>
@@ -160,9 +162,10 @@ import {
 import { nextTick } from 'vue-demi'
 import { ClaimPortal } from '../../api/claimPortal'
 import { defineEmits } from 'vue';
-const emit = defineEmits(["pageChange"])
+import { User } from "../../api/userDetail"
+const emit = defineEmits(["pageChange", "infoChange"])
 const props = defineProps({
-    tokenid: Number,
+    openAlexId: String,
     personAccount: Number, // 1 自己的账号 2 别人的账号
     openAlexAccount: Number, //0 非openalex 1 openalex原生作者
     userInfo: Object, //
@@ -213,7 +216,40 @@ const changeMessage = ref({
 
 const saveChange = async () => {
     //todo保存工作 
-    changeDialogShow.value = false
+    if (changeMessage.value.name == null) {
+        ElNotification({
+            title: "请完善昵称",
+            message: "请完善昵称",
+            type: "error",
+            duration: 3000
+        })
+        return
+    }
+    let data = {
+        introduction: changeMessage.value.introduction,
+        name: changeMessage.value.name
+    }
+    User.ChangeUserInfo(data).then((res) => {
+        if (res.data.result == 1) {
+            changeDialogShow.value = false
+            emit("infoChange")
+        } else {
+            ElNotification({
+                title: "很遗憾",
+                message: res.message,
+                type: "error",
+                duration: 3000
+            })
+        }
+    }).catch((err) => {
+        ElNotification({
+            title: "很遗憾",
+            message: err.message,
+            type: "error",
+            duration: 3000
+        })
+    })
+    // changeDialogShow.value = false
 }
 
 const cancelChange = () => {
@@ -223,7 +259,7 @@ const cancelChange = () => {
 
 const abandonPortal = () => {
     //如果是审核中 无法放弃
-    ClaimPortal.AbandonPortal().then((res) => {
+    ClaimPortal.AbandonPortal({}).then((res) => {
         if (res.data.result == 1) {
             abandonPortalDialog.value = false;
             emit("AbandonPortal")
@@ -262,23 +298,55 @@ const toOpenAlexAccount = () => {
     //跳转到认证的门户
 }
 
-const uploadFile = async () => {
-    //todo上传头像 更新avatar_url
-}
-
-const accountPreProcess = () => {
-    //todo 确定该账户是不是自己的账户
-    //todo 确定非自己账户是不是已经关注
-}
-
 const follow = async () => {
     //todo 向后端发送请求 关注某人
-    is_follow.value = true
+    User.FollowAuthor({
+        author_id: props.openAlexId
+    }).then((res) => {
+        if (res.data.result == 1) {
+            is_follow.value = true
+        } else {
+            ElNotification({
+                title: "很遗憾",
+                message: res.message,
+                type: "error",
+                duration: 3000
+            })
+        }
+    }).catch((err) => {
+        ElNotification({
+            title: "很遗憾",
+            message: err.message,
+            type: "error",
+            duration: 3000
+        })
+    })
 }
 
 const cancelFollow = async () => {
     //todo 向后端发送请求 取消关注某人
-    is_follow.value = false
+    User.CancelFollow({
+        author_id: props.openAlexId
+    }).then((res) => {
+        if (res.data.result == 1) {
+            is_follow.value = false
+        } else {
+            ElNotification({
+                title: "很遗憾",
+                message: res.message,
+                type: "error",
+                duration: 3000
+            })
+        }
+    }).catch((err) => {
+        ElNotification({
+            title: "很遗憾",
+            message: err.message,
+            type: "error",
+            duration: 3000
+        })
+    })
+
 }
 
 </script>
@@ -288,6 +356,7 @@ const cancelFollow = async () => {
     width: 100%;
     background-color: white;
     border-radius: 20px;
+    box-shadow: 3px 3px 3px 3px #dedede;
     height: 100%;
 
     display: flex;
@@ -348,7 +417,7 @@ const cancelFollow = async () => {
 .organization {
     font-size: 15px;
     height: 23%;
-    margin-bottom: 2%;
+    margin-bottom: 5px;
     line-height: 100%;
     text-align: left;
     cursor: pointer;
@@ -361,10 +430,10 @@ const cancelFollow = async () => {
     color: #409eff;
     height: 25%;
     width: 100%;
-    line-height: 100%;
+    /* line-height: 50%; */
     text-align: left;
     display: flex;
-    align-items: center;
+    /* align-items: center; */
 
     /* display: block; */
     word-break: break-all;
@@ -379,12 +448,12 @@ const cancelFollow = async () => {
 .right-btn-wrap {
     height: 100%;
     width: 10%;
-    display: flex;
+    display: flex !important;
     align-items: center;
 }
 
 .right-btn {
-    margin-top: 50%;
+    /* margin-top: 50%; */
     font-size: 1px;
 }
 

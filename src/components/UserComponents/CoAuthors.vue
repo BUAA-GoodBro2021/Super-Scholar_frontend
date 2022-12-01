@@ -10,7 +10,7 @@
                             style="cursor: pointer;"></el-avatar>
                     </li>
                     <li>
-                        <span class="coauthor-name">{{ item.display_name }}</span>
+                        <span class="coauthor-name">{{ item.author_name }}</span>
                     </li>
                     <li class="right-arrow-li">
                         <span class="right-arrow-wrap">
@@ -23,7 +23,11 @@
                 <el-divider v-if="index != authorList.length - 1"></el-divider>
             </div>
         </div>
-        <div class="empty" v-else>
+        <div class="co-author-pagination" v-if="claimed == 1">
+            <el-pagination layout="prev, pager, next" :total="authorTotalSize" @current-change="PageChange()"
+                v-model:current-page="pageCurrent" hide-on-single-page :page-sizes="[1, 2, 3, 4, 5]" />
+        </div>
+        <div class="empty" v-if="claimed == 0">
             该用户尚未认证
         </div>
     </div>
@@ -32,31 +36,19 @@
 import {
     Right
 } from '@element-plus/icons-vue'
+import { defineEmits } from 'vue';
+const emit = defineEmits(["coAuthorPageChange"])
 const props = defineProps({
-    authorList: Object,
+    authorList: Array,
     claimed: Number,
+    authorTotalSize: Number,
 })
 
-const authorList = ref(
-    [
-        {
-            display_name: '蔡徐坤',
-            id: '',
-            avatar_url: ''
-        },
-        {
-            display_name: '全民制作人',
-            id: '',
-            avatar_url: ''
-        },
-        {
-            display_name: '悠悠球琛总',
-            id: '',
-            avatar_url: ''
-        },
-    ]
-)
+const pageCurrent = ref(1)
 
+const PageChange = () => {
+    emit("coAuthorPageChange", pageCurrent.value)
+}
 </script>
 <style>
 /* 整体的height和width由外层调整 */
@@ -64,6 +56,7 @@ const authorList = ref(
     width: 100%;
     background-color: white;
     border-radius: 20px;
+    box-shadow: 3px 3px 3px 3px #dedede;
     height: 100%;
 
     display: flex;
@@ -82,9 +75,25 @@ const authorList = ref(
 
 .author-list {
     width: 90%;
-    height: auto;
+    height: 92%;
     overflow-y: auto;
 }
+
+.co-author-pagination {
+    height: 10%;
+    display: flex;
+    justify-content: center;
+}
+
+::-webkit-scrollbar {
+    width: 0 !important;
+}
+
+::-webkit-scrollbar {
+    width: 0 !important;
+    height: 0;
+}
+
 
 .author-card {
     width: 100%;
@@ -131,14 +140,14 @@ const authorList = ref(
     font-weight: 800;
 }
 
-.right-arrow-wrap{
+.right-arrow-wrap {
     height: 80%;
     line-height: 100%;
     display: flex;
     align-items: center;
 }
 
-.empty{
+.empty {
     color: grey;
     font-size: 18px;
     font-weight: 600;

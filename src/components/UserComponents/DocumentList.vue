@@ -27,23 +27,22 @@
                             type="success" @click="ToPdf(scope.row.open_access)">已有pdf</el-tag>
                     </template>
                 </el-table-column>
-                <el-table-column prop="pdf" label="操作" min-width="16%">
+                <el-table-column prop="pdf" label="操作" min-width="16%" v-if="personalAccount == 1">
                     <template #default="scope">
-                        <el-upload ref="upload" class="upload-demo" 
-                            v-if="scope.row.open_access.is_oa == -1"
-                            :limit="1"
-                            :auto-upload="false"
-                            :show-file-list="false"
-                            :on-exceed="handleExceed">
-                            <template #trigger>
-                                <el-tag style="cursor: pointer;" type="success">上传pdf
-                                </el-tag>
-                            </template>
+                        <el-upload ref="uploadRef" class="upload-demo" v-if="scope.row.open_access.is_oa == -1" :limit="1"
+                            :auto-upload="false" action="" :show-file-list="false" :on-change="(file, filelist) => changeFile(file, filelist, scope.row)" accept=".pdf">
+                            <el-tag style="cursor: pointer;" v-if="!scope.row.uploading">上传pdf
+                            </el-tag>
+                            <span v-if="scope.row.uploading">
+                                <el-icon class="is-loading" >
+                                    <Loading />
+                                </el-icon>
+                             </span>
                         </el-upload>
-                        <el-tag v-if="scope.row.open_access.is_oa == 0" style="cursor: pointer;" @click="CancelPdf()"
-                            type="warning">取消上传</el-tag>
+                        <el-tag v-if="scope.row.open_access.is_oa == 0" style="cursor: pointer;" @click="CancelUploadingPdf(scope.row)">
+                            取消上传</el-tag>
                         <el-tag v-if="scope.row.open_access.is_oa == 1" style="cursor: pointer;"
-                            @click="CancelPdfConfirm(scope.row)" type="danger">删除pdf</el-tag>
+                            @click="CancelPdfConfirm(scope.row)">删除pdf</el-tag>
                     </template>
                 </el-table-column>
             </el-table>
@@ -66,26 +65,35 @@
 <script setup>
 import { defineEmits } from 'vue';
 import { User } from "../../api/userDetail"
+import {
+    ArrowDown,
+    ArrowUp,
+    SuccessFilled,
+    Loading
+} from '@element-plus/icons-vue'
 const emit = defineEmits(["pageChange"])
+const uploadRef = ref(null)
 const props = defineProps({
     documentList: Object,
     pageTotalSize: Number,
-    author_id: String
+    author_id: String,
+    personalAccount: Number
 })
 const pageCurrent = ref(1)
-const document = ref()
+const document = ref(
+    {
+        id: '123'
+    }
+)
 const cancelPdfDialog = ref(false)
-const CancelPdfConfirm = (data) => {
-    cancelPdfDialog.value = true
-    document.value = data
-}
-const CancelPdf = () => {
+
+const CancelUploadingPdf = (item) => {
     User.CancelPdf({
-        work_id: document.id.substring(21),
-        author_id: author_id
+        work_id: item.id.substring(21),
+        author_id: props.author_id
     }).then((res) => {
         if (res.data.result == 1) {
-            emit("DocumentChange")
+            emit("pageChange", pageCurrent.value)
         } else {
             ElNotification({
                 title: "很遗憾",
@@ -104,76 +112,70 @@ const CancelPdf = () => {
     })
 }
 
-const beforePdfUpload = (data) => {
-    console.log('beforeUpload: ' + data)
+const CancelPdfConfirm = (data) => {
+    cancelPdfDialog.value = true
+    document.value = data
+}
+const CancelPdf = () => {
+    User.CancelPdf({
+        work_id: document.value.id.substring(21),
+        author_id: props.author_id
+    }).then((res) => {
+        if (res.data.result == 1) {
+            emit("pageChange", pageCurrent.value)
+        } else {
+            ElNotification({
+                title: "很遗憾",
+                message: res.message,
+                type: "error",
+                duration: 3000
+            })
+        }
+    }).catch((err) => {
+        ElNotification({
+            title: "很遗憾",
+            message: err.message,
+            type: "error",
+            duration: 3000
+        })
+    })
 }
 
-const handleExceed = (data) => {
-    console.log('handleExceed : ' + data)
+const changeFile = async (file, filelist, item) => {
+    let data = new FormData()
+    data.append("work_id", item.id.substring(21))
+    data.append("author_id", props.author_id)
+    data.append("pdf", filelist[0].raw)
+    item.uploading = true
+    User.UpLoadPdf(data).then((res) => {
+        if (res.data.result == 1) {
+            emit("pageChange",  pageCurrent.value)
+            ElNotification({
+                title: "Success",
+                message: '上传成功',
+                type: "success",
+                duration: 3000
+            })
+        } else {
+            ElNotification({
+                title: "很遗憾",
+                message: res.message,
+                type: "error",
+                duration: 3000
+            })
+            item.uploading = false
+        }
+    }).catch((err) => {
+        item.uploading = false
+        ElNotification({
+            title: "很遗憾",
+            message: err.message,
+            type: "error",
+            duration: 3000
+        })
+    })
+    uploadRef.value.clearFiles()
 }
-
-const processedDocumentList = ref([
-    {
-        display_name: '鸡你太美鸡你太美迎面的你走来逐渐让我蠢蠢欲动，这种感觉从未有过cause I get a crash on you',
-        publication_date: '2022-2-11',
-        cited_by_count: '11',
-        authorList: [
-            {
-                display_name: "harbour",
-                id: '',
-            },
-            {
-                display_name: "harbour",
-                id: '',
-            },
-            {
-                display_name: "harbour",
-                id: '',
-            },
-        ],
-        pdf: 0,
-    },
-    {
-        display_name: '你是我的，我是你的谁',
-        publication_date: '2022-4-31',
-        cited_by_count: '11',
-        pdf: -1,
-        authorList: [
-            {
-                display_name: "harbour",
-                id: '',
-            },
-            {
-                display_name: "harbour",
-                id: '',
-            },
-            {
-                display_name: "harbour",
-                id: '',
-            },
-        ]
-    },
-    {
-        display_name: '再多一眼，看一眼就会爆炸，在近一点靠近点快被融化',
-        publication_date: '2022-4-31',
-        cited_by_count: '10',
-        pdf: 1,
-        authorList: [
-            {
-                display_name: "harbour",
-                id: '',
-            },
-            {
-                display_name: "harbour",
-                id: '',
-            },
-            {
-                display_name: "harbour",
-                id: '',
-            },
-        ]
-    },]
-)
 
 onMounted(() => {
     //处理documentList 将publication_year与publication_date连接起来
@@ -192,6 +194,7 @@ const ToPdf = (data) => {
 .document-list-wrap {
     width: 100%;
     height: 100%;
+    position: relative;
 }
 
 .table-wrap {
@@ -199,9 +202,12 @@ const ToPdf = (data) => {
 }
 
 .pagination-wrap {
-    height: 10%;
+    position: absolute;
+    bottom: 0;
     display: flex;
     justify-content: center;
+    width: 100%;
+    height: 36px;
 }
 
 .article_and_data_main_wrap {

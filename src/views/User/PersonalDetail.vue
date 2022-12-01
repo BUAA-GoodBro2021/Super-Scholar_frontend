@@ -2,16 +2,17 @@
     <div class="personal-wrap">
         <div class="avatar_wrap">
             <AvaterWrapVue :personAccount="1" :userInfo="userInfo" :claimed="claimed" :openAlexAccount="0"
-                @AbandonPortal="AbandonPortal" />
+                @AbandonPortal="AbandonPortal()" @infoChange="infoChange"/>
         </div>
         <div class="article_data_wrap">
             <div class="left">
                 <ArticleAndDataVue :documentList="userInfo.documentList" :claimed="claimed"
-                    :pageTotalSize="pageTotalSize" @pageChange="pageChange" @DocumentChange="DocumentChange"
-                    :dataCountByYear="userInfo.counts_by_year" :author_id="replyUser.open_alex_id" />
+                    :pageTotalSize="pageTotalSize" @pageChange="pageChange" 
+                    :dataCountByYear="userInfo.counts_by_year" :author_id="replyUser.open_alex_id" 
+                    :authorNetWork="authorNet" :authorName="userInfo.open_alex_name" :personalAccount="1"/>
             </div>
             <div class="right">
-                <CoAuthorsVue :claimed="claimed" />
+                <CoAuthorsVue :claimed="claimed" @coAuthorPageChange="coAuthorPageChange" :authorTotalSize="authorTotalSize" :authorList="coAuthorList"/>
             </div>
         </div>
     </div>
@@ -36,6 +37,7 @@ const openAlexAccount = ref(0) // 0 网站用户 1 openalex作者
 const userInfo = ref({
     user_id: "20373638",
     display_name: 'Harbour',
+    open_alex_name: 'HandSome Harbour',
     last_known_institution: "Hogwarts",
     email: '2358272468@qq.com',
     introduction: '中分头 背带裤 我是ikun你记住 山外青山楼外楼 唱跳rap打篮球 ',
@@ -88,12 +90,15 @@ const userInfo = ref({
 const replyUser = ref({
     open_alex_id: "A12345678debug"
 })
+const authorNet = ref([])
 const pageTotalSize = ref(10)
+const authorTotalSize = ref(5)
+const coAuthorList = ref([])
 // const docummentList = ref([])
 
 
 onMounted(() => {
-    getAccountType()
+    getAccountType(1)
 })
 
 const ConvertUserInfo = (data) => {
@@ -101,16 +106,18 @@ const ConvertUserInfo = (data) => {
     userInfo.value.email = data.email
     userInfo.value.user_id = data.user_id
     userInfo.value.introduction = data.introduction ? data.introduction : null
+    userInfo.value.avatar_url = data.avatar_url
 }
 
-const getAccountType = () => {
+/*type 0 值获取个人信息 用于修改个人简介昵称之后使用 1 获取个人信息同时获取文献 专家关系网络 */
+const getAccountType = (type) => {
     //todo 获取id所对应的myAcountType与otherAccountType
     User.GetUserDetail().then((res) => {
         if (res.data.result == 1) {
             replyUser.value = res.data.user
             claimed.value = res.data.user.is_professional == -1 ? 0 : res.data.user.is_professional == 0 ? 2 : 1
             ConvertUserInfo(res.data.user)
-            if (claimed.value == 1) {// 已认证
+            if (claimed.value == 1 && type == 1) {// 已认证
                 let data = {
                     "entity_type": "works",
                     "params": {
@@ -123,6 +130,7 @@ const getAccountType = () => {
                 }
                 getDocumentList(data)
                 getOpenAlexAuthor()
+                getAuthorNet()
             }
         } else {
             ElNotification({
@@ -151,6 +159,7 @@ const getOpenAlexAuthor = async () => {
     }).then((res) => {
         if (res.data.result == 1) {
             userInfo.value.counts_by_year = res.data.single_data.counts_by_year
+            userInfo.value.open_alex_name = res.data.single_data.display_name
         } else {
             ElNotification({
                 title: "很遗憾",
@@ -170,11 +179,36 @@ const getOpenAlexAuthor = async () => {
 }
 
 const getDocumentList = async (data) => {
-    console.log('获取文献列表')
     User.GetAuthorDocumentListById(data).then((res) => {
         if (res.data.result == 1) {
             pageTotalSize.value = res.data.list_of_data[0].meta.count
             userInfo.value.documentList = res.data.list_of_data[0].results
+        } else {
+            ElNotification({
+                title: "很遗憾",
+                message: res.message,
+                type: "error",
+                duration: 3000
+            })
+        }
+    }).catch((err) => {
+        ElNotification({
+            title: "很遗憾",
+            message: err.message,
+            type: "error",
+            duration: 3000
+        })
+    })
+}
+
+const getAuthorNet = async () => {
+    User.GetAuthorNetById({
+        author_id: replyUser.value.open_alex_id
+    }).then((res) => {
+        if (res.data.result == 1) {
+            authorNet.value = res.data.cooperation_author_list
+            authorTotalSize.value = res.data.cooperation_author_count
+            UpdateCoAuthor(1)
         } else {
             ElNotification({
                 title: "很遗憾",
@@ -208,27 +242,31 @@ const pageChange = async (page) => {
 }
 
 const AbandonPortal = () => {
-    getAccountType()
+    getAccountType(0)
 }
 
-const DocumentChange = async () => {
-    let data = {
-        "entity_type": "works",
-        "params": {
-            "filter": {
-                "author.id": replyUser.value.open_alex_id
-            },
-            "page": page,
-            "per_page": 10
-        }
+
+const coAuthorPageChange = (page) => {
+    // 切割作者列表
+    UpdateCoAuthor(page)
+}
+
+const infoChange = () => {
+    getAccountType(0)
+}
+
+const UpdateCoAuthor = (page) => {
+    coAuthorList.value = []
+    for(let i = 5 * (page - 1) ; i < 5 * page ; i++) {
+        coAuthorList.value.push(authorNet.value[i])
     }
-    getDocumentList(data)
+    // console.log(coAuthorList.value)
 }
 </script>
 <style scoped>
 .personal-wrap {
     width: 100%;
-    height: 95%;
+    height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -239,8 +277,8 @@ const DocumentChange = async () => {
 .avatar_wrap {
     width: 70%;
     min-width: 1280px;
-    margin: 2% 0 1% 0;
-    height: 25%;
+    margin: 0.5% 0 0.5% 0;
+    height: 27%;
 }
 
 .article_data_wrap {
@@ -248,14 +286,17 @@ const DocumentChange = async () => {
     min-width: 1280px;
     height: 72%;
     display: flex;
+    
 }
 
 .article_data_wrap .left {
     width: 68%;
     margin-right: 2%;
+    /* box-shadow: 3px 6px 10px 5px #888888; */
 }
 
 .article_data_wrap .right {
     width: 30%;
+    /* box-shadow: 3px 6px 10px 5px #888888; */
 }
 </style>

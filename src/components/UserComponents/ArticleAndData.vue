@@ -3,11 +3,11 @@
         <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
             <el-tab-pane label="发表文献" name="documents" class="tab-pane">
                 <DocumentListVue :documentList="documentList" v-if="claimed == 1" :pageTotalSize="pageTotalSize"
-                    @pageChange="pageChange" :author_id="author_id" @DocumentChange="DocumentChange" />
+                    @pageChange="pageChange" :author_id="author_id" :personalAccount="personalAccount"/>
                 <div class="empty" v-else>该用户尚未认证</div>
             </el-tab-pane>
             <el-tab-pane label="数据分析" name="dataAnalyse" class="tab-pane">
-                <DataAnalyseVue :tabChange="tabChangeToData" v-if="claimed == 1" :dataCountByYear="dataCountByYear" />
+                <DataAnalyseVue :tabChange="tabChangeToData" v-if="claimed == 1" :authorName="authorName" :dataCountByYear="dataCountByYear" :authorNetWork="authorNetWork"/>
                 <div class="empty" v-else>该用户尚未认证</div>
             </el-tab-pane>
         </el-tabs>
@@ -21,12 +21,14 @@ const emit = defineEmits(["pageChange"])
 const activeName = ref('documents')
 const tabChangeToData = ref(false)
 const props = defineProps({
-    documentList: Object,
-    dataCountByYear: Object,
-    authorNetWork: Object,
-    claimed: Number,
+    documentList: Object, //文献列表
+    dataCountByYear: Object, //数据分析
+    authorNetWork: Array,  // 数据分析
+    claimed: Number, //是否认证
     pageTotalSize: Number, //文献总条数
-    author_id: String,
+    author_id: String, 
+    authorName: String,
+    personalAccount: Number, //是不是自己的账户
 })
 
 const getAccountType = function () {
@@ -44,9 +46,6 @@ const pageChange = (page) => {
     emit("pageChange", page)
 }
 
-const DocumentChange = () => {
-    emit("DocumentChange")
-}
 
 </script>
 <style scoped>
@@ -54,6 +53,7 @@ const DocumentChange = () => {
     width: 100%;
     background-color: white;
     border-radius: 20px;
+    box-shadow: 3px 3px 3px 3px #dedede;
     height: 100%;
 
     display: flex;
@@ -75,7 +75,7 @@ const DocumentChange = () => {
 
 :deep(.demo-tabs .el-tabs__content) {
     width: 100%;
-    height: 100%;
+    height: 96%;
 }
 
 :deep(.demo-tabs .el-tab-pane) {
