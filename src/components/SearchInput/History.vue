@@ -7,7 +7,7 @@
         class="search-history-icon-delete"
         @click="onDeleteAllClick"
       >
-        <use xlink:href="#icon-delete" style="fill: #a1a1aa;"/>
+        <use xlink:href="#icon-delete" fill="#a1a1aa"/>
       </svg>
     </div>
 
@@ -29,7 +29,7 @@
           class="search-history-icon-delete"
           @click.stop="onDeleteClick(index)"
         >
-          <use xlink:href="#icon-input-delete" />
+          <use xlink:href="#icon-clear" />
         </svg>
       </div>
     </div>
