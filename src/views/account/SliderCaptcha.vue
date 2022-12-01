@@ -27,14 +27,15 @@
 <script>
   const EMIT_CLOSE = 'close'
   const EMIT_SUCCESS = 'success'
-</script>
-
-<script setup>
 /**
  * 这两个文件我进行了一些修改，和官方的是不一样的
  */
 import '../../vendor/SliderCaptcha/slidercaptcha.min.css';
 import '../../vendor/SliderCaptcha/longbow.slidercaptcha.min.js';
+</script>
+
+<script setup>
+
 import { Account } from '../../api/account';
 import { onMounted } from 'vue'
 

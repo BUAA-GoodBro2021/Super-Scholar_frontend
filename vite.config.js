@@ -68,6 +68,7 @@ export default defineConfig({
   },
   build:{
     minify: 'terser',
+    sourcemap: true,
     terserOptions:{
       compress:{
         // 生产环境中移除console.log()和debugger
