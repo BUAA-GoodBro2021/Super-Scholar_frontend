@@ -30,8 +30,8 @@
 /**
  * 这两个文件我进行了一些修改，和官方的是不一样的
  */
-import '../../vendor/SliderCaptcha/slidercaptcha.min.css';
-import '../../vendor/SliderCaptcha/longbow.slidercaptcha.min.js';
+import '../../vendor/SliderCaptcha/slidercaptcha.css';
+import '../../vendor/SliderCaptcha/slidercaptcha.js';
 </script>
 
 <script setup>

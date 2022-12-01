@@ -21,9 +21,9 @@ import { createSvgIconsPlugin } from 'vite-plugin-svg-icons';
 // https://vitejs.dev/config/
 export default defineConfig({
 
-  css: {
-    devSourcemap: true,
-  },
+  // css: {
+  //   devSourcemap: true,
+  // },
 
   // 在plugins中配置插件 
   plugins: [
@@ -72,11 +72,11 @@ export default defineConfig({
   },
   build:{
     minify: 'terser',
-    sourcemap: true,
+    // sourcemap: true,
     terserOptions:{
       compress:{
         // 生产环境中移除console.log()和debugger
-        drop_console:true,
+        // drop_console:true,
         drop_debugger:true,
       }
     }
