@@ -1,99 +1,100 @@
-<!--多媒体素材首页 -->
 <template>
-    <div class="video-container">
-        <el-card shadow="hover">
-            <div class="video-header clearfix">
-                <div class="header-top">
-                    <!-- 新建文件夹 需要处理进入到收藏夹内部时候 -->
-                    <el-button type="primary" @click="addConfirm()" v-show="pageOne">
-                        <el-icon>
-                            <Plus />
-                        </el-icon>
-                        {{ '新建收藏夹' }}
-                    </el-button>
-                    <!-- 重命名 -->
-                    <el-button v-show="pageOne && hasSelect" style="margin-left:10px" type="primary"
-                        @click="ChangeNameConfirm()">
-                        <el-icon>
-                            <Edit />
-                        </el-icon>
-                        {{ '重命名' }}
-                    </el-button>
-
-                    <!-- 删除 -->
-                    <el-button v-show="hasSelect" style="margin-left:10px" @click="handleDeleteFile()">
-                        <el-icon>
-                            <Delete />
-                        </el-icon>
-                        {{ '删除' }}
-                    </el-button>
-                    <div class="fr">
-                        <el-input v-model="keyWord" :placeholder="'名称'" style="width:150px;margin-left:10px;" clearable
-                            @clear="resetGetMaterialPage()"></el-input>
-                        <!-- 查询 -->
-                        <el-button type="primary" style="margin-left:2px" @click="queryMaterialPage()">
+    <div class="collection-body">
+        <div class="video-container">
+            <el-card shadow="hover">
+                <div class="video-header clearfix">
+                    <div class="header-top">
+                        <!-- 新建文件夹 需要处理进入到收藏夹内部时候 -->
+                        <el-button type="primary" @click="addConfirm()" v-show="pageOne">
                             <el-icon>
-                                <Search />
-                            </el-icon>{{ '查询' }}
+                                <Plus />
+                            </el-icon>
+                            {{ '新建收藏夹' }}
                         </el-button>
+                        <!-- 重命名 -->
+                        <el-button v-show="pageOne && hasSelect" style="margin-left:10px" type="primary"
+                            @click="ChangeNameConfirm()">
+                            <el-icon>
+                                <Edit />
+                            </el-icon>
+                            {{ '重命名' }}
+                        </el-button>
+
+                        <!-- 删除 -->
+                        <el-button v-show="hasSelect" style="margin-left:10px" @click="handleDeleteFile()">
+                            <el-icon>
+                                <Delete />
+                            </el-icon>
+                            {{ '删除' }}
+                        </el-button>
+                        <div class="fr">
+                            <el-input v-model="keyWord" :placeholder="'名称'" style="width:150px;margin-left:10px;"
+                                clearable @clear="resetGetMaterialPage()"></el-input>
+                            <!-- 查询 -->
+                            <el-button type="primary" style="margin-left:2px" @click="queryMaterialPage()">
+                                <el-icon>
+                                    <Search />
+                                </el-icon>{{ '查询' }}
+                            </el-button>
+                        </div>
+                    </div>
+
+                    <div class="breadcrumb">
+                        <!-- 面包屑 这里只起到展示作用 不可点击 -->
+                        <el-breadcrumb :separator-icon="ArrowRight">
+                            <el-breadcrumb-item v-for="(item, index) in breadcrumbList" :key="index">
+                                <span :class="(index === breadcrumbList.length - 1) ? 'breadcrumb-link-active' : ''"
+                                    class="breadcrumb-link">{{ item }}</span>
+                            </el-breadcrumb-item>
+                        </el-breadcrumb>
                     </div>
                 </div>
 
-                <div class="breadcrumb">
-                    <!-- 面包屑 这里只起到展示作用 不可点击 -->
-                    <el-breadcrumb :separator-icon="ArrowRight">
-                        <el-breadcrumb-item v-for="(item, index) in breadcrumbList" :key="index">
-                            <span :class="(index === breadcrumbList.length - 1) ? 'breadcrumb-link-active' : ''"
-                                class="breadcrumb-link">{{ item }}</span>
-                        </el-breadcrumb-item>
-                    </el-breadcrumb>
-                </div>
-            </div>
-
-            <div v-loading="loading" class="video-main">
-                <ul class="list">
-                    <li v-for="(file, index) in files" :key="index" :class="{ active: file.active }" class="list-item"
-                        @dblclick="dbClickOpenFile(file)">
-                        <div class="inner">
-                            <i class="icon-folder" v-show="file.type == 0"></i>
-                            <div v-show="file.type > 0" class="hover-cover">
-                                <span style="color:#fff;">{{ file.size }}</span>
+                <div v-loading="loading" class="video-main">
+                    <ul class="list">
+                        <li v-for="(file, index) in files" :key="index" :class="{ active: file.active }"
+                            class="list-item" @dblclick="dbClickOpenFile(file)">
+                            <div class="inner">
+                                <i class="icon-folder" v-show="file.type == 0"></i>
+                                <div v-show="file.type > 0" class="hover-cover">
+                                    <span style="color:#fff;">{{ file.size }}</span>
+                                </div>
                             </div>
-                        </div>
-                        <i class="icon-file-selected" @click="SelectItem(file)"></i>
-                        <div class="file-name">
-                            <span :title="file.name">{{ file.name }}</span>
-                        </div>
-                    </li>
-                </ul>
-                <!-- 分页 -->
-                <el-pagination layout="prev, pager, next" :total="total" @current-change="handleCurrentChange()"
-                    v-model:current-page="pageIndex" hide-on-single-page
-                    :page-sizes="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]" />
-            </div>
-        </el-card>
-        <!-- 重命名弹出框 -->
-        <el-dialog v-model="changeDialog">
-            <template #header center>
-                <span class="dialog-title">重命名</span>
-            </template>
-            <el-input v-model="changeName" max="10" show-word-limit></el-input>
-            <div style="display: flex; justify-content: center; ">
-                <el-button @click="handleChangeName()" type="primary">确定</el-button>
-                <el-button @click="changeDialog = false">取消</el-button>
-            </div>
-        </el-dialog>
-        <!-- 新增弹出框 -->
-        <el-dialog v-model="addDialog">
-            <template #header center>
-                <span class="dialog-title">新建收藏夹</span>
-            </template>
-            <el-input v-model="changeName" max="10" show-word-limit></el-input>
-            <div style="display: flex; justify-content: center; ">
-                <el-button @click="addFolder()" type="primary">确定</el-button>
-                <el-button @click="addDialog = false">取消</el-button>
-            </div>
-        </el-dialog>
+                            <i class="icon-file-selected" @click="SelectItem(file)"></i>
+                            <div class="file-name">
+                                <span :title="file.name">{{ file.name }}</span>
+                            </div>
+                        </li>
+                    </ul>
+                    <!-- 分页 -->
+                    <el-pagination layout="prev, pager, next" :total="total" @current-change="handleCurrentChange()"
+                        v-model:current-page="pageIndex" hide-on-single-page
+                        :page-sizes="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]" />
+                </div>
+            </el-card>
+            <!-- 重命名弹出框 -->
+            <el-dialog v-model="changeDialog">
+                <template #header center>
+                    <span class="dialog-title">重命名</span>
+                </template>
+                <el-input v-model="changeName" max="10" show-word-limit></el-input>
+                <div style="display: flex; justify-content: center; ">
+                    <el-button @click="handleChangeName()" type="primary">确定</el-button>
+                    <el-button @click="changeDialog = false">取消</el-button>
+                </div>
+            </el-dialog>
+            <!-- 新增弹出框 -->
+            <el-dialog v-model="addDialog">
+                <template #header center>
+                    <span class="dialog-title">新建收藏夹</span>
+                </template>
+                <el-input v-model="changeName" max="10" show-word-limit></el-input>
+                <div style="display: flex; justify-content: center; ">
+                    <el-button @click="addFolder()" type="primary">确定</el-button>
+                    <el-button @click="addDialog = false">取消</el-button>
+                </div>
+            </el-dialog>
+        </div>
     </div>
 </template>
    
@@ -143,7 +144,7 @@ const files = ref([
 
 // ReStart
 const ChangeNameConfirm = () => {
-    changeName.value =''
+    changeName.value = ''
     changeDialog.value = true
 }
 const handleChangeName = () => {
@@ -184,7 +185,7 @@ const dbClickOpenFile = () => {
 }
 
 const SelectItem = (item) => {
-    
+
     //todo 找到与Vue.set相同的提供激活手段
     // 切换选择文件或文件夹的激活样式
     // this.id = id
@@ -229,6 +230,12 @@ const handleCurrentChange = () => {
 </script>
    
 <style lang="scss" scoped>
+.collection-body{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+}
 .clearfix:after {
     content: '';
     display: block;
