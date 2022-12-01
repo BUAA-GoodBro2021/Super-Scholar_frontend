@@ -1,7 +1,7 @@
 <template>
     <div class="brief_main_wrap">
         <div class="title_profile">
-            <div v-html="paperInfo.display_name"></div>
+            <div v-html="paperInfo.display_name" style="font-size:24px"></div>
             <el-divider></el-divider>
             <div class="authors" v-if="paperInfo.authorships">
                 <el-icon><UserFilled /></el-icon> &nbsp;
