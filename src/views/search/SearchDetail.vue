@@ -58,12 +58,14 @@
                 </div>
               </div>
               <div class="search-result__tabs"></div>
+              <!-- 随着滚动 sticky 在header下方的筛选栏 -->
               <div class="search-result__sort clearfix">
                 <div class="search-result__sort-right">
                   <div class="per-page">per page: </div>
                   <div class="sort-type">Sort Type</div>
                 </div>
               </div>
+              <!-- 搜索结果主体 -->
               <ul class="search-result__list">
                 <!-- 单个搜索结果卡片 -->
                 <li class="result-item">
@@ -127,7 +129,58 @@
                         <p>Conventional convolutional neural networks (CNN) are trained on large domain datasets and are hence typically over-represented and inefficient in limited class applications. An efficient way to convert such large many-class pre-trained networks into ...</p>
                       </div>
                       <!-- 论文底部快捷操作 -->
-                      <div class="card-footer clearfix"></div>
+                      <div class="card-footer clearfix">
+                        <!-- <div class="card-footer-left">
+                          <ul class="rlist--inline">
+                            <li></li>
+                          </ul>
+                        </div> -->
+                        <div class="card-footer-right">
+                          <ul class="rlist--inline" style="float: left;">
+                            <!-- TODO 导出bibtex等引用格式 -->
+                            <li>
+                              <div class="card-tool-btn">
+                                <i class="iconfont icon-quotes" style="font-size: 1.1rem;"></i>
+                                <span class="card-btn-hint">
+                                  <span class="card-btn-hint-arrow"></span>
+                                  Export Citation
+                                </span>
+                              </div>
+                            </li>
+                            <!-- TODO 添加收藏夹的浮窗 -->
+                            <li>
+                              <div class="card-tool-btn">
+                                <i class="iconfont icon-folderplus-fill"></i>
+                                <!-- <i class="iconfont icon-folder-add-fill"></i> -->
+                                <span class="card-btn-hint">
+                                  <span class="card-btn-hint-arrow"></span>
+                                  Add to Favor
+                                </span>
+                              </div>
+                            </li>
+                          </ul>
+                          <ul class="rlist--inline dot-separator" style="float: right;">
+                            <li>
+                              <div class="card-tool-btn">
+                                <i class="iconfont icon-quotes" style="font-size: 1.1rem;"></i>
+                                <span class="card-btn-hint">
+                                  <span class="card-btn-hint-arrow"></span>
+                                  Export Citation
+                                </span>
+                              </div>
+                            </li>
+                            <li>
+                              <div class="card-tool-btn">
+                                <i class="iconfont icon-quotes" style="font-size: 1.1rem;"></i>
+                                <span class="card-btn-hint">
+                                  <span class="card-btn-hint-arrow"></span>
+                                  Export Citation
+                                </span>
+                              </div>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </li>
@@ -147,7 +200,7 @@ import SearchInput from '../../components/SearchInput/Index.vue';
 </script>
 
 <style scoped>
-a {
+a, a:hover, a:focus {
   color: inherit;
   text-decoration: none;
   background-color: transparent;
@@ -527,9 +580,122 @@ img {
 .card-footer {
   height: auto;
 }
+
+.rlist--inline {
+  cursor: default;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.rlist--inline>li {
+  display: inline-block;
+}
+.card-footer-left li:not(:last-child) {
+  /* 6px */
+  padding-right: .375rem;
+}
+.card-footer-left > ul > li {
+  vertical-align: text-top;
+}
+@media (min-width: 533px) {
+  .card-footer-left > ul > li {
+    border-right: .0625rem solid #d9d9d9;
+    margin-right: .4375rem;
+  }
+}
+
+
+.card-footer-right {
+  float: right;
+}
+/**
+这里是因为上面规定了 .rlist--inline li 元素是 display:inline-block;
+vertical-align 用来指定行内元素（inline）或表格单元格（table-cell）元素的垂直对齐方式。
+*/
+.card-footer-right .rlist--inline li {
+  vertical-align: middle;
+  position: relative;
+}
+
+/* #region 单个底部工具按钮+下拉栏 */
+.card-footer-right .rlist--inline li .card-tool-btn:hover {
+  background-color: #d7d7d7;
+  cursor: pointer;
+}
+.card-footer-right .rlist--inline li .card-tool-btn {
+  position: relative;
+  display: inline-block;
+  /* 32px */
+  width: 2rem;
+  height: 2rem;
+  line-height: 1.75rem;
+  padding: 0;
+  margin: 0 3px;
+  font-size: 17px;
+  border-radius: 2px;
+  color: #6b6b6b;
+  background: #f0f0f0;
+
+  display: inline-block;
+  white-space: nowrap;
+  text-align: center;
+  vertical-align: middle;
+}
+.card-footer-right .rlist--inline li .card-tool-btn i{
+  vertical-align: middle;
+  padding-right: 0;
+}
+
+.card-footer-right .rlist--inline li:hover .card-tool-btn .card-btn-hint{
+  display: inline-block;
+}
+.card-footer-right .rlist--inline li .card-tool-btn .card-btn-hint{
+  display: none;
+  position: absolute;
+  top: calc(2rem + 0.8rem);
+  left: 50%;
+  transform: translate(-50%, 0);
+  background: #6b6b6b;
+  padding: 10px 15px;
+  color: #fff;
+  border-radius: 3px;
+  font-size: 14px;
+  line-height: 20px;
+  z-index: 9020;
+  max-width: 300px;
+}
+/* 
+经典的利用 宽度高度为0，边框宽度不为0，形成三角形
+*/
+.card-footer-right .rlist--inline li:hover .card-tool-btn .card-btn-hint .card-btn-hint-arrow{
+  display: inline-block;
+}
+.card-footer-right .rlist--inline li .card-tool-btn .card-btn-hint .card-btn-hint-arrow{
+  display: none;
+  width: 0;
+  height: 0;
+  border: .625rem solid #6b6b6b;
+  transform: rotate(45deg);
+  position: absolute;
+  top: -.1875rem;
+  left: calc(50% - .625rem);
+  z-index: -1;
+}
+/* #endregion 单个底部工具按钮+下拉栏 结束 */
+
+.dot-separator::before {
+  color: #6b6b6b;
+  content: "•";
+  padding-right: 5px;
+  padding-left: 5px;
+  font-weight: 600;
+  font-size: 19px;
+  vertical-align: middle;
+}
+
 /* #endregion 搜索结果区域结束 */
 
-  /* #region 响应式布局 */
+/* #region 响应式布局 */
 @media screen and (max-height: 75rem) {
   .filter-block-title {
     max-width: 9.375rem;
