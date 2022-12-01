@@ -76,7 +76,7 @@ const router = createRouter({
         {
           path: 'collection',
           name: 'Collection',
-          component: ()=>import('../views/User/CollectFile.vue'),
+          component: ()=>import('../views/User/Collection.vue'),
         },
         {
           path: 'paper/:paperid',
