@@ -124,6 +124,18 @@
     block.className = 'slider-captcha-block';
     sliderText.innerHTML = this.options.barText;
     var el = this.$element;
+    /**
+     * DEBUG 2022.12.2
+     * 这里由于服务器端貌似产生了一些问题，导致 el 元素内部出现了两批
+     * “canvas，reshIcon，block，sliderContainer”
+     * 但是本地测试完全没问题
+     * 感觉可能是 teleport 在不同的环境里导致的
+     */
+    var child = el.lastElementChild;
+    while (child) {
+      el.removeChild(child);
+      child = el.lastElementChild;
+    }
     el.appendChild(canvas);
     el.appendChild(reshIcon);
     el.appendChild(block);
