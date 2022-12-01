@@ -18,7 +18,7 @@
         class="search-history-bubble"
         @click="onHistoryBubbleClick(item)"
       >
-        <span>{{item}}</span>
+        <span class="search-history-context">{{item}}</span>
         <!--
           @IMPORTANT 
           这里的阻止冒泡非常关键，因为外层 div （v-for）也是靠点击触发
@@ -111,9 +111,21 @@ const onHistoryBubbleClick = (item) => {
   line-height: 18px;
   font-weight: 700;
   transition-duration: 300ms;
+
+  
 }
 .search-history-bubble:hover {
   background-color: rgb(228 228 231);
+}
+.search-history-bubble .search-history-context {
+  /* max-width: 90%; */
+  /* FIXME 下面四行一起用可以实现多行溢出文本用省略号 "..." 代替，保证不超过一行 */
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  /* text-overflow: ellipsis; */
+  /* white-space: nowrap; */
 }
 
 .search-history-icon-delete {

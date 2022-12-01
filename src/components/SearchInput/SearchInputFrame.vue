@@ -8,12 +8,27 @@
     class="group search-container"
   >
     <div>
-      <!-- 搜索图标，垂直居中，左偏移为 20px -->
-      <svg aria-hidden="true" class="search-icon">
-        <use xlink:href="#icon-search" fill="#707070" />
-      </svg>
       <!-- 
-        输入框（回车触发搜索）
+        搜索模式切换
+       -->
+      <select 
+        ref="selectTarget"
+        @change="handleSelectSearchType"
+        class="group search-type-select"
+      >
+        <option value="works">论文</option>
+        <option value="authors">作者</option>
+        <option value="venues">期刊会议</option>
+        <option value="institutions">机构</option>
+        <option value="concepts">领域</option>
+      </select>
+      <!-- TODO: 可以来个左侧分割线，但不太必要 -->
+      <!-- <div
+        class="group search-divider-left"
+      ></div> -->
+      <!-- 
+        输入框（回车/点击按钮触发搜索）
+        取消了 maxlength="20"，改用padding掩盖
        -->
       <input class="group search-input"
         type="text" 
@@ -22,7 +37,6 @@
         @focus="onFocusHandler"
         @blur="onBlurHandler"
         @keyup.enter="onSearchHandler"
-        maxlength="20"
       />
       <!-- 
         删除按钮，垂直居中，右偏移为 90px
@@ -31,37 +45,27 @@
       <svg 
         v-show="inputSearchValue"
         aria-hidden="true" 
-        class="search-icon-cleartext"
+        class="clear-text-icon"
         @click="onClearClick"
       >
         <use xlink:href="#icon-input-delete" />
       </svg>
-      
-      <!-- TODO 搜索模式 -->
-      <!-- <select 
-        ref="selectTarget"
-        @change="handleSelect"
-        style="
-          position: absolute; 
-          top: 50%; 
-          transform: translate(0, -50%); 
-          right: 80px; 
-          height: 70%; 
-          outline: none;
-          font-size: 0.35rem/* 5.6px */;
-          line-height: 0.45rem/* 7.2px */;
-        "
-      >
-        <option value="1">论文标题</option>
-        <option value="2">作者</option>
-        <option value="3">期刊</option>
-        <option value="4">机构</option>
-      </select> -->
       <!-- 分割线 -->
       <div
         class="group search-divider"
       ></div>
       <!-- 搜索按钮，点击按钮触发搜索 -->
+      <!-- 搜索图标，垂直居中，右偏移为 20px -->
+      <button
+        class="search-btn"
+      >
+        <svg aria-hidden="true" class="search-btn-icon">
+          <use xlink:href="#icon-search" fill="#707070" />
+        </svg>
+      </button>
+      <!-- <svg aria-hidden="true" class="search-icon">
+        <use xlink:href="#icon-search" fill="#707070" />
+      </svg> -->
       <!-- <m-button 
         class="search-btn"
         icon="search" 
@@ -108,17 +112,24 @@ const EMIT_BLUR = 'blur'
 
 <script setup>
 import { onMounted, ref, watch } from 'vue';
-import { useVModel, onClickOutside } from '@vueuse/core'
+import { useVModel, onClickOutside } from '@vueuse/core';
+import { useSearchStore } from '../../stores/search.js';
 
 const selectTarget = ref(null);
-// onMounted(()=>{
-//   console.log(selectTarget.value);
-//   console.log(selectTarget.value.options);
-// })
-const handleSelect = () => {
+const searchStore = useSearchStore();
+onMounted(()=>{
   console.log(selectTarget.value);
   console.log(selectTarget.value.options);
-  console.log(selectTarget.value.options[selectTarget.value.options.selectedIndex].value);
+})
+const handleSelectSearchType = () => {
+  // console.log(selectTarget.value);
+  // console.log(selectTarget.value.options);
+  // console.log(selectTarget.value.options[selectTarget.value.options.selectedIndex].value);
+  const options = selectTarget.value.options;
+  console.log(options[options.selectedIndex].value);
+  searchStore.setSearchType(
+    options[options.selectedIndex].value
+  );
 }
 // selectTarget.value.options[selectTarget.value.selectIndex].value;
 
@@ -229,15 +240,24 @@ onClickOutside(searchContainerTarget, () => {
   border-color: rgb(228 228 231);
 }
 
-.search-icon {
-  width: 15px;
-  height: 15px;
-  position: absolute;
-  top: 50%;
-  left: 20px;
+.search-type-select {
+  position: absolute; 
+  top: 50%; 
+  left: 14px; 
   transform: translate(0, -50%);
+  width: 5rem;
+  height: 60%; 
+  outline: none;
+  border: none;
+  border-radius: 16px 0 0 16px;
+  font-size: 14px;
+  line-height: 18px;
+  background-color: rgb(244 244 245);
+  transition-duration: 500ms;
 }
-
+.group:hover .search-type-select {
+  background-color: white;
+}
 
 /* caret-color : 改变输入框光标颜色，同时又不改变输入框里面的内容的颜色
   https://blog.csdn.net/u014490083/article/details/82469126  */
@@ -251,7 +271,9 @@ input {
   display: block;
   width: 100%;
   height: 44px;
-  padding-left: 40px;
+  /* padding-left: 40px; */
+  padding-left: 100px;
+  padding-right: 100px;
   
   font-size: 14px;
   line-height: 18px;
@@ -288,7 +310,7 @@ input {
   border-color: rgb(63 63 70);
 }
 
-.search-icon-cleartext{
+.clear-text-icon{
   width: 15px;
   height: 15px;
   position: absolute;
@@ -316,19 +338,56 @@ input {
   opacity: 1;
 }
 
+.search-icon {
+  width: 15px;
+  height: 15px;
+  position: absolute;
+  top: 50%;
+  /* left: 20px; */
+  right: 20px;
+  transform: translate(0, -50%);
+}
+
+
+/* #region 搜索按钮和搜索按钮的图标 */
 .search-btn {
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  box-sizing: border-box;
+  background-color: rgb(244 244 245);
+
   position: absolute;
   top: 50%;
   right: 10px;
-  border-radius: 9999px;
+  border-radius: 0 9999px 9999px 0;
   transform: translate(0, -50%);
-  opacity: 0;
+  /* opacity: 0; */
   transition-duration: 500ms;
+
+  font-size: 14px;
+  line-height: 18px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .group:hover .search-btn {
-  opacity: 1;
+  background-color: white;
 }
-
+.search-btn-icon {
+  margin: auto;
+  width: 15px;
+  height: 15px;
+  transition: 150ms;
+}
+.search-btn:hover .search-btn-icon {
+  transform: scale(1.2, 1.2);
+}
+/* #endregion 搜索按钮和搜索按钮的图标结束 */
 
 .search-dropdown {
   width: 100%;
@@ -343,7 +402,7 @@ input {
   position: absolute;
   left: 0px;
   top: 56px;
-  z-index: 20;
+  z-index: 2000;
 
   transition-duration: 200ms;
   --tw-ring-offset-shadow: 0 0 #0000;

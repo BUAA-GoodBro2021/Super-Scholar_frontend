@@ -65,6 +65,7 @@
                 </div>
               </div>
               <ul class="search-result__list">
+                <!-- 单个搜索结果卡片 -->
                 <li class="result-item">
                   <div class="result-item-checkbox-container"></div>
                   <div class="result-item-card clearfix">
@@ -379,12 +380,12 @@ a {
     position: sticky;
     background: white;
     /* transition: top .5s; */
-    z-index: 555555;
+    z-index: 555;
     /* top: 7.75rem; */
     top: 0;
     left: 0;
     /* 这里改为我们的header高度 */
-    /* top: 64px;  */
+    top: 64px; 
     margin: .625rem 0;
   }
   .search-result__sort-right {

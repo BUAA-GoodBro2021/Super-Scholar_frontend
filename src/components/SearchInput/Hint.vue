@@ -18,8 +18,8 @@
 <script setup>
 import { ref } from 'vue';
 import { watchDebounced } from '@vueuse/core';
-// TODO 这里要更改请求
-// import { getSearchHint } from '@/api/img';
+import { Search } from '../../api/search';
+import { useSearchStore } from '../../stores/search.js';
 
 const props = defineProps({
   // 搜索文本
@@ -30,16 +30,29 @@ const props = defineProps({
 });
 const emits = defineEmits([EMIT_HINT_ITEM_CLICK]);
 
+const searchStore = useSearchStore();
 /**
  * 梳理搜索提示数据获取
  */
 const hintData = ref([]);
 const getHintData = async () => {
   if (!props.searchText) return;
-  const { result } = await getSearchHint({
-    q: props.searchText,
+
+  const res = await Search.getAssociateContent({
+    "entity_type": searchStore.searchType,
+    "params": {
+        "q": props.searchText
+    }
   });
-  hintData.value = result;
+  // console.log(res.data);
+  if (res.data.result === 1) {
+    hintData.value = [];
+    const hintLength = res.data.associate_content.results.length;
+    for (let i = 0; i < hintLength; i++) {
+      hintData.value.push(res.data.associate_content.results[i].display_name);
+    }
+    // console.log(hintData.value);
+  }
 }
 
 /**
@@ -62,13 +75,18 @@ watchDebounced(
  */
 const highlightText = (text) => {
   // 生成高亮标签
-  const highlightStr = `<span class="text-zinc-900 dark:text-zinc-200">${props.searchText}</span>`
+  const highlightStr = `<span style="color: rgb(24 24 27);">${props.searchText}</span>`
   // 构建正则表达式
   const regModelStr = escapeRegExp(props.searchText);
   const reg = new RegExp(regModelStr, 'gi');
   // const reg = new RegExp(props.searchText, 'gi');
   // 从《显示文本中》找出与《用户输入文本相同的内容》，使用《高亮标签》进行替换
-  return text.replace(reg, highlightStr);
+  return `<span style="
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;"
+    >${text.replace(reg, highlightStr)}</span>`;
 }
 /**
  * @VERY_IMPORTANT 处理用户输入，修复bug
@@ -95,17 +113,24 @@ const onHintItemClick = (item) => {
 
 <style scoped>
 .hint-text-container {
-  padding: 0.25rem/* 4px */;
+  padding: 10px;
   padding-right: 0;
 
-  font-size: 0.42rem/* 6.72px */;
-  line-height: 0.52rem/* 8.32px */;
+  font-size: 16.8px;
+  line-height: 20.8px;
   font-weight: 700;
-  color: rgb(113 113 122);
+  /* color: rgb(113 113 122); */
+  color: rgb(153, 153, 156);
 
-  border-radius: 0.25rem;
+  border-radius: 10px;
   cursor: pointer;
   transition-duration: 300ms;
+
+  /* FIXME 下面四行一起用可以实现多行溢出文本用省略号 "..." 代替，保证不超过一行 */
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
 }
 .hint-text-container:hover {
   background-color: rgb(228 228 231);
@@ -113,4 +138,12 @@ const onHintItemClick = (item) => {
 .dark .hint-text-container:hover {
   background-color: rgb(24 24 27);
 }
+
+/* 好像用class的方式不太行 */
+/* .hint-text-highlight {
+  color: rgb(24 24 27);
+}
+.dark .hint-text-highlight {
+  color: rgb(228 228 231);
+} */
 </style>

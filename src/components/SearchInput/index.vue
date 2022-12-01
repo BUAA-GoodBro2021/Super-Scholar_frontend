@@ -8,19 +8,19 @@
       @search="handleSearch"
     >
       <!-- 下拉栏，命名组件的简写形式 <template v-slot:dropdown> -->
-        <!-- 搜索提示，点击某个搜索提示也会触发搜索 -->
-        <!-- 
-          最近搜索，和搜索提示交替出现
-          点击历史记录气泡默认触发搜索+将历史记录放到数组最开始
-          点击搜索的叉号则会删除单条记录 
-         -->
       <template #dropdown>
         <div>
-          <!-- <Hint 
+          <!-- 搜索提示，点击某个搜索提示也会触发搜索 -->
+          <Hint 
             v-show="inputSearchValue"
             :search-text="inputSearchValue"
             @hint-item-click="handleSearch"
-          /> -->
+            />
+          <!-- 
+            最近搜索，和搜索提示交替出现
+            点击历史记录气泡默认触发搜索+将历史记录放到数组最开始
+            点击搜索的叉号则会删除单条记录 
+            -->
           <History
             v-show="!inputSearchValue"
             @history-bubble-click="handleSearch"         
@@ -48,6 +48,10 @@ const searchStore = useSearchStore();
  * 这也是需要把 搜索框文本 存储在 vuex/pinia state的原因，当然，它需要持久化存储
  */
 const handleSearch = (val) => {
+  // 去掉可能的斜体标签
+  val = val.replace(/<\/?i>/ig, "");
+  
+  console.log(val);
   inputSearchValue.value = val;
   if( val ) {
     searchStore.addHistory(val);
