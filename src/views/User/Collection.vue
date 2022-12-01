@@ -85,6 +85,8 @@
                             :page-sizes="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]" />
                     </div> -->
                 </div>
+                {{hasSelect}}
+                {{selects}}
             </el-card>
             <!-- 重命名弹出框 -->
             <el-dialog v-model="changeDialog">
@@ -317,8 +319,9 @@ const deleteFile = () => {
         selects.value.forEach((el) => {
             packages.push(el.id)
         })
+        // console.log(JOSN.stringfy(packages))
         Collection.DeleteCollection({
-            package_id: packages
+            package_id_list: packages
         }).then((res) => {
             if (res.data.result == 1) {
                 getCollectionList()
@@ -392,7 +395,7 @@ const SelectItem = (item) => {
             if (selects.value[i].id == item.id) {
                 selects.value.splice(i, 1)
                 item.active = false
-                if (selects.length == 0) hasSelect.value = false
+                if (selects.value.length == 0) hasSelect.value = false
                 return
             }
         }
