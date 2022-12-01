@@ -195,7 +195,7 @@
 </template>
 
 <script setup>
-import SearchInput from '../../components/SearchInput/Index.vue';
+// import SearchInput from '../../components/SearchInput/Index.vue';
 
 </script>
 
