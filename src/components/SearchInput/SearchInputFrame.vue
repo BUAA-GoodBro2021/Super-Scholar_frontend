@@ -48,7 +48,7 @@
         class="clear-text-icon"
         @click="onClearClick"
       >
-        <use xlink:href="#icon-input-delete" />
+        <use xlink:href="#icon-clear" />
       </svg>
       <!-- 分割线 -->
       <div
@@ -63,15 +63,6 @@
           <use xlink:href="#icon-search" fill="#707070" />
         </svg>
       </button>
-      <!-- <svg aria-hidden="true" class="search-icon">
-        <use xlink:href="#icon-search" fill="#707070" />
-      </svg> -->
-      <!-- <m-button 
-        class="search-btn"
-        icon="search" 
-        iconColor="#ffffff"
-        @click="onSearchHandler"
-      ></m-button> -->
     </div>
     <!-- 
       搜索框下拉栏
