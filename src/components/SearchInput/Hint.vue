@@ -16,7 +16,7 @@
 </script>
 
 <script setup>
-import { ref } from 'vue';
+// import { ref } from 'vue';
 import { watchDebounced } from '@vueuse/core';
 import { Search } from '../../api/search';
 import { useSearchStore } from '../../stores/search.js';

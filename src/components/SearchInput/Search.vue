@@ -32,7 +32,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+// import { ref } from 'vue';
 import { useSearchStore } from '../../stores/search.js';
 import Hint from './Hint.vue';
 import History from './History.vue';
