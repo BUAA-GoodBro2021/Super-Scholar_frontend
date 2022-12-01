@@ -74,6 +74,11 @@ const router = createRouter({
           component: ()=>import('../views/User/ClaimPortal.vue'),
         },
         {
+          path: 'collection',
+          name: 'Collection',
+          component: ()=>import('../views/User/CollectFile.vue'),
+        },
+        {
           path: 'paper/:paperid',
           name: 'PaperDetail',
           component: ()=>import('../views/paper/PaperDetail.vue'),

@@ -117,6 +117,13 @@ const getFollowList = async () => {
     User.GetFollowList({}).then((res) => {
         if (res.data.result == 1) {
             // todo 根据关注列表确定follow字段
+            userInfo.value.is_follow = false 
+            res.data.follow_id_list.forEach(element => {
+                if(element == openAlexId) userInfo.value.is_follow = true
+                console.log(element, openAlexId)
+            });
+            // if(res.data.follow_id_list.array.indexOf(openAlexId) != -1) userInfo.value.is_follow = false 
+            // else userInfo.value.is_follow = true
         } else {
             ElNotification({
                 title: "很遗憾",

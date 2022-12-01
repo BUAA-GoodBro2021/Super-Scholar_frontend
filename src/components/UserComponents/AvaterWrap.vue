@@ -349,6 +349,10 @@ const cancelFollow = async () => {
 
 }
 
+watch(() => props.userInfo.is_follow, (newVal) => {
+    is_follow.value = newVal
+})
+
 </script>
 <style>
 /* 整体的height和width由外层调整 */
