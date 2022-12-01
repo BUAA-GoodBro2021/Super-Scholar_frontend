@@ -76,7 +76,7 @@ export default defineConfig({
     terserOptions:{
       compress:{
         // 生产环境中移除console.log()和debugger
-        // drop_console:true,
+        drop_console:true,
         drop_debugger:true,
       }
     }
