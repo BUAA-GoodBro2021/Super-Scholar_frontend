@@ -71,6 +71,12 @@
                         </ul>
                     </div>
                     <div v-loading="loading" class="video-main" v-show="!pageOne">
+                        <!-- <div class="list-item-work">
+                            <div class="inner">
+                                <span>复用组件放在这里 仿照list-item给list-item-work加上行为</span>
+                            </div>
+                            <i class="icon-file-selected" @click="SelectItem(file)"></i>
+                        </div> -->
                         <span>ListHere</span>
                     </div>
                     <!-- <div class="pagination-wrap">
@@ -349,12 +355,12 @@ const resetItems = () => {
 // 搜索指定的目标
 const searchItems = () => {
     // 搜索之前重置被选中的选项
-    if(keyWord.value == '') return
+    if (keyWord.value == '') return
     resetSelect()
-    if(pageOne) {
+    if (pageOne) {
         filterFiles.value = []
         files.value.forEach((el) => {
-            if(el.name.includes(keyWord.value)) filterFiles.value.push(el)
+            if (el.name.includes(keyWord.value)) filterFiles.value.push(el)
         })
     }
 }
@@ -370,7 +376,7 @@ const dbClickOpenFile = (item) => {
 
 // 返回到收藏夹列表
 const backToRoot = (type) => {
-    if(type) {
+    if (type) {
         breadcrumbList.value.splice(1, 1)
         pageOne.value = true
         resetSelect()
@@ -499,6 +505,7 @@ const SelectItem = (item) => {
     height: 0;
 }
 
+/* 每一个文件夹的框 */
 .video-container .video-main .list-item {
     border: 1px solid #fff;
     box-sizing: border-box;
@@ -510,12 +517,14 @@ const SelectItem = (item) => {
     cursor: pointer;
 }
 
+/* 每一个文件夹名字上方的部分 */
 .video-container .video-main .list-item .inner {
     height: 60px;
     width: 60px;
     margin: 5px 10px;
 }
 
+/* 文件夹图标 */
 .video-container .video-main .list-item .inner .icon-folder {
     display: inline-block;
     width: 60px;
