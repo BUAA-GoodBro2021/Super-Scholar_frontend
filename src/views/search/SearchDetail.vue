@@ -4,7 +4,7 @@
     <!-- 上部分，用户放置搜索框 -->
     <div class="search-area">
       <div class="search-area-handler">
-        <SearchInput class="search-input"/>
+        <!-- <SearchInput class="search-input"/> -->
       </div>
     </div>
     <!-- 主体部分，左侧用于放置搜索筛选，右侧用于存放搜索结果 -->
