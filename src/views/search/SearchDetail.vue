@@ -197,8 +197,6 @@
 <script setup>
 import SearchInput from '../../components/SearchInput/Index.vue';
 
-
-
 </script>
 
 <style scoped>
