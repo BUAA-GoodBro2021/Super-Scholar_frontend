@@ -78,6 +78,11 @@ const router = createRouter({
           path: '/message-list',
           name: 'MessageList',
           component: ()=>import('../views/message/index.vue'),
+        },
+        {
+          path: '/institution/:institutionid',
+          name: 'InstitutionDetail',
+          component: ()=>import('../views/institution/InstitutionDetail.vue'),
         }
       ],
     },
