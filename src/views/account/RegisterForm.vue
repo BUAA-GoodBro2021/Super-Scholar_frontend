@@ -75,8 +75,8 @@ const validatePassword = (rule,value,callback)=>{
 	let reg = /^[a-zA-Z0-9@\$\^\.\_\*\\?]{6,15}$/
 	if(!value.length){
 		callback(new Error("请输入密码"))
-	}else if(value.length<6){
-		callback(new Error("密码长度不得小于6位"))
+	}else if(value.length<8||value.length>16){
+		callback(new Error("密码长度应为8-16位"))
 	}else if(!reg.test(value)){
 		callback(new Error("密码应包含数字和字母"))
 	}else{
