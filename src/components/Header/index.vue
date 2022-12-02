@@ -1,7 +1,7 @@
 <template>
     <div class="header">
         <el-row :gutter="20">
-            <el-col :span="6" class="left">
+            <el-col :span="14" class="left">
                 <img src="/icon.png" class="logo" />
                 <router-link to="/" class="link">
                     <span>高级检索</span>
@@ -67,6 +67,18 @@ onMounted(()=>{
 }
 
 .avatar {
+    position: absolute;
     margin-top: 10px;
+    margin-right: 20px;
+    right: 180px;
+}
+
+.langswitch{
+    position: absolute;
+    right: 20px;
+}
+.fullscreenswitch{
+    position: absolute;
+    right: 80px;
 }
 </style>

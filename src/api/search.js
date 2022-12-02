@@ -9,13 +9,9 @@ export class Search{
     // 本次的body默认使用JSON而不是FormData
     static async single(data) {
         return service(url.single, {
-          // 方法，默认为 get
-          method: "post",
-          // 返回值类型，默认为json
-          responseType: "json",
-          // 这里是 data: data的简写
-          data,
-        });
+            method: "post",
+            data,
+          });
     }
     // 获取搜索数据列表
     static async getSearchDataList(data) {
