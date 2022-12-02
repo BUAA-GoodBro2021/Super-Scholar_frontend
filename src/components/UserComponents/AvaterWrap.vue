@@ -159,7 +159,7 @@ import {
     Edit,
     HomeFilled,
 } from '@element-plus/icons-vue'
-import { nextTick } from 'vue-demi'
+import { nextTick } from 'vue'
 import { ClaimPortal } from '../../api/claimPortal'
 import { defineEmits } from 'vue';
 import { User } from "../../api/userDetail"

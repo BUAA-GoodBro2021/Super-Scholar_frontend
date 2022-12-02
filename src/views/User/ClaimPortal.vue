@@ -121,7 +121,7 @@ import {
     SuccessFilled,
     Loading
 } from '@element-plus/icons-vue'
-import { reactive } from "vue-demi";
+import { reactive } from "vue";
 const globalStore = useGlobalStore();
 const stepIndex = ref(0)
 

@@ -30,8 +30,8 @@
 <script setup>
 import { refWithControl } from '@vueuse/shared';
 import * as echarts from 'echarts'
-import { watch } from 'vue-demi';
-// import { nextTick, reactive, readonly } from "vue-demi"
+import { watch } from 'vue';
+// import { nextTick, reactive, readonly } from "vue"
 
 const props = defineProps({
     dataCountByYear: Object,
