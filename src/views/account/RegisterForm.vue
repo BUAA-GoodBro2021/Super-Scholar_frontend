@@ -72,7 +72,7 @@ const validateEmail = (rule,value,callback)=>{
 	}
 }
 const validatePassword = (rule,value,callback)=>{
-	let reg = /^[a-zA-Z0-9@\$\^\.\*\\?]{6,15}$/
+	let reg = /^[a-zA-Z0-9@\$\^\.\_\*\\?]{6,15}$/
 	if(!value.length){
 		callback(new Error("请输入密码"))
 	}else if(value.length<6){
@@ -93,12 +93,6 @@ const validatePassword2 = (rule,value,callback)=>{
 	}
 }
 
-const submit = (formRef)=>{
-	console.log(formRef);
-	formRef.validate((valid)=>{
-		if(valid) isSliderCaptchaShow.value = true
-	})
-}
 const registerRules = ref({
 	username: [{validator:validateName, trigger: "blur" }],
 	password1: [{validator:validatePassword, trigger: "blur" }],
@@ -111,15 +105,21 @@ const registerForm = ref({
 	password2:"",
     email:"",
 })
+const login = ()=>{
+	router.push({name:"Login"})
+}
+// 提交前进行表单验权
+const submit = (formRef)=>{
+	formRef.validate((valid)=>{
+		if(valid) isSliderCaptchaShow.value = true
+	})
+}
 // 控制人类行为验证窗口显示
 const isSliderCaptchaShow = ref(false);
 // 人类行为验证通过事件
 const onSliderCaptchaSuccess = () => {
 	isSliderCaptchaShow.value = false;
 	register();
-}
-const login = ()=>{
-	router.push({name:"Login"})
 }
 const register = ()=>{
 	Account.register(registerForm.value).then((res)=>{
@@ -139,7 +139,6 @@ const register = ()=>{
 				type: "error",
 				duration: 3000
 			})
-			registerFormRef.value.resetFields();
 		}
 	}).catch((err)=>{
 		console.log("Error",err);
@@ -149,12 +148,7 @@ const register = ()=>{
 				type: "error",
 				duration: 3000
 		})
-		resetForm();
 	})
-}
-const resetForm = (formEl)=>{
-    if(!formEl) return;
-    formEl.resetFields();
 }
 onMounted(() => {
 	// 监听enter事件

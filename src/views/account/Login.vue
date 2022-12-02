@@ -10,7 +10,9 @@
 				</div>
 				<router-view v-slot="{route,Component}">
 					<transition name="fade" mode="out-in">
-						<component :is="Component"></component>
+						<keep-alive>
+							<component :is="Component"></component>
+						</keep-alive>
 					</transition>
 				</router-view>
 			</div>
@@ -118,7 +120,5 @@
 				}
 			}
 		}
-
 	}
-
 </style>

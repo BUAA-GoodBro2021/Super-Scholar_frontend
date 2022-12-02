@@ -65,7 +65,6 @@ const loginForm = ref({
     username:"",
     password:""
 })
-const loading = ref(false);
 // 控制人类行为验证窗口显示
 const isSliderCaptchaShow = ref(false);
 // 人类行为验证通过事件
@@ -73,6 +72,7 @@ const onSliderCaptchaSuccess = () => {
 	isSliderCaptchaShow.value = false;
 	login();
 }
+// 禁用登录按钮
 const disabled = computed(()=>{
 	return !(loginForm.value.username.length && loginForm.value.password.length);
 })
@@ -97,7 +97,6 @@ const login = ()=>{
 				type: "error",
 				duration: 3000
 			})
-			loginFormRef.value.resetFields();
 		}
 	}).catch((err)=>{
 		ElNotification({
@@ -108,9 +107,11 @@ const login = ()=>{
 			})
 	})
 }
-const resetForm = (formEl)=>{
-    if(!formEl) return;
-    formEl.resetFields();
+// 提交前进行表单验权
+const submit = (formRef)=>{
+	formRef.validate((valid)=>{
+		if(valid) isSliderCaptchaShow.value = true
+	})
 }
 const register = ()=>{
 	router.push({name:"Register"});
@@ -120,9 +121,7 @@ onMounted(() => {
 	document.onkeydown = (e) => {
 		e = window.event || e;
 		if (e.code === "Enter" || e.code === "enter" || e.code === "NumpadEnter") {
-			loginFormRef.validate((valid)=>{
-				if(valid) isSliderCaptchaShow.value = true;
-			})
+			submit(loginFormRef);
 		}
 	};
 });
