@@ -10,7 +10,9 @@
 				</div>
 				<router-view v-slot="{route,Component}">
 					<transition name="fade" mode="out-in">
-						<component :is="Component"></component>
+						<keep-alive>
+							<component :is="Component"></component>
+						</keep-alive>
 					</transition>
 				</router-view>
 			</div>
@@ -71,7 +73,11 @@
 			width: 420px;
 			padding: 50px 40px 45px;
 			border-radius: 10px;
-			box-shadow: 2px 3px 7px rgb(0 0 0 / 20%);
+			box-shadow: 0 0.7px 1.7px rgba(0, 0, 0, 0.248);
+			backdrop-filter: blur(6px);
+			&:hover {
+				box-shadow: 2px 3px 7px rgb(0 0 0 / 20%);
+			}
 			.login-logo {
 				display: flex;
 				align-items: center;
@@ -115,5 +121,4 @@
 			}
 		}
 	}
-
 </style>

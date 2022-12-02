@@ -17,10 +17,10 @@
 			</el-form-item>
 		</el-form>
 		<div class="login-btn">
-			<el-button :icon="UserFilled" round @click="isSliderCaptchaShow = true" size="large" type="primary" :loading="loading">
+			<el-button :icon="CirclePlus" round @click="register()" size="large">注册</el-button>
+			<el-button :icon="UserFilled" round @click="isSliderCaptchaShow = true" size="large" type="primary" :disabled="disabled">
 				登录
 			</el-button>
-			<el-button :icon="CirclePlus" round @click="register()" size="large">注册</el-button>
 		</div>
 		<!-- 该组件是要直接插入到 整个页面的 body中的，所以要利用 vue3 新组件 teleport -->
 		<teleport to="body">
@@ -34,7 +34,7 @@
 </template>
 <script setup>
 import SliderCaptcha from "./SliderCaptcha.vue";
-import { CircleClose, UserFilled } from "@element-plus/icons-vue";
+import { CirclePlus, UserFilled } from "@element-plus/icons-vue";
 import { ElNotification } from "element-plus";
 import {useGlobalStore} from "../../stores/global.js";
 import { Account } from "../../api/account";
@@ -43,15 +43,28 @@ import i18n from "../../language/index"
 const globalStore = useGlobalStore();
 const router = useRouter();
 const loginFormRef = ref();
+const validateName = (rule,value,callback)=>{
+	if(!value.length){
+		callback(new Error("请输入用户名"))
+	}else{
+		callback();
+	}
+}
+const validatePassword = (rule,value,callback)=>{
+	if(!value.length){
+		callback(new Error("请输入密码"))
+	}else{
+		callback();
+	}
+}
 const loginRules = ref({
-	username: [{ required: true, message: "请输入用户名", trigger: "blur" }],
-	password: [{ required: true, message: "请输入密码", trigger: "blur" }]
+	username: [{validator:validateName, trigger: "blur" }],
+	password: [{validator:validatePassword, trigger: "blur" }]
 });
 const loginForm = ref({
     username:"",
     password:""
 })
-const loading = ref(false);
 // 控制人类行为验证窗口显示
 const isSliderCaptchaShow = ref(false);
 // 人类行为验证通过事件
@@ -59,7 +72,10 @@ const onSliderCaptchaSuccess = () => {
 	isSliderCaptchaShow.value = false;
 	login();
 }
-
+// 禁用登录按钮
+const disabled = computed(()=>{
+	return !(loginForm.value.username.length && loginForm.value.password.length);
+})
 const login = ()=>{
 	Account.login(loginForm.value).then((res)=>{
 		if(res.data.result===1){
@@ -81,7 +97,6 @@ const login = ()=>{
 				type: "error",
 				duration: 3000
 			})
-			loginFormRef.value.resetFields();
 		}
 	}).catch((err)=>{
 		ElNotification({
@@ -92,12 +107,13 @@ const login = ()=>{
 			})
 	})
 }
-const resetForm = (formEl)=>{
-    if(!formEl) return;
-    formEl.resetFields();
+// 提交前进行表单验权
+const submit = (formRef)=>{
+	formRef.validate((valid)=>{
+		if(valid) isSliderCaptchaShow.value = true
+	})
 }
 const register = ()=>{
-	console.log("register")
 	router.push({name:"Register"});
 }
 onMounted(() => {
@@ -105,7 +121,7 @@ onMounted(() => {
 	document.onkeydown = (e) => {
 		e = window.event || e;
 		if (e.code === "Enter" || e.code === "enter" || e.code === "NumpadEnter") {
-			isSliderCaptchaShow.value = true;
+			submit(loginFormRef);
 		}
 	};
 });
