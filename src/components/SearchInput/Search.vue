@@ -31,12 +31,18 @@
   </div>
 </template>
 
+<script>
+const EMIT_SEARCH = "finalSearch";
+</script>
+
 <script setup>
 // import { ref } from 'vue';
 import { useSearchStore } from '../../stores/search.js';
 import Hint from './Hint.vue';
 import History from './History.vue';
 import SearchInputFrame from './SearchInputFrame.vue';
+
+const emits = defineEmits([EMIT_SEARCH]);
 
 const inputSearchValue = ref("");
 const searchStore = useSearchStore();
@@ -51,12 +57,14 @@ const handleSearch = (val) => {
   // 去掉可能的斜体标签
   val = val.replace(/<\/?i>/ig, "");
   
-  console.log(val);
+  // console.log(val);
   inputSearchValue.value = val;
   if( val ) {
     searchStore.addHistory(val);
     // 触发 searchText 的变化
     searchStore.setSearchInputText(val);
+    // 触发 父组件进行搜索
+    // emits(EMIT_SEARCH, val);
   };
 }
 

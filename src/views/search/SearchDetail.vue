@@ -4,7 +4,10 @@
     <!-- 上部分，用户放置搜索框 -->
     <div class="search-area">
       <div class="search-area-handler">
-        <SearchInput class="search-input"/>
+        <SearchInput 
+          @final-search="handleFinalSearch"
+          class="search-input"
+        />
       </div>
     </div>
     <!-- 主体部分，左侧用于放置搜索筛选，右侧用于存放搜索结果 -->
@@ -196,6 +199,17 @@
 
 <script setup>
 import SearchInput from '../../components/SearchInput/Search.vue';
+import { Search } from '../../api/search';
+import { useSearchStore } from '../../stores/search.js';
+
+const searchStore = useSearchStore();
+// , searchEntityType
+const handleFinalSearch = (searchText) => {
+  console.log(searchText);
+  // Search.getSearchDataList({
+  //   "entity_type": searchEntityType
+  // })
+}
 
 
 </script>
