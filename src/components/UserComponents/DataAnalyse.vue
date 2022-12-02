@@ -28,7 +28,6 @@
     </div>
 </template>
 <script setup>
-import { refWithControl } from '@vueuse/shared';
 import * as echarts from 'echarts'
 import { watch } from 'vue';
 // import { nextTick, reactive, readonly } from "vue"
@@ -40,7 +39,7 @@ const props = defineProps({
     authorName: String
 })
 const activeName = ref('countByYear')
-const dataCount = refWithControl([
+const dataCount = ref([
     {
         year: 2022,
         work_count: 12,
@@ -66,7 +65,6 @@ const dataCount = refWithControl([
         work_count: 17,
         cited_by_count: 6,
     },
-
 ])
 let chart1, chart2;
 let x1data = [], countdata = [], citedata = []
