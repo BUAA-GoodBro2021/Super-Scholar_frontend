@@ -4,5 +4,6 @@ export default {
         exitFullScreen:"Exit Full Screen",
         action1:"logout",
         welcome:"Welcome",
+        message:"message",
     }
 }

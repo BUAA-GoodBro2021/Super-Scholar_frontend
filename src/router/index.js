@@ -88,6 +88,11 @@ const router = createRouter({
           path: '/search-detail',
           name: 'SearchDetail',
           component: ()=>import('../views/search/SearchDetail.vue'),
+        },
+        {
+          path: '/message-list',
+          name: 'MessageList',
+          component: ()=>import('../views/message/index.vue'),
         }
       ],
     },
