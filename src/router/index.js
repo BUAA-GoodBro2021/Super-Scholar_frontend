@@ -81,7 +81,7 @@ const router = createRouter({
         {
           path: 'paper/:paperid',
           name: 'PaperDetail',
-          component: ()=>import('../views/paper/PaperDetail.vue'),
+          component: ()=>import('../views/paper/Paper.vue'),
         },
         // 临时加一个路由页面，用于调试搜索详情页面，后续调整其位置
         {
