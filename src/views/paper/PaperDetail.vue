@@ -19,8 +19,8 @@
 </template>
 <script setup>
 import PaperBriefVue from '../../components/Paper/PaperBrief.vue';
-import ArticleAndDataVue from '../UserComponents/ArticleAndData.vue';
-import CoAuthorsVue from '../UserComponents/CoAuthors.vue';
+import ArticleAndDataVue from '../../components/UserComponents/ArticleAndData.vue';
+import CoAuthorsVue from '../../components/UserComponents/CoAuthors.vue';
 const route = useRoute()
 const tokenid = route.params.tokenid
 const myAcountType = ref() // 自己的账户标志 0 非个人账户 1 个人账户未认证 2 个人账户认证且认证通过 3 个人账户认证但是在审核中
