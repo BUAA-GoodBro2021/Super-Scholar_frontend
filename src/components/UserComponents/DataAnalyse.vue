@@ -6,38 +6,41 @@
             </el-tab-pane>
             <el-tab-pane label="专家关系网络" name="authorNetWork">
                 <div class="network" id="network" v-if="chart2Show"></div>
-                <el-dialog v-model="chart2Dialog" width="30%">
-                    <template #title>
+                <el-dialog v-model="chart2Dialog" width="50%" height="60%">
+                    <template #header>
                         <span class="dialog-title">与{{ nodedata[choseLine].value }}合著作品如下</span>
                     </template>
                     <div class="dialog-wrap">
                         <div v-for="(item, index) in chart2DialogData" :key="index">
-                            <span class="document_title">{{(index +1) + '. ' + item.display_name }}</span>
-                            <div class="authors_wrap">
+                            <span class="document_title">{{ (index + 1) + '. ' + item.work_name }}</span>
+                            <!-- <div class="authors_wrap">
                                 <span class="document_authors" v-for="(authoritem, authorindex) in item.authorList"
                                     :key="authorindex">{{ authoritem.display_name }}
                                     <span v-if="authorindex != item.authorList.length - 1">/&nbsp;</span>
                                 </span>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                 </el-dialog>
             </el-tab-pane>
         </el-tabs>
-        {{ chart2DialogData }}
+        <!-- {{ chart2DialogData }} -->
     </div>
 </template>
 <script setup>
+import { refWithControl } from '@vueuse/shared';
 import * as echarts from 'echarts'
+import { watch } from 'vue-demi';
 // import { nextTick, reactive, readonly } from "vue-demi"
 
 const props = defineProps({
     dataCountByYear: Object,
-    authorNetWork: Object,
-    tabChange: Boolean
+    tabChange: Boolean,
+    authorNetWork: Array,
+    authorName: String
 })
 const activeName = ref('countByYear')
-const dataCount = reactive([
+const dataCount = refWithControl([
     {
         year: 2022,
         work_count: 12,
@@ -73,69 +76,103 @@ const chart2Show = ref(false)
 const chart2Dialog = ref(false)
 const chart2DialogData = ref([])
 const choseLine = ref()
+const changeToDataAnalyse = ref(false) // 记录跳转到数据分析tab页面的行为是否发生过
 
 onMounted(() => {
     //todo
     //处理documentList 将publication_year与publication_date连接起来
-    data1PreProcess(x1data, countdata, citedata)
-    // initChart1(x1data, countdata, citedata)
-    data2PreProcess(nodedata, linedata)
+    // data1PreProcess(x1data, countdata, citedata)
+    // // initChart1(x1data, countdata, citedata)
+    // data2PreProcess(nodedata, linedata)
 })
 
 watch(() => props.tabChange, (newVal) => {
+    if (newVal) changeToDataAnalyse.value = true
     if (newVal && chart1Show.value == false) {
         console.log('发表文献->数据分析')
+        data1PreProcess(x1data, countdata, citedata)
         nextTick(() => {
             chart1Show.value = true
             nextTick(() => {
                 initChart1(x1data, countdata, citedata)
-
                 window.onresize = () => chart1.resize()
                 window.addEventListener('resize', () => {
                     chart1.resize()
                 })
             })
-            console.log(document.getElementById('count'))
         })
     }
 })
 
+// watch(() => props.authorNetWork, (newVal) => {
+//     if (changeToDataAnalyse.value == true) {
+//         data2PreProcess(nodedata, linedata)
+//         nextTick(() => {
+//             chart2Show.value = true
+//             nextTick(() => {
+//                 initChart2(nodedata, linedata)
+//                 window.onresize = () => chart2.resize()
+//                 window.addEventListener('resize', () => {
+//                     chart1.resize()
+//                 })
+//             })
+//         })
+//     }
+// })
+
+// watch(() => props.dataCountByYear, (newVal) => {
+//     console.log('props.dataCountbyYear changed')
+// })
+
 const handleClick = (tab) => {
-    if (tab.paneName == 'authorNetWork' && chart2Show.value == false) {
-        nextTick(() => {
-            chart2Show.value = true
+    if (tab.paneName == 'authorNetWork') {
+        if (chart2Show.value == false) {
             nextTick(() => {
-                initChart2(nodedata, linedata)
-                window.onresize = () => chart2.resize()
-                window.addEventListener('resize', () => {
-                    chart2.resize()
+                chart2Show.value = true
+                data2PreProcess(nodedata, linedata)
+                nextTick(() => {
+                    initChart2(nodedata, linedata)
+                    window.onresize = () => chart2.resize()
+                    window.addEventListener('resize', () => {
+                        chart2.resize()
+                        chart1.resize()
+                    })
                 })
-            })
 
-        })
+            })
+        }
     } else if (tab.paneName == 'countByYear' && chart1Show.value == false) {
-        nextTick(() => {
-            chart1Show.value = true
+        if (chart1Show.value == false) {
             nextTick(() => {
-                initChart1(x1data, countdata, citedata)
+                chart1Show.value = true
+                data1PreProcess(x1data, countdata, citedata)
+                nextTick(() => {
+                    initChart1(x1data, countdata, citedata)
 
-                window.onresize = () => chart1.resize()
-                window.addEventListener('resize', () => {
-                    chart1.resize()
+                    window.onresize = () => chart1.resize()
+                    window.addEventListener('resize', () => {
+                        chart2.resize()
+                        chart1.resize()
+                    })
                 })
+                console.log(document.getElementById('count'))
             })
-            console.log(document.getElementById('count'))
-        })
+        }
     }
 }
 
 const data1PreProcess = (xdata, countdata, citedata) => {
-    dataCount.sort(function (a, b) {
+    dataCount.value = []
+    // xdata = []
+    // countdata = []
+    // citedata = []
+    dataCount.value.push(...props.dataCountByYear)
+    dataCount.value.sort(function (a, b) {
         return a.year - b.year
     })
-    dataCount.forEach((item, index) => {
+    dataCount.value.forEach((item, index) => {
         xdata.push(item.year)
-        countdata.push(item.work_count)
+        countdata.push(item.works_count)
         citedata.push(item.cited_by_count)
     })
 }
@@ -143,15 +180,37 @@ const data1PreProcess = (xdata, countdata, citedata) => {
 const colors = reactive(['#ff8400', '#03fc62', '#aa61b2', '#0a95e6', '#00fff7', '#f06467', '#f06467', '#03fc62', '#00fff7', '#f06467'])
 
 const data2PreProcess = (nodedata, linedata) => {
-    let i
-    for (i = 0; i < 15; i++) {
+    // nodedata
+    // linedata = []
+    nodedata.push({
+        "name": 0,
+        "value": props.authorName,
+        x: 65,
+        y: 30,
+        "symbolSize": 70,
+        "draggable": true,
+        "itemStyle": {
+            "normal": {
+                "borderColor": colors[9],
+                "borderWidth": 4,
+                "shadowBlur": 20,
+                "shadowColor": colors[9],
+                "color": "#F0F8FF"
+            }
+        },
+        tooltip: {
+            formatter: '{c}',
+        },
+    })
+    for (let i = 0; i < props.authorNetWork.length; i++) {
+        if (i == 20) break;
         nodedata.push(
             {
-                "name": i,
-                "value": "学者姓名",
-                x: i == 0 ? 65 : 0,
-                y: i == 0 ? 6 : 0,
-                "symbolSize": i == 0 ? 120 : 80,
+                "name": i + 1,
+                "value": props.authorNetWork[i].author_name,
+                x: 0,
+                y: 0,
+                "symbolSize": 50,
                 "draggable": true,
                 "itemStyle": {
                     "normal": {
@@ -169,87 +228,18 @@ const data2PreProcess = (nodedata, linedata) => {
         )
     }
 
-    for (i = 1; i < 15; i++) {
+    for (let i = 1; i < nodedata.length; i++) {
         linedata.push({
             source: 0,
             target: i,
-            value: i,
+            value: props.authorNetWork[i - 1].cooperation_author_count,
             tooltip: {
                 formatter: '合著数量 {c}',
             },
             //合著的作品
-            coArticles: [
-                {
-                    display_name: '鸡你太美鸡你太美迎面的你走来逐渐让我蠢蠢欲动，这种感觉从未有过cause I get a crash on you',
-                    publication_date: '2022-2-11',
-                    cited_by_count: '11',
-                    authorList: [
-                        {
-                            display_name: "harbour",
-                            id: '',
-                        },
-                        {
-                            display_name: "harbour",
-                            id: '',
-                        },
-                        {
-                            display_name: "harbour",
-                            id: '',
-                        },
-                    ]
-                },
-                {
-                    display_name: '你是我的，我是你的谁',
-                    publication_date: '2022-4-31',
-                    cited_by_count: '11',
-                    authorList: [
-                        {
-                            display_name: "harbour",
-                            id: '',
-                        },
-                        {
-                            display_name: "harbour",
-                            id: '',
-                        },
-                        {
-                            display_name: "harbour",
-                            id: '',
-                        },
-                    ]
-                },
-                {
-                    display_name: '再多一眼，看一眼就会爆炸，在近一点靠近点快被融化',
-                    publication_date: '2022-4-31',
-                    cited_by_count: '10',
-                    authorList: [
-                        {
-                            display_name: "harbour",
-                            id: '',
-                        },
-                        {
-                            display_name: "harbour",
-                            id: '',
-                        },
-                        {
-                            display_name: "harbour",
-                            id: '',
-                        },
-                    ]
-                },]
+            coArticles: props.authorNetWork[i - 1].work_list
         })
     }
-
-    linedata.push({
-        source: 2,
-        target: 6,
-        value: 'articleName',
-    })
-
-    linedata.push({
-        source: 5,
-        target: 10,
-        value: 'articleName'
-    })
 }
 
 const initChart1 = (xdata, countdata, citedata) => {
@@ -265,7 +255,7 @@ const initChart1 = (xdata, countdata, citedata) => {
             }
         },
         grid: {
-            right: '15%',
+            right: '20%',
             left: '15%'
         },
         toolbox: {
@@ -276,7 +266,7 @@ const initChart1 = (xdata, countdata, citedata) => {
             }
         },
         legend: {
-            data: ['发表文献', '引用数量', '发表文献', '引用数量']
+            data: ['发表文献', '引用数量']
         },
         xAxis: [
             {
@@ -292,7 +282,8 @@ const initChart1 = (xdata, countdata, citedata) => {
             {
                 type: 'value',
                 name: '发表文献',
-                position: 'right',
+                position: 'left',
+                offset: 40,
                 alignTicks: true,
                 axisLine: {
                     show: true,
@@ -309,7 +300,7 @@ const initChart1 = (xdata, countdata, citedata) => {
                 name: '引用数量',
                 position: 'right',
                 alignTicks: true,
-                offset: 80,
+                offset: 40,
                 axisLine: {
                     show: true,
                     lineStyle: {
@@ -320,37 +311,6 @@ const initChart1 = (xdata, countdata, citedata) => {
                     formatter: '{value} '
                 }
             },
-            {
-                type: 'value',
-                name: '发表文献',
-                position: 'left',
-                alignTicks: true,
-                axisLine: {
-                    show: true,
-                    lineStyle: {
-                        color: colors[2]
-                    }
-                },
-                axisLabel: {
-                    formatter: '{value}'
-                }
-            },
-            {
-                type: 'value',
-                name: '引用数量',
-                position: 'left',
-                alignTicks: true,
-                offset: 80,
-                axisLine: {
-                    show: true,
-                    lineStyle: {
-                        color: colors[2]
-                    }
-                },
-                axisLabel: {
-                    formatter: '{value}'
-                }
-            }
         ],
         series: [
             {
@@ -364,18 +324,6 @@ const initChart1 = (xdata, countdata, citedata) => {
                 yAxisIndex: 1,
                 data: citedata
             },
-            {
-                name: '发表文献',
-                type: 'line',
-                yAxisIndex: 2,
-                data: countdata
-            },
-            {
-                name: '引用数量',
-                type: 'line',
-                yAxisIndex: 3,
-                data: citedata
-            }
         ]
     };
     option && chart1.setOption(option)
@@ -387,7 +335,6 @@ const initChart2 = (nodedata, linedata) => {
     chart2 = document.getElementById('network')
     chart2 = echarts.init(chart2)
     let option = {
-
         backgroundColor: 'white',
         tooltip: {
             // formatter: '合著数量{c}',
@@ -402,8 +349,8 @@ const initChart2 = (nodedata, linedata) => {
             type: 'graph',
             layout: 'force',
             force: {
-                repulsion: 30,
-                edgeLength: 10
+                repulsion: 20,
+                edgeLength: 7
             },
             roam: true,
             label: {
@@ -411,7 +358,7 @@ const initChart2 = (nodedata, linedata) => {
                     show: true,
                     position: 'inside',
                     formatter: '{c}',
-                    fontSize: 16,
+                    fontSize: 11,
                     fontStyle: '400',
                 }
             },
@@ -463,12 +410,12 @@ const initChart2 = (nodedata, linedata) => {
 }
 
 #tab-countByYear {
-    font-size: 20px;
+    font-size: 16px;
     font-weight: 600;
 }
 
 #tab-authorNetWork {
-    font-size: 20px;
+    font-size: 16px;
     font-weight: 600;
 }
 
@@ -489,17 +436,20 @@ const initChart2 = (nodedata, linedata) => {
 
 .dialog-wrap {
     padding: 0px 10px 10px 10px;
+    height: 400px;
+    overflow-y: scroll;
+    display: block;
 }
 
 .dialog-title {
-    font-size: 24px;
+    font-size: 18px;
     text-align: center;
     font-weight: 600;
 }
 
 .document_title {
     margin-top: 5px;
-    font-size: 20px;
+    font-size: 15px;
     line-height: 30px;
     text-align: left;
     height: auto;
@@ -517,7 +467,7 @@ const initChart2 = (nodedata, linedata) => {
 }
 
 .document_authors {
-    font-size: 17px;
+    font-size: 10px;
     color: grey;
     cursor: pointer;
 }

@@ -1,18 +1,19 @@
 <template>
     <div class="personal-wrap">
         <div class="avatar_wrap">
-            <AvaterWrapVue :personAccount="1" :userInfo="userInfo" :claimed="claimed" :openAlexAccount="0"
-                @AbandonPortal="AbandonPortal()" @infoChange="infoChange"/>
+            <AvaterWrapVue :personAccount="0" :userInfo="userInfo" :claimed="1" :openAlexAccount="1"
+                @AbandonPortal="AbandonPortal()" @infoChange="infoChange" :openAlexId="openAlexId"/>
         </div>
         <div class="article_data_wrap">
             <div class="left">
                 <ArticleAndDataVue :documentList="userInfo.documentList" :claimed="claimed"
                     :pageTotalSize="pageTotalSize" @pageChange="pageChange" 
-                    :dataCountByYear="userInfo.counts_by_year" :author_id="replyUser.open_alex_id" 
-                    :authorNetWork="authorNet" :authorName="userInfo.open_alex_name" :personalAccount="1"/>
+                    :dataCountByYear="userInfo.counts_by_year" :author_id="openAlexId" :authorNetWork="authorNet"
+                    :authorName="userInfo.open_alex_name" :personalAccount="0" />
             </div>
             <div class="right">
-                <CoAuthorsVue :claimed="claimed" @coAuthorPageChange="coAuthorPageChange" :authorTotalSize="authorTotalSize" :authorList="coAuthorList"/>
+                <CoAuthorsVue :claimed="claimed" @coAuthorPageChange="coAuthorPageChange"
+                    :authorTotalSize="authorTotalSize" :authorList="coAuthorList" />
             </div>
         </div>
     </div>
@@ -30,7 +31,7 @@ const globalStore = useGlobalStore();
 
 
 const route = useRoute()
-const tokenid = route.params.tokenid
+const openAlexId = route.params.tokenid
 const claimed = ref(1) // 0 未认证 1 认证 2认证中 在openalexaccount为0时候有效 当网站用户认证的时候 发表文献和数据分析以合作作者采用openalex作者页面的数据
 const openAlexAccount = ref(0) // 0 网站用户 1 openalex作者
 // const otherAcountType = ref() // 他人账户 0 未认证的网站用户 1 认证的网站用户或者是未认证的原生作者
@@ -63,7 +64,7 @@ const userInfo = ref({
     ],
     avatar_url: "",
     accountType: '',
-    is_follow: true,
+    is_follow: false,
     documentList: [
         {
             display_name: '鸡你太美鸡你太美迎面的你走来逐渐让我蠢蠢欲动，这种感觉从未有过cause I get a crash on you',
@@ -87,9 +88,7 @@ const userInfo = ref({
         }
     ]
 })
-const replyUser = ref({
-    open_alex_id: "A12345678debug"
-})
+
 const authorNet = ref([])
 const pageTotalSize = ref(10)
 const authorTotalSize = ref(5)
@@ -98,40 +97,33 @@ const coAuthorList = ref([])
 
 
 onMounted(() => {
-    getAccountType(1)
+    getOpenAlexAuthor()
+    let data = {
+        "entity_type": "works",
+        "params": {
+            "filter": {
+                "author.id": openAlexId
+            },
+            "page": 1,
+            "per_page": 10
+        }
+    }
+    getDocumentList(data)
+    getAuthorNet()
+    getFollowList()
 })
 
-const ConvertUserInfo = (data) => {
-    userInfo.value.display_name = data.username
-    userInfo.value.email = data.email
-    userInfo.value.user_id = data.user_id
-    userInfo.value.introduction = data.introduction ? data.introduction : null
-    userInfo.value.avatar_url = data.avatar_url
-}
-
-/*type 0 值获取个人信息 用于修改个人简介昵称之后使用 1 获取个人信息同时获取文献 专家关系网络 */
-const getAccountType = (type) => {
-    //todo 获取id所对应的myAcountType与otherAccountType
-    User.GetUserDetail().then((res) => {
+const getFollowList = async () => {
+    User.GetFollowList({}).then((res) => {
         if (res.data.result == 1) {
-            replyUser.value = res.data.user
-            claimed.value = res.data.user.is_professional == -1 ? 0 : res.data.user.is_professional == 0 ? 2 : 1
-            ConvertUserInfo(res.data.user)
-            if (claimed.value == 1 && type == 1) {// 已认证
-                let data = {
-                    "entity_type": "works",
-                    "params": {
-                        "filter": {
-                            "author.id": replyUser.value.open_alex_id
-                        },
-                        "page": 1,
-                        "per_page": 10
-                    }
-                }
-                getDocumentList(data)
-                getOpenAlexAuthor()
-                getAuthorNet()
-            }
+            // todo 根据关注列表确定follow字段
+            userInfo.value.is_follow = false 
+            res.data.follow_id_list.forEach(element => {
+                if(element == openAlexId) userInfo.value.is_follow = true
+                console.log(element, openAlexId)
+            });
+            // if(res.data.follow_id_list.array.indexOf(openAlexId) != -1) userInfo.value.is_follow = false 
+            // else userInfo.value.is_follow = true
         } else {
             ElNotification({
                 title: "很遗憾",
@@ -148,18 +140,22 @@ const getAccountType = (type) => {
             duration: 3000
         })
     })
+
 }
 
 const getOpenAlexAuthor = async () => {
     User.GetOpenAlexAuthorById({
         "entity_type": "authors",
         "params": {
-            "id": replyUser.value.open_alex_id
+            "id": openAlexId
         }
     }).then((res) => {
         if (res.data.result == 1) {
             userInfo.value.counts_by_year = res.data.single_data.counts_by_year
             userInfo.value.open_alex_name = res.data.single_data.display_name
+            userInfo.value.last_known_institution = res.data.single_data.last_known_institution.display_name
+            userInfo.value.x_concepts = res.data.single_data.x_concepts
+            userInfo.value.display_name = res.data.single_data.display_name
         } else {
             ElNotification({
                 title: "很遗憾",
@@ -203,7 +199,7 @@ const getDocumentList = async (data) => {
 
 const getAuthorNet = async () => {
     User.GetAuthorNetById({
-        author_id: replyUser.value.open_alex_id
+        author_id: openAlexId
     }).then((res) => {
         if (res.data.result == 1) {
             authorNet.value = res.data.cooperation_author_list
@@ -232,7 +228,7 @@ const pageChange = async (page) => {
         "entity_type": "works",
         "params": {
             "filter": {
-                "author.id": replyUser.value.open_alex_id
+                "author.id": openAlexId
             },
             "page": page,
             "per_page": 10
@@ -240,11 +236,6 @@ const pageChange = async (page) => {
     }
     getDocumentList(data)
 }
-
-const AbandonPortal = () => {
-    getAccountType(0)
-}
-
 
 const coAuthorPageChange = (page) => {
     // 切割作者列表
@@ -257,7 +248,7 @@ const infoChange = () => {
 
 const UpdateCoAuthor = (page) => {
     coAuthorList.value = []
-    for(let i = 5 * (page - 1) ; i < 5 * page ; i++) {
+    for (let i = 5 * (page - 1); i < 5 * page; i++) {
         coAuthorList.value.push(authorNet.value[i])
     }
     // console.log(coAuthorList.value)
@@ -286,7 +277,7 @@ const UpdateCoAuthor = (page) => {
     min-width: 1280px;
     height: 72%;
     display: flex;
-    
+
 }
 
 .article_data_wrap .left {

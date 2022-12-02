@@ -54,14 +54,29 @@ const router = createRouter({
       },
       children: [
         {
-          path: '/user/:tokenid',
+          path: 'user/:tokenid',
           name: 'UserDetail',
           component: ()=>import('../views/User/UserDetail.vue'),
         },
         {
-          path: '/personal/account',
+          path: 'openalex/author/:tokenid',
+          name: 'OpenAlexAuthorDetail',
+          component: ()=>import('../views/User/AuthorAccount.vue'),
+        },
+        {
+          path: 'personal/account',
           name: 'PersonalDetail',
           component: ()=>import('../views/User/PersonalDetail.vue'),
+        },
+        {
+          path: 'claimportal',
+          name: 'ClaimPortal',
+          component: ()=>import('../views/User/ClaimPortal.vue'),
+        },
+        {
+          path: 'collection',
+          name: 'Collection',
+          component: ()=>import('../views/User/Collection.vue'),
         },
         {
           path: 'paper/:paperid',
