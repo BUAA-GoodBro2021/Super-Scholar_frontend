@@ -110,6 +110,7 @@ const login = ()=>{
 }
 // 提交前进行表单验权
 const submit = (formRef)=>{
+	console.log("FORMREF",formRef)
 	formRef.validate((valid)=>{
 		if(valid) isSliderCaptchaShow.value = true
 	})
@@ -155,7 +156,7 @@ onMounted(() => {
 	document.onkeydown = (e) => {
 		e = window.event || e;
 		if (e.code === "Enter" || e.code === "enter" || e.code === "NumpadEnter") {
-			submit(registerFormRef);
+			submit(registerFormRef.value);
 		}
 	};
 });

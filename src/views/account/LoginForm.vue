@@ -18,7 +18,7 @@
 		</el-form>
 		<div class="login-btn">
 			<el-button :icon="CirclePlus" round @click="register()" size="large">注册</el-button>
-			<el-button :icon="UserFilled" round @click="isSliderCaptchaShow = true" size="large" type="primary" :disabled="disabled">
+			<el-button :icon="UserFilled" round @click="submit(loginFormRef)" size="large" type="primary" :disabled="disabled">
 				登录
 			</el-button>
 		</div>
@@ -109,6 +109,7 @@ const login = ()=>{
 }
 // 提交前进行表单验权
 const submit = (formRef)=>{
+	console.log("FORMREF",formRef)
 	formRef.validate((valid)=>{
 		if(valid) isSliderCaptchaShow.value = true
 	})
@@ -121,7 +122,7 @@ onMounted(() => {
 	document.onkeydown = (e) => {
 		e = window.event || e;
 		if (e.code === "Enter" || e.code === "enter" || e.code === "NumpadEnter") {
-			submit(loginFormRef);
+			submit(loginFormRef.value);
 		}
 	};
 });
