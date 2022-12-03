@@ -62,7 +62,7 @@ const validateName = (rule,value,callback)=>{
 	}
 }
 const validateEmail = (rule,value,callback)=>{
-	let reg = /^([A-z0-9]{6,18})(\w|\-)+@[A-z0-9]+\.([A-z]{2,3})$/;
+	let reg = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
 	if(!value.length){
 		callback(new Error("请输入邮箱"))
 	}else if(!reg.test(value)){
