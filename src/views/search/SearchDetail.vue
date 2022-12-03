@@ -29,7 +29,7 @@
                           <!-- 展开标题 -->
                           <a class="filter-block-control accordion__control">
                             <h4 class="filter-block-title">Names</h4>
-                            <i class="expand-icon"></i>
+                            <i class="iconfont icon-arrowup"></i>
                           </a>
                           <!-- 折叠栏 -->
                           <div class="accordion-content">
@@ -54,7 +54,6 @@
                 <div class="search-num-info">
                   <span class="left-border-span"></span>
                   <div class="search-num-info-detail">
-                    <!-- <span class="hitlength">21,469</span> -->
                     <span class="hitlength">{{totalSearchResNum}}</span>
                     <span> Results</span>
                     <span> for: </span>
@@ -109,13 +108,12 @@
                       <!-- 论文的作者列表 -->
                       <ul class="card-author-list">
                         <li v-for="(author, authorIndex) in item.authorships">
-                          <!-- TODO 跳转到对应的作者主页 -->
-                          <a href="#">
+                          <!-- 跳转到对应的作者主页 -->
+                          <a @click="toOpenAlexAuthorPage(author.author.id.slice(21))">
                             <img
                               class="author-avator"  
                               src="https://dl.acm.org/pb-assets/icons/DOs/default-profile-1543932446943.svg"
                             />
-                            <!-- { "id": "https://openalex.org/A2473549963", "display_name": "Ross Girshick", "orcid": null } -->
                             <span>{{author.author.display_name}}</span>
                           </a>
                           <span>, </span>
@@ -123,11 +121,18 @@
                       </ul>
                       <!-- 论文的简要信息 -->
                       <div class="card-simple-info">
-                        <a href="/doi/proceedings/10.1145/3293353" >
-                          <span class="epub-section__title">
-                            ICVGIP 2018: Proceedings of the 11th Indian Conference on Computer Vision, Graphics and Image Processing
-                          </span>
-                        </a>
+                        <!-- TODO 跳转到对应的institution主页 -->
+                        <span class="epub-section__title">
+                          {{item.host_venue.display_name}}
+                        </span>
+                        <!-- 这里由于伪元素位置的影响，必须span里面嵌套一个span -->
+                        <span class="dot-separator">
+                          <span>{{item.publication_date}},&nbsp;&nbsp;</span>
+                          <span>{{item.type}}</span>
+                        </span>
+                        <span class="dot-separator" v-if="item.doi">
+                          <a style="vertical-align: middle;" :href="item.doi">{{item.doi}}</a>
+                        </span>
                       </div>
                       <!-- 论文的内容摘要 -->
                       <div class="card-abstract">
@@ -249,7 +254,9 @@ import { Search } from '../../api/search';
 import { useSearchStore } from '../../stores/search.js';
 import { ElNotification } from "element-plus";
 import { onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
 const searchStore = useSearchStore();
 // 搜索结果数据列表
 const searchDataList = ref([]);
@@ -392,6 +399,16 @@ const handleFinalSearch = (searchText, searchEntityType) => {
   })
 }
 
+// #region 卡片内部交互函数
+const toOpenAlexAuthorPage = (openAlexAuthorId) => {
+  // console.log(openAlexAuthorId);
+  router.push({
+    name: 'OpenAlexAuthorDetail',
+    params: {tokenid: openAlexAuthorId}
+  });
+}
+
+
 const handleConceptBubbleClick = (conceptEntity) => {
   ElNotification({
     title: "待开发",
@@ -401,6 +418,7 @@ const handleConceptBubbleClick = (conceptEntity) => {
   })
 }
 
+// #endregion 卡片内部交互函数
 </script>
 
 <style scoped>
@@ -853,6 +871,16 @@ img {
 .card-simple-info {
   color: #6b6b6b;
   margin: .625rem 0;
+  box-sizing: border-box;
+}
+.card-simple-info span{
+  display: inline-block;
+  vertical-align: middle;
+}
+.card-simple-info .epub-section__title{
+  font-size: 14px;
+  box-sizing: border-box;
+  cursor: pointer;
 }
 
 .card-abstract {
@@ -1047,6 +1075,7 @@ img {
   font-weight: 600;
   font-size: 19px;
   vertical-align: middle;
+  box-sizing: border-box;
 }
 /* #endregion 卡片底部右侧快捷操作 */
 
