@@ -25,6 +25,7 @@ import CoAuthorsVue from '../../components/UserComponents/CoAuthors.vue';
 import { useGlobalStore } from "../../stores/global.js";
 import { User } from "../../api/userDetail"
 import { ElNotification } from "element-plus";
+import { watch} from 'vue';
 import { UserFilled } from '@element-plus/icons-vue';
 const globalStore = useGlobalStore();
 
@@ -95,6 +96,11 @@ const pageTotalSize = ref(10)
 const authorTotalSize = ref(5)
 const coAuthorList = ref([])
 // const docummentList = ref([])
+
+watch(() => route.params.tokenid, (newval) => {
+    getAccountType(1)
+})
+
 
 
 onMounted(() => {
