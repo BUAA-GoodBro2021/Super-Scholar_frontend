@@ -37,7 +37,7 @@ import Search from "../components/SearchInput/Search.vue";
    height: calc(100vh - 64px);
 }
 .main{
-   height:75vh;
+   height:60vh;
    background-color: #eeeeee;
    background-image: url("../assets/images/login_bg.svg");
 	background-size: cover;
@@ -45,8 +45,8 @@ import Search from "../components/SearchInput/Search.vue";
    top: 64px;
    .search {
       position: absolute;
-      left: 5vw;
-      top: 30vh;
+      left:5vw;
+      top: 26vh;
       width: 40vw;
    }
    @media screen and (max-width:992px) {
