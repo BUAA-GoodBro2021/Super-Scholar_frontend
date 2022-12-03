@@ -72,7 +72,7 @@ const validateEmail = (rule,value,callback)=>{
 	}
 }
 const validatePassword = (rule,value,callback)=>{
-	let reg = /^[a-zA-Z0-9\_\@]{6,15}$/
+	let reg = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,16}$/
 	if(!value.length){
 		callback(new Error("请输入密码"))
 	}else if(value.length<8||value.length>16){
