@@ -38,11 +38,14 @@
 				返回
 			</el-button>
 		</div>
-		<SliderCaptcha 
-			v-if="isSliderCaptchaShow"
-			@success="onSliderCaptchaSuccess"
-			@close="isSliderCaptchaShow = false"
-		/>
+		<teleport to="body">
+			<SliderCaptcha 
+				v-if="isSliderCaptchaShow"
+				@success="onSliderCaptchaSuccess"
+				@close="isSliderCaptchaShow = false"
+			/>
+		</teleport>
+		
 	</div>
 </template>
 <script setup>
