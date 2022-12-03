@@ -659,11 +659,9 @@ a, a:hover, a:focus {
     background: white;
     /* transition: top .5s; */
     z-index: 555;
-    /* top: 7.75rem; */
-    top: 0;
     left: 0;
-    /* 这里改为我们的header高度 */
-    top: 64px; 
+    /* 这里改为我们的header高度-1 */
+    top: 63px; 
     margin: .625rem 0;
   }
   .search-result__sort-right {
