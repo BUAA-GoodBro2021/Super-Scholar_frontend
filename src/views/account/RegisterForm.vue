@@ -16,7 +16,7 @@
 				</el-input>
 			</el-form-item>
 			<el-form-item prop="password1">
-				<el-input type="password1" v-model="registerForm.password1" placeholder="密码" show-password autocomplete="new-password">
+				<el-input type="password1" v-model="registerForm.password1" placeholder="密码 8-16位 可使用 数字 字母 @ _" show-password autocomplete="new-password">
 					<template #prefix>
 						<el-icon class="el-input__icon"><lock /></el-icon>
 					</template>
@@ -38,11 +38,14 @@
 				返回
 			</el-button>
 		</div>
-		<SliderCaptcha 
-			v-if="isSliderCaptchaShow"
-			@success="onSliderCaptchaSuccess"
-			@close="isSliderCaptchaShow = false"
-		/>
+		<teleport to="body">
+			<SliderCaptcha 
+				v-if="isSliderCaptchaShow"
+				@success="onSliderCaptchaSuccess"
+				@close="isSliderCaptchaShow = false"
+			/>
+		</teleport>
+		
 	</div>
 </template>
 <script setup>
@@ -62,7 +65,7 @@ const validateName = (rule,value,callback)=>{
 	}
 }
 const validateEmail = (rule,value,callback)=>{
-	let reg = /^([A-z0-9]{6,18})(\w|\-)+@[A-z0-9]+\.([A-z]{2,3})$/;
+	let reg = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
 	if(!value.length){
 		callback(new Error("请输入邮箱"))
 	}else if(!reg.test(value)){
@@ -72,13 +75,13 @@ const validateEmail = (rule,value,callback)=>{
 	}
 }
 const validatePassword = (rule,value,callback)=>{
-	let reg = /^[a-zA-Z0-9@\$\^\.\_\*\\?]{6,15}$/
+	let reg = /^[a-zA-Z0-9\_\@]{6,15}$/
 	if(!value.length){
 		callback(new Error("请输入密码"))
 	}else if(value.length<8||value.length>16){
 		callback(new Error("密码长度应为8-16位"))
 	}else if(!reg.test(value)){
-		callback(new Error("密码应包含数字和字母"))
+		callback(new Error("密码格式不规范"))
 	}else{
 		callback();
 	}

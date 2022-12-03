@@ -52,6 +52,13 @@
     align-items: center;
     justify-content: center;
 }
+@media (max-width:768px){
+	.login-box{
+		.login-left{
+			display: none;
+		}
+	}
+}
 .login-box {
 		box-sizing: border-box;
 		display: flex;

@@ -1,28 +1,19 @@
 <template>
     <div class="header">
-        <el-row :gutter="20">
-            <el-col :span="6" class="left">
+        <div class="left">
+            <router-link to="/" class="link">
                 <img src="/icon.png" class="logo" />
-                <router-link to="/" class="link">
-                    <span>高级检索</span>
-                </router-link>
-                <router-link to="/" class="link">
-                    <span>搜索学者</span>
-                </router-link>
-            </el-col>
-            <el-col :span="3" :offset="12" class="avatar">
-                <UserInfo />
-            </el-col>
-            <el-col :span="3">
-                <Language />
-                <FullScreen />
-            </el-col>
-        </el-row>
+            </router-link>
+            <router-link to="/" class="link">
+                <span>高级检索</span>
+            </router-link>
+        </div>
+        <div class="avatar">
+            <UserInfo />
+        </div>
     </div>
 </template>
 <script setup>
-import Language from './Language.vue';
-import FullScreen from "./FullScreen.vue";
 import UserInfo from "./UserInfo.vue";
 import { useDark, useToggle } from '@vueuse/core';
 const isDark = useDark();
@@ -34,39 +25,34 @@ onMounted(()=>{
 })
 
 </script>
-<style scoped>
+<style lang="scss" scoped>
 .header {
     background-color: white;
     text-align: center;
     width: 100%;
     position: fixed;
-    /* 不是这两条也能不加的啊 */
-    top: 0;
-    left: 0;
-    z-index: 1145;
-}
-
-.logo {
-    margin-left: 40px;
-    width: 120px;
-    height: 64px;
-}
-
-.left {
-    line-height: 64px;
     display: flex;
-}
-
-.link {
-    font-size: 16px;
-    font-weight: 600;
-    text-decoration: none;
-    text-align: center;
-    color: black;
-    margin-left: 10px;
-}
-
-.avatar {
-    margin-top: 10px;
+    justify-content: space-between;
+    z-index: 1145;
+    .left {
+        margin-left: 2vw;
+        line-height: 64px;
+        display: flex;
+        .link {
+        font-size: 16px;
+        font-weight: 600;
+        text-decoration: none;
+        color: black;
+        margin-left: 3vw;
+        }
+        .logo {
+        width: 120px;
+        height: 64px;
+        }
+    }
+    .avatar {
+        margin-top: 1vh;
+        margin-right: 10vw;
+    }
 }
 </style>

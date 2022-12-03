@@ -31,12 +31,18 @@
   </div>
 </template>
 
+<script>
+const EMIT_SEARCH = "finalSearch";
+</script>
+
 <script setup>
 // import { ref } from 'vue';
 import { useSearchStore } from '../../stores/search.js';
 import Hint from './Hint.vue';
 import History from './History.vue';
 import SearchInputFrame from './SearchInputFrame.vue';
+
+const emits = defineEmits([EMIT_SEARCH]);
 
 const inputSearchValue = ref("");
 const searchStore = useSearchStore();
@@ -46,17 +52,20 @@ const searchStore = useSearchStore();
  * 因为 searchInputText 不是一个孤零零的数据，对于搜索框内容在确定要进行搜索以后，
  * 相关的页面部分应该根据 searchText 做出反应
  * 这也是需要把 搜索框文本 存储在 vuex/pinia state的原因，当然，它需要持久化存储
+ * VERY IMPORT 这里设置了当搜索文本为空时，不触发搜索的逻辑，这很重要。
  */
 const handleSearch = (val) => {
   // 去掉可能的斜体标签
   val = val.replace(/<\/?i>/ig, "");
   
-  console.log(val);
+  // console.log(val);
   inputSearchValue.value = val;
   if( val ) {
     searchStore.addHistory(val);
     // 触发 searchText 的变化
     searchStore.setSearchInputText(val);
+    // 触发 父组件进行搜索
+    emits(EMIT_SEARCH, val, searchStore.searchType);
   };
 }
 

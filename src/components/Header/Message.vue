@@ -34,6 +34,5 @@ onMounted(
     z-index: 1000;
     right: 0%;
     margin-right: -5px;
-    margin-top: -5px;
 }
 </style>

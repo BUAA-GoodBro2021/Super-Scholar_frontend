@@ -32,7 +32,7 @@ const emits = defineEmits([EMIT_HINT_ITEM_CLICK]);
 
 const searchStore = useSearchStore();
 /**
- * 梳理搜索提示数据获取
+ * 根据用户输入的搜索文本，获取联想文本提示数据hint
  */
 const hintData = ref([]);
 const getHintData = async () => {
