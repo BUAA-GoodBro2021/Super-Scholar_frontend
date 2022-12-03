@@ -7,14 +7,14 @@
                     <li>
                         <el-avatar :size="70"
                             :src="item.avatar_url ? avatar_url : 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png'"
-                            style="cursor: pointer;"></el-avatar>
+                            style="cursor: pointer;" @click="toAuthor(item)"></el-avatar>
                     </li>
                     <li>
-                        <span class="coauthor-name">{{ item.author_name }}</span>
+                        <span class="coauthor-name" @click="toAuthor(item)" >{{ item.author_name }}</span>
                     </li>
                     <li class="right-arrow-li">
                         <span class="right-arrow-wrap">
-                            <el-icon style="cursor: pointer;">
+                            <el-icon style="cursor: pointer;" @click="toAuthor(item)">
                                 <Right />
                             </el-icon>
                         </span>
@@ -38,6 +38,7 @@ import {
 } from '@element-plus/icons-vue'
 import { defineEmits } from 'vue';
 const emit = defineEmits(["coAuthorPageChange"])
+const router = useRouter();
 const props = defineProps({
     authorList: Array,
     claimed: Number,
@@ -45,6 +46,13 @@ const props = defineProps({
 })
 
 const pageCurrent = ref(1)
+
+const toAuthor = (item) => {
+    router.push({
+        name: 'OpenAlexAuthorDetail',
+        params: {tokenid: item.author_id}
+    })
+}
 
 const PageChange = () => {
     emit("coAuthorPageChange", pageCurrent.value)
