@@ -22,11 +22,12 @@ onMounted(
         }
     }
 );
-beforeUnmount(()=>{
+onBeforeUnmount(
+    ()=>{
         clearInterval(interVal);
+        console.log("定时器已被清除")
     }
-) 
-before
+)
 </script>
 <style>
 .red-point{

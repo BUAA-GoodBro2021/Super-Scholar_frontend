@@ -10,13 +10,13 @@
         </span>
         <template #dropdown>
             <el-dropdown-menu class="dropdown">
-                <el-dropdown-item class="dropdown-item" :icon="More" @click="checkMessage">
+                <el-dropdown-item class="dropdown-item" :icon="More" @click="getPersonalDetail">
                     <span class="dropdown-text">个人详情</span>
                 </el-dropdown-item>
-                <el-dropdown-item class="dropdown-item" :icon="Check" @click="checkMessage">
+                <el-dropdown-item class="dropdown-item" :icon="Check" @click="getPersonalDetail">
                     <span class="dropdown-text">认领门户</span>
                 </el-dropdown-item>
-                <el-dropdown-item class="dropdown-item" :icon="Star" @click="checkMessage">
+                <el-dropdown-item class="dropdown-item" :icon="Star" @click="getCollection">
                     <span class="dropdown-text">收藏夹</span>
                 </el-dropdown-item>
                 <el-dropdown-item class="dropdown-item" :icon="Notification" @click="checkMessage">
@@ -34,6 +34,7 @@ import { Check, More, Notification, Star, SwitchButton } from '@element-plus/ico
 import { useRouter } from 'vue-router';
 import  Message  from './Message.vue';
 import { useGlobalStore } from '../../stores/global';
+
 const globalStore = useGlobalStore();
 const router = useRouter();
 const circleUrl = globalStore.userInfo.avatar_url;
@@ -47,6 +48,12 @@ const login = ()=>{
 const checkMessage = ()=>{
     router.push({name:"MessageList"});
 }
+const getPersonalDetail = ()=>{
+    router.push({name:"PersonalDetail"});
+}
+const getCollection = ()=>{
+    router.push({name:"Collection"});
+}
 </script>
 <style lang="scss" >
 .dropdown{
@@ -58,7 +65,7 @@ const checkMessage = ()=>{
 .dropdown-text{
     margin-left: 1vw;
 }
-@media screen and (max-width:768px){
+@media screen and (max-width:928px){
     .dropdown-text{
         display: none;
     }
