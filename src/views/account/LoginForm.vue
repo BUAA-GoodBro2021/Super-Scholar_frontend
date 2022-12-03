@@ -88,7 +88,7 @@ const login = ()=>{
 				type: "success",
 				duration: 3000
 			});
-			router.push(`/user/${res.data.token}`);
+			router.push({name:"Welcome"})
 		}
 		else{
 			ElNotification({
