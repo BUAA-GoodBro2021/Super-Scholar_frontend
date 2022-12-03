@@ -52,6 +52,7 @@ const searchStore = useSearchStore();
  * 因为 searchInputText 不是一个孤零零的数据，对于搜索框内容在确定要进行搜索以后，
  * 相关的页面部分应该根据 searchText 做出反应
  * 这也是需要把 搜索框文本 存储在 vuex/pinia state的原因，当然，它需要持久化存储
+ * VERY IMPORT 这里设置了当搜索文本为空时，不触发搜索的逻辑，这很重要。
  */
 const handleSearch = (val) => {
   // 去掉可能的斜体标签

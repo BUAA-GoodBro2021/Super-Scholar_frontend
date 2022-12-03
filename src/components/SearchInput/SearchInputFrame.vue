@@ -16,7 +16,7 @@
         @change="handleSelectSearchType"
         class="group search-type-select"
       >
-        <option value="works">论文</option>
+        <option value="works" sel>论文</option>
         <option value="authors">作者</option>
         <option value="venues">期刊会议</option>
         <option value="institutions">机构</option>
@@ -111,21 +111,28 @@ import { useSearchStore } from '../../stores/search.js';
 
 const selectTarget = ref(null);
 const searchStore = useSearchStore();
+/**
+ * 根据pinia中记录的 搜索实体类型，改变<select>的默认选择
+ */
 onMounted(()=>{
-  console.log(selectTarget.value);
-  console.log(selectTarget.value.options);
+  var options = selectTarget.value.options;
+  for (let i = 0; i < options.length; i++) {
+    if (options[i].value === searchStore.searchType) {
+      options[i].selected = true;
+      options.selectedIndex = i;
+    }
+  }
 })
 const handleSelectSearchType = () => {
   // console.log(selectTarget.value);
   // console.log(selectTarget.value.options);
   // console.log(selectTarget.value.options[selectTarget.value.options.selectedIndex].value);
   const options = selectTarget.value.options;
-  console.log(options[options.selectedIndex].value);
+  // console.log(options[options.selectedIndex].value);
   searchStore.setSearchType(
     options[options.selectedIndex].value
   );
 }
-// selectTarget.value.options[selectTarget.value.selectIndex].value;
 
 /**
  * 1.输入内容双向绑定、控制下拉区域的展示、事件处理

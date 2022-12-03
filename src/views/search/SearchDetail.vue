@@ -54,7 +54,8 @@
                 <div class="search-num-info">
                   <span class="left-border-span"></span>
                   <div class="search-num-info-detail">
-                    <span class="hitlength">21,469</span>
+                    <!-- <span class="hitlength">21,469</span> -->
+                    <span class="hitlength">{{totalSearchResNum}}</span>
                     <span> Results</span>
                     <span> for: </span>
                   </div>
@@ -64,59 +65,60 @@
               <!-- 随着滚动 sticky 在header下方的筛选栏 -->
               <div class="search-result__sort clearfix">
                 <div class="search-result__sort-right">
-                  <div class="per-page">per page: </div>
-                  <div class="sort-type">Sort Type</div>
+                  <!-- <div class="per-page">per page: </div> -->
+                  <div class="sort-type" ref="sortDropdownTarget">
+                    <button class="sort-type-btn" @click="expandSortDropdown">
+                      <b>Sort Type: </b>
+                      <!-- <span> Relevance</span> -->
+                      <span> {{searchStore.sortType}}</span>
+                      <i class="iconfont icon-arrowup"></i>
+                    </button>
+                    <div class="sort-dropdown">
+                      <ul class="sort-dropdown-ul">
+                        <li 
+                          v-for="item in dropdownSortTypeArray"
+                          @click="handleDropdownClick(item)"
+                        >
+                          {{item}}
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
                 </div>
               </div>
               <!-- 搜索结果主体 -->
               <ul class="search-result__list">
                 <!-- 单个搜索结果卡片 -->
-                <li class="result-item">
+                <li class="result-item" v-for="(item, index) in searchDataList">
                   <div class="result-item-checkbox-container"></div>
                   <div class="result-item-card clearfix">
                     <div class="result-item__citation">
                       <div class="citation-heading">research-article</div>
-                      <div class="citation-date">May 20</div>
+                      <!-- <div class="citation-date">May 20</div> -->
+                      <div class="citation-date">{{item.publication_date}}</div>
                     </div>
                     <div class="result-item__content">
                       <!-- 论文的标题 -->
                       <h5 class="card-title">
+                        <!-- TODO 需要加跳转到论文详情+匹配高亮 -->
                         <span>
                           <!-- <a href="/doi/10.1145/3293353.3293383">HSD-<span onclick="highlight()" class="single_highlight_class">CNN</span>: Hierarchically self decomposing <span onclick="highlight()" class="single_highlight_class">CNN</span> architecture using class specific filter sensitivity analysis</a> -->
-                          HSD-CNN: Hierarchically self decomposing CNN architecture using class specific filter sensitivity analysis
+                          {{item.display_name}}
                         </span>
                       </h5>
                       <!-- 论文的作者列表 -->
                       <ul class="card-author-list">
-                        <li>
+                        <li v-for="(author, authorIndex) in item.authorships">
                           <!-- TODO 跳转到对应的作者主页 -->
                           <a href="#">
                             <img
                               class="author-avator"  
                               src="https://dl.acm.org/pb-assets/icons/DOs/default-profile-1543932446943.svg"
                             />
-                            <span>K. SaiRam</span>
+                            <!-- { "id": "https://openalex.org/A2473549963", "display_name": "Ross Girshick", "orcid": null } -->
+                            <span>{{author.author.display_name}}</span>
                           </a>
                           <span>, </span>
-                        </li>
-                        <li>
-                          <a href="#">
-                            <img
-                            class="author-avator"  
-                            src="https://dl.acm.org/pb-assets/icons/DOs/default-profile-1543932446943.svg"
-                            />
-                            <span>Jayanta Mukherjee</span>
-                          </a>
-                          <span>, </span>
-                        </li>
-                        <li>
-                          <a href="#">
-                            <img
-                              class="author-avator"  
-                              src="https://dl.acm.org/pb-assets/icons/DOs/default-profile-1543932446943.svg"
-                            />
-                            <span>Amit Patra</span>
-                          </a>
                         </li>
                       </ul>
                       <!-- 论文的简要信息 -->
@@ -129,15 +131,45 @@
                       </div>
                       <!-- 论文的内容摘要 -->
                       <div class="card-abstract">
-                        <p>Conventional convolutional neural networks (CNN) are trained on large domain datasets and are hence typically over-represented and inefficient in limited class applications. An efficient way to convert such large many-class pre-trained networks into ...</p>
+                        <p>{{item.abstract}}</p>
                       </div>
-                      <!-- 论文底部快捷操作 -->
+                      <!-- 论文的领域concepts气泡展示，这里只截取前11个 -->
+                      <div class="card-concepts clearfix">
+                        <div 
+                          class="card-concepts-wrap" 
+                          v-for="(concept, conceptIndex) in item.concepts.slice(0, 11)"
+                          @click="handleConceptBubbleClick(concept)"
+                        >
+                          <i class="iconfont icon-menu"></i>
+                          <div class="card-concept-context">{{concept.display_name}}</div>
+                        </div>
+                      </div>
+                      
                       <div class="card-footer clearfix">
-                        <!-- <div class="card-footer-left">
+                        <!-- 论文底部简略信息 -->
+                        <div class="card-footer-left">
                           <ul class="rlist--inline">
-                            <li></li>
+                            <li class="metric-holder">
+                              <ul class="rlist--inline">
+                                <!-- 引用数量 -->
+                                <li>
+                                  <span class="citation">
+                                    <i class="iconfont icon-quotes" style="font-size: 1.1rem"></i>
+                                    <span>{{item.cited_by_count}}</span>
+                                  </span>
+                                </li>
+                                <!-- 下载数量 -->
+                                <li>
+                                  <span class="metric">
+                                    <i class="iconfont icon-Rise" style="font-size: 1.3rem"></i>
+                                    <span>195</span>
+                                  </span>
+                                </li>
+                              </ul>
+                            </li>
                           </ul>
-                        </div> -->
+                        </div>
+                        <!-- 论文底部快捷操作 -->
                         <div class="card-footer-right">
                           <ul class="rlist--inline" style="float: left;">
                             <!-- TODO 导出bibtex等引用格式 -->
@@ -163,21 +195,23 @@
                             </li>
                           </ul>
                           <ul class="rlist--inline dot-separator" style="float: right;">
+                            <!-- TODO 添加跳转到PDF在线预览的窗口 -->
                             <li>
-                              <div class="card-tool-btn">
-                                <i class="iconfont icon-quotes" style="font-size: 1.1rem;"></i>
+                              <div class="card-tool-btn pdf-btn">
+                                <i class="iconfont icon-pdf1" style="font-size: 0.9rem;"></i>
                                 <span class="card-btn-hint">
                                   <span class="card-btn-hint-arrow"></span>
-                                  Export Citation
+                                  View PDF online
                                 </span>
                               </div>
                             </li>
+                            <!-- TODO 添加跳转到论文源网页的超链接 -->
                             <li>
-                              <div class="card-tool-btn">
-                                <i class="iconfont icon-quotes" style="font-size: 1.1rem;"></i>
+                              <div class="card-tool-btn web-btn">
+                                <i class="iconfont icon-signal-source" style="font-size: 1.3rem;"></i>
                                 <span class="card-btn-hint">
                                   <span class="card-btn-hint-arrow"></span>
-                                  Export Citation
+                                  Get Access to Source Web
                                 </span>
                               </div>
                             </li>
@@ -188,6 +222,7 @@
                   </div>
                 </li>
               </ul>
+
               <div class="search-result__list">xxxxxxxxxxxxx</div>
             </div>
           </div>
@@ -198,15 +233,125 @@
 </template>
 <!-- 
   测试备注，cnn和cnn21 搜索的结果是大于15个、等于4个
-  用于测试页面布局
+  用于测试页面布局。
+  整体的搜索应对刷新的逻辑是：
+    刷新页面以后，依然按照用户设定的 searchType searchText pageSize sortType 进行一次搜索
+    但是过滤条件对象重置为空，不向后端传递。
+    即“保留 搜索实体类型、搜索文本、用户选定的每页数据尺寸、用户选定的排序方式；取消 用户设置的筛选条件”
  -->
+<script>
+const sortTypeArray = ["Relevance", "Earliest", "Latest", "Cited"];
+</script>
+
 <script setup>
 import SearchInput from '../../components/SearchInput/Search.vue';
 import { Search } from '../../api/search';
 import { useSearchStore } from '../../stores/search.js';
 import { ElNotification } from "element-plus";
+import { onMounted, ref } from 'vue';
 
 const searchStore = useSearchStore();
+// 搜索结果数据列表
+const searchDataList = ref([]);
+// 搜索结果总数
+var totalSearchResNum = ref(0);
+
+// 搜索类型下拉栏DOM
+const sortDropdownTarget = ref(null);
+const expandSortDropdown = () => {
+  sortDropdownTarget.value.classList.contains('js--open') 
+    ? sortDropdownTarget.value.classList.remove('js--open')
+    : sortDropdownTarget.value.classList.add('js--open')
+}
+// 初始化默认删去 Relevant
+const dropdownSortTypeArray = ref(sortTypeArray.filter(
+  (sortType) => sortType !== searchStore.sortType
+));
+
+const handleDropdownClick = async (newSortType) => {
+  // 点击以后立即收起下拉栏
+  expandSortDropdown();
+  searchStore.setSortType(newSortType);
+  dropdownSortTypeArray.value = sortTypeArray.filter(
+    (sortType) => sortType !== searchStore.sortType
+  );
+  console.log(searchStore.sortType, searchStore.searchInputText, searchStore.searchType);
+  // 确保搜索文本不为空
+  if (searchStore.searchInputText) {
+    var res = null;
+    switch (newSortType) {
+      case "Relevance":
+        res = await Search.getSearchDataList({
+          "entity_type": searchStore.searchType,
+          "params": {
+            "search" : searchStore.searchInputText,
+            "page": 1,
+            "per_page": 15
+          }
+        })
+        break;
+      case "Earliest":
+        res = await Search.getSearchDataList({
+          "entity_type": searchStore.searchType,
+          "params": {
+            "search" : searchStore.searchInputText,
+            "sort": {
+              // "display_name" : "asc",
+              "publication_date": "asc"
+            },
+            "page": 1,
+            "per_page": 15
+          }
+        })
+        break;
+      case "Latest":
+        res = await Search.getSearchDataList({
+          "entity_type": searchStore.searchType,
+          "params": {
+            "search" : searchStore.searchInputText,
+            "sort": {
+              // "display_name" : "asc",
+              "publication_date": "desc"
+            },
+            "page": 1,
+            "per_page": 15
+          }
+        })
+        break;
+      case "Cited":
+        res = await Search.getSearchDataList({
+          "entity_type": searchStore.searchType,
+          "params": {
+            "search" : searchStore.searchInputText,
+            "sort": {
+              "cited_by_count": "desc",
+            },
+            "page": 1,
+            "per_page": 15
+          }
+        })
+        break;
+      default:
+        console.error("排序类型有误！");
+        break;
+    }
+    if (res) {
+      if (res.data.result === 1) {
+        searchDataList.value = res.data.list_of_data[0].results;
+        totalSearchResNum.value = res.data.list_of_data[0].meta.count;
+        console.log(searchDataList);
+        ElNotification({
+          title: "恭喜您",
+          message: `搜索成功，用时 ${res.data.list_of_data[0].meta.db_response_time_ms / 1000} s`,
+          type: "success",
+          duration: 3000
+        });
+      }
+    }
+  }
+}
+
+
 /**
  * 核心搜索函数
  * @param {String} searchText 搜索文本
@@ -225,12 +370,13 @@ const handleFinalSearch = (searchText, searchEntityType) => {
   .then((res) => {
     // console.log(res);
     if (res.data.result === 1) {
-      // 
-      console.log(res.data.list_of_data);
-      console.log(res.data.list_of_data[0].results);
+      // console.log(res.data.list_of_data);
+      searchDataList.value = res.data.list_of_data[0].results;
+      totalSearchResNum.value = res.data.list_of_data[0].meta.count;
+      console.log(searchDataList);
       ElNotification({
         title: "恭喜您",
-        message: "搜索成功",
+        message: `搜索成功，用时 ${res.data.list_of_data[0].meta.db_response_time_ms / 1000} s`,
         type: "success",
         duration: 3000
       });
@@ -246,6 +392,14 @@ const handleFinalSearch = (searchText, searchEntityType) => {
   })
 }
 
+const handleConceptBubbleClick = (conceptEntity) => {
+  ElNotification({
+    title: "待开发",
+    message: conceptEntity,
+    type: "warning",
+    duration: 3000
+  })
+}
 
 </script>
 
@@ -266,6 +420,7 @@ a, a:hover, a:focus {
 .search-detail-container{
   box-sizing: border-box;
   background-color: rgb(228 228 231);
+  /* background-color: rgb(255, 255, 255); */
   font-family: Merriweather Sans,sans-serif;
   line-height: 1.4;
   word-wrap: break-word;
@@ -471,11 +626,13 @@ a, a:hover, a:focus {
 .search-result {
   overflow: visible;
 }
+
+
 .search-result__sort {
   border-bottom: .0625rem solid #d9d9d9;
   font-size: .875rem;
 }
-.search-result__sort-right {
+.search-result__sort .search-result__sort-right {
   float: right;
 }
 @media (min-width: 768px) {
@@ -499,12 +656,90 @@ a, a:hover, a:focus {
   border-right: .0625rem solid #d9d9d9;
   padding-right: .3125rem;
   display: inline-block;
+  font-size: .875rem;
 }
 .search-result__sort-right .sort-type {
   float: right;
   position: relative;
   padding: 0 .5rem;
+  font-size: 1.875rem;
+  font-family: "Microsoft YaHei", serif;
 }
+.search-result__sort-right .sort-type .sort-type-btn {
+  display: inline-block;
+  position: relative;
+  width: 170px;
+  padding: .3125rem 0 1.25rem;
+  margin: 0;
+  line-height: 1.15;
+  box-sizing: border-box;
+  cursor: pointer;
+  background-color: transparent;
+  border: none;
+  /* font-style: italic; */
+  font-size: 14px !important;
+  text-transform: none;
+}
+.search-result__sort-right .sort-type .sort-type-btn b {
+  color: black;
+  font-weight: 600;
+}
+.search-result__sort-right .sort-type .sort-type-btn span {
+  color: black;
+  font-weight: 300 !important;
+}
+.search-result__sort-right .sort-type.js--open .sort-type-btn i{
+  transform: rotate(180deg);
+}
+/* VERY IMPORTANT
+ransform在行内元素不起作用，要给i加上display:inline-block的样式转为行内块元素。 */
+.search-result__sort-right .sort-type .sort-type-btn i {
+  display: inline-block;
+  font-size: 1.625rem;
+  /* font-size: .5rem; */
+  margin-left: .3125rem;
+  vertical-align: middle;
+  padding-right: 0;
+  transition: transform .5s;
+}
+
+.search-result__sort-right .sort-type.js--open .sort-dropdown {
+  display: block;
+}
+.search-result__sort-right .sort-type .sort-dropdown {
+  display: none;
+  position: absolute;
+  z-index: 9;
+  text-align: left;
+  top: 55px;
+  width: 95%;
+  padding: 0;
+  background: #fff;
+  /* border: .0625rem solid #d9d9d9; */
+  border-top: .1875rem solid;
+  font-size: 14px;
+  min-width: 150px;
+  right: 0;
+  box-shadow: 0 0.125rem 0.625rem rgb(82 82 82 / 43%);
+}
+.search-result__sort-right .sort-type .sort-dropdown .sort-dropdown-ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.search-result__sort-right .sort-type .sort-dropdown .sort-dropdown-ul li{
+  padding: .375rem .9375rem;
+  display: block;
+  cursor: pointer;
+  background-color: transparent;
+  /* font-style: italic; */
+  font-weight: 300;
+}
+.search-result__sort-right .sort-type .sort-dropdown .sort-dropdown-ul li:hover {
+  background-color: #d9d9d9;
+}
+
+/* #region 搜索列表和单个搜索卡片 */
 .search-result__list {
   list-style: none;
   padding: 0;
@@ -622,11 +857,42 @@ img {
 
 .card-abstract {
   height: auto;
-  margin: 1rem, 0;
-  /* 下面一起用可以实现溢出文本用省略号 "..." 代替 */
+  margin: 0.9rem 0;
+  font-size: 1rem;
+  font-family: 'Times New Roman', Times, "Microsoft YaHei", serif;
+  /* FIXME 下面四行一起用可以实现多行溢出文本用省略号 "..." 代替，保证不超过一行 */
   overflow: hidden;
-  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
 }
+
+.card-concepts {
+  height: auto;
+  margin-bottom: .8rem;
+}
+
+.card-concepts .card-concepts-wrap{
+  float: left;
+  margin-right: 10px;
+  margin-bottom: 5px;
+  padding: 3px 5px;
+  box-sizing: border-box;
+  border: 1.6px solid black;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+}
+.card-concepts .card-concepts-wrap i{
+  display: inline-block;
+  margin-right: 3px;
+}
+.card-concepts .card-concepts-wrap .card-concept-context{
+  display: inline-block;
+  text-transform: capitalize;
+}
+
+
 .card-footer {
   height: auto;
 }
@@ -640,7 +906,12 @@ img {
 .rlist--inline>li {
   display: inline-block;
 }
-.card-footer-left li:not(:last-child) {
+
+/* #region 卡片底部左侧简略信息 */
+.card-footer-left {
+  float: left;
+}
+.card-footer-left li {
   /* 6px */
   padding-right: .375rem;
 }
@@ -654,13 +925,32 @@ img {
   }
 }
 
+.metric-holder {
+  outline: none;
+  position: relative;
+  display: inline-block;
+  font-weight: 600;
+}
+.card-footer-left .citation {
+  color: #0077c2;
+}
+.card-footer-left .metric {
+  color: #651fff;
+}
+.card-footer-left li i{
+  padding-right: .375rem;
+  vertical-align: sub;
+  transition: transform .5s;
+}
 
+/* #endregion 卡片底部左侧简略信息结束 */
+/* #region 卡片底部右侧快捷操作 */
 .card-footer-right {
   float: right;
 }
 /**
-这里是因为上面规定了 .rlist--inline li 元素是 display:inline-block;
-vertical-align 用来指定行内元素（inline）或表格单元格（table-cell）元素的垂直对齐方式。
+  这里因为上面规定了 .rlist--inline li 元素是 display:inline-block;
+  vertical-align 用来指定行内元素（inline）或表格单元格（table-cell）元素的垂直对齐方式。
 */
 .card-footer-right .rlist--inline li {
   vertical-align: middle;
@@ -690,6 +980,22 @@ vertical-align 用来指定行内元素（inline）或表格单元格（table-ce
   white-space: nowrap;
   text-align: center;
   vertical-align: middle;
+}
+
+.card-footer-right .rlist--inline li .card-tool-btn.pdf-btn:hover {
+  /* background-color: #d44848; */
+  background-color: #e34444;
+}
+.card-footer-right .rlist--inline li .card-tool-btn.pdf-btn {
+  background-color: #d40c03;
+  color: white;
+}
+.card-footer-right .rlist--inline li .card-tool-btn.web-btn:hover {
+  background-color: #319ddf;
+}
+.card-footer-right .rlist--inline li .card-tool-btn.web-btn {
+  background-color: #0077c2;
+  color: white;
 }
 .card-footer-right .rlist--inline li .card-tool-btn i{
   vertical-align: middle;
@@ -742,6 +1048,9 @@ vertical-align 用来指定行内元素（inline）或表格单元格（table-ce
   font-size: 19px;
   vertical-align: middle;
 }
+/* #endregion 卡片底部右侧快捷操作 */
+
+/* #endregion 搜索列表和单个搜索卡片结束 */
 
 /* #endregion 搜索结果区域结束 */
 
