@@ -196,19 +196,54 @@
     </div>
   </div>
 </template>
-
+<!-- 
+  测试备注，cnn和cnn21 搜索的结果是大于15个、等于4个
+  用于测试页面布局
+ -->
 <script setup>
 import SearchInput from '../../components/SearchInput/Search.vue';
 import { Search } from '../../api/search';
 import { useSearchStore } from '../../stores/search.js';
+import { ElNotification } from "element-plus";
 
 const searchStore = useSearchStore();
-// , searchEntityType
-const handleFinalSearch = (searchText) => {
-  console.log(searchText);
-  // Search.getSearchDataList({
-  //   "entity_type": searchEntityType
-  // })
+/**
+ * 核心搜索函数
+ * @param {String} searchText 搜索文本
+ * @param {String} searchEntityType 搜索实体类
+ */
+const handleFinalSearch = (searchText, searchEntityType) => {
+  console.log(searchText, searchEntityType);
+  Search.getSearchDataList({
+    "entity_type": searchEntityType,
+    "params": {
+        "search" : searchText,
+        "page": 1,
+        "per_page": 15
+    }
+  })
+  .then((res) => {
+    // console.log(res);
+    if (res.data.result === 1) {
+      // 
+      console.log(res.data.list_of_data);
+      console.log(res.data.list_of_data[0].results);
+      ElNotification({
+        title: "恭喜您",
+        message: "搜索成功",
+        type: "success",
+        duration: 3000
+      });
+    }
+  })
+  .catch((err) => {
+    ElNotification({
+      title: "很遗憾",
+      message: err.message,
+      type: "error",
+      duration: 3000
+    })
+  })
 }
 
 

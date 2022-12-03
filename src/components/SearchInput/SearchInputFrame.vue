@@ -54,10 +54,13 @@
       <div
         class="group search-divider"
       ></div>
-      <!-- 搜索按钮，点击按钮触发搜索 -->
-      <!-- 搜索图标，垂直居中，右偏移为 20px -->
+      <!-- 
+        搜索按钮，点击按钮触发搜索。
+        图标垂直居中，右偏移为 20px 
+       -->
       <button
         class="search-btn"
+        @click="onSearchHandler"
       >
         <svg aria-hidden="true" class="search-btn-icon">
           <use xlink:href="#icon-search" fill="#707070" />

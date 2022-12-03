@@ -64,7 +64,7 @@ const handleSearch = (val) => {
     // 触发 searchText 的变化
     searchStore.setSearchInputText(val);
     // 触发 父组件进行搜索
-    // emits(EMIT_SEARCH, val);
+    emits(EMIT_SEARCH, val, searchStore.searchType);
   };
 }
 
