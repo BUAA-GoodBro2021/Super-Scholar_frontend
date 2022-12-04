@@ -67,7 +67,7 @@
                 </li>
                 <li class="right-btn-wrap" style="float: right; vertical-align: middle;" v-if="personAccount == 1">
                     <el-button class="right-btn" type="primary" plain @click="changeDialogShow = true">
-                        <el-icon><Edit /></el-icon>编辑
+                       编辑
                     </el-button>
                 </li>
                 <li class="right-btn-wrap" v-if="personAccount != 1 && openAlexAccount == 1 && is_follow"
