@@ -16,6 +16,8 @@
         <div class="row clearfix">
           <!-- 左侧筛选部分 -->
           <div class="col-lg-3 col-md-3 col-sm-4 ">
+            <ElButton v-if="confirmFilterSearch" @click="handleFilterSearch">确认更改测试</ElButton>
+            <ElButton v-if="confirmFilterSearch" @click="cancelFilterSearch">取消更改测试</ElButton>
             <div class="sticko__child colored-block">
               <!-- 单个筛选单元 -->
               <div 
@@ -27,7 +29,7 @@
                 <!-- 筛选块标题 -->
                 <div 
                   class="colored-block-title clearfix" 
-                  @click="expandFilterDropDown(worksFilterDOM[index], index)"
+                  @click="handleWorksGroupSearch(worksFilterDOM[index], index)"
                 >
                   <div class="colored-block-title-context">{{item.title}}</div>
                   <i class="iconfont icon-arrowup colored-block-icon"></i>
@@ -36,10 +38,21 @@
                 <div class="colored-block-content">
                   <div class="filter-block">
                     <div class="accordion-content">
-                      <ElCheckboxGroup v-model="worksFilterList[index].selectedArray" @change="handleChange">
+                      <ElCheckboxGroup 
+                        v-model="worksFilterList[index].selectedArray" 
+                        @change="handleChange(index)"
+                      >
                         <ul class="rlist expand__list">
-                          <li v-for="labelItem in worksFilterList[index].stringArray">
-                            <ElCheckbox :label="labelItem" />
+                          <li v-for="labelItem in worksFilterList[index].objectArray">
+                            <!-- 
+                              VERY IMPORTANT 
+                              这里 label属性 代表选中时，添加进入 ElCheckboxGroup 的v-model绑定的数组的值
+                              我们选择 labelItem 代表的这项（实际上是根据labelItem.key_display_name选择）
+                              实际上是把 labelItem.key 添加进入了对应的数组
+                             -->
+                            <ElCheckbox :label="labelItem.key">
+                              {{labelItem.key_display_name}}&nbsp;&nbsp;({{labelItem.count}})
+                            </ElCheckbox>
                           </li>
                         </ul>
                       </ElCheckboxGroup>
@@ -72,15 +85,14 @@
                   <div class="sort-type" ref="sortDropdownTarget">
                     <button class="sort-type-btn" @click="expandSortDropdown">
                       <b>Sort Type: </b>
-                      <!-- <span> Relevance</span> -->
                       <span> {{searchStore.sortType}}</span>
                       <i class="iconfont icon-arrowup"></i>
                     </button>
                     <div class="sort-dropdown">
                       <ul class="rlist">
                         <li 
-                          v-for="item in dropdownSortTypeArray"
-                          @click="handleDropdownClick(item)"
+                          v-for="item in worksSortTypeArray"
+                          @click="handleWorksSortSearch(item)"
                         >
                           {{item}}
                         </li>
@@ -143,7 +155,7 @@
                       <ul class="card-author-list">
                         <li v-for="(author, authorIndex) in item.authorships">
                           <!-- 跳转到对应的作者主页 -->
-                          <a @click="toOpenAlexAuthorPage(author.author.id.slice(21))">
+                          <a @click="jumpToAuthorPage(author.author.id.slice(21))">
                             <img
                               class="author-avator"  
                               src="https://dl.acm.org/pb-assets/icons/DOs/default-profile-1543932446943.svg"
@@ -249,7 +261,7 @@
                             <li v-if="(item.open_access.is_oa === 1)">
                               <div 
                                 class="card-tool-btn pdf-btn" 
-                                @click="viewPDFOnline(item.open_access.oa_url)"
+                                @click="jumpToPDFOnlinePage(item.open_access.oa_url)"
                               >
                                 <i class="iconfont icon-pdf1" style="font-size: 0.9rem;"></i>
                                 <span class="card-btn-hint">
@@ -311,7 +323,7 @@ const sortTypeArray = ["Relevance", "Earliest", "Latest", "Cited"];
 import SearchInput from '../../components/SearchInput/Search.vue';
 import { Search } from '../../api/search';
 import { useSearchStore } from '../../stores/search.js';
-import { ElCheckbox, ElCheckboxGroup, ElNotification, } from "element-plus";
+import { ElButton, ElCheckbox, ElCheckboxGroup, ElNotification, } from "element-plus";
 import { onMounted, reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
@@ -322,24 +334,14 @@ const searchDataList = ref([]);
 // 搜索结果总数
 var totalSearchResNum = ref(0);
 
-// 搜索类型下拉栏DOM
-const sortDropdownTarget = ref(null);
-const expandSortDropdown = () => {
-  sortDropdownTarget.value.classList.contains('js--open') 
-    ? sortDropdownTarget.value.classList.remove('js--open')
-    : sortDropdownTarget.value.classList.add('js--open')
-}
-
+// #region ！！过滤区域 -----------------------------------------------------------------------
 // 过滤器下拉栏DOM
 const worksFilterDOM = ref([]);
 const setWorksFilterDOM = (DOMElement) => {
   worksFilterDOM.value.push(DOMElement);
 }
-// onMounted(() => {console.log(worksFilterDOM.value)});
 
-
-// 过滤器筛选数据列表
-// 创造一个对象数组。这个数组有7个对象元素，每个对象有5个属性：
+// 过滤器筛选数据列表。创造一个对象数组。这个数组有7个对象元素，每个对象有5个属性：
 const worksFilterList = reactive([
   {
     group: "publication_year",
@@ -356,6 +358,7 @@ const worksFilterList = reactive([
     selectedArray: []
   },
   {
+    // 可以不带有 authorships
     group: "authorships.author.id",
     title: "作者 Author",
     objectArray: [],
@@ -392,25 +395,33 @@ const worksFilterList = reactive([
   },
 ]);
 
-const expandFilterDropDown = (filterDOM, index) => {
-  console.log(index);
+/**
+ * 展开/收起过滤单元的下拉栏
+ * 并触发 “分组搜索”
+ * @param {HTMLElement} filterDOM 对应的过滤单元的DOM
+ * @param {Number} index 过滤单元在整个DOM数组中的位置
+ */
+const handleWorksGroupSearch = (filterDOM, index) => {
   var data = {
     "entity_type": searchStore.searchType,  // 理论上来说这里只能是 works
     "params": {
+      "filter": buildWorksFilterKey(),
       "group_by": worksFilterList[index].group,
       "page": 1,
       "per_page": 15,
       "search" : searchStore.searchInputText,
-      // "sort": {},
+      "sort": buildWorksSortKey(searchStore.sortType),
     }
   };
+  console.log("分组搜索前端发出的请求体");
+  console.log(data);
   // 注意这里传入的不是 ref 包裹的DOM元素，而是在模板中自动解析以后的value，直接就是HTMLDOM
   if (filterDOM.classList.contains('js--open')) {
     filterDOM.classList.remove('js--open');   // 收起
   } else {
     Search.getGroupDataList(data)
     .then((res) => {
-      console.log(res.data);
+      // console.log(res.data);
       if (res.data.result === 1) {
         let groupArray = res.data.groups_of_data.group_by;
         worksFilterList[index].objectArray = groupArray;
@@ -427,86 +438,150 @@ const expandFilterDropDown = (filterDOM, index) => {
   }
 }
 
-const handleChange = (newArray) => {
-  console.log(newArray);
+// 出现“确认”“取消”勾选的过滤器的按钮
+const confirmFilterSearch = ref(false);
+const handleChange = (index) => {
+  console.log(worksFilterList[index].selectedArray);
+  confirmFilterSearch.value = true;
 }
+/**
+ * 遍历所有的works筛选字段。
+ * 将用户已经勾选的条目构建出 filter 字段
+ * (对象类型)以便于发送给后端
+ * @return 一个对象
+ */
+const buildWorksFilterKey = () => {
+  var filter = {};
+  for (let i = 0; i < 7; i++) {
+    // 利用 [] 给对象创建一个键字段
+    filter[worksFilterList[i].group] = "";
+    // 遍历每一个筛选单元中， 代表“选中”的 label 数组
+    for(let j = 0; j < worksFilterList[i].selectedArray.length; j++) {
+      filter[worksFilterList[i].group] += worksFilterList[i].selectedArray[j] + "|";
+    }
+    // 去掉最后一个 '|' 字符
+    filter[worksFilterList[i].group] = filter[worksFilterList[i].group].slice(0, -1);
+  }
+  return filter;
+};
+/**
+ * 确定要进行 “带有搜索筛选字段” 的 搜索
+ */
+const handleFilterSearch = () => {
+  confirmFilterSearch.value = false;
+  for(let i = 0; i < 7; i++) {
+    if (worksFilterDOM.value[i].classList.contains('js--open')) {
+      worksFilterDOM.value[i].classList.remove('js--open');
+    }
+  }
+  var data = {
+    "entity_type": searchStore.searchType,  // 理论上来说这里只能是 works
+    "params": {
+      "filter": buildWorksFilterKey(),
+      "page": 1,
+      "per_page": 15,
+      "search" : searchStore.searchInputText,
+      "sort": buildWorksSortKey(searchStore.sortType),
+    }
+  };
+  console.log("用户筛选搜索，前端发出的请求体");
+  console.log(data);
+  Search.getSearchDataList(data)
+  .then((res) => {
+    if (res.data.result === 1) {
+      searchDataList.value = res.data.list_of_data[0].results;
+      totalSearchResNum.value = res.data.list_of_data[0].meta.count;
+      console.log(searchDataList);
+      ElNotification({
+        title: "恭喜您",
+        message: `搜索成功，用时 ${res.data.list_of_data[0].meta.db_response_time_ms / 1000} s`,
+        type: "success",
+        duration: 3000
+      });
+    }
+  })
+  .catch((err) => {
+    console.log(err);
+  })
+}
+/**
+ * 取消要进行 “带有搜索筛选字段” 的 搜索
+ * 并清空所有已经勾选的筛选条目
+ */
+const cancelFilterSearch = () => {
+  confirmFilterSearch.value = false;
+  // 清空所有选择
+  for (let i = 0; i < 7; i++) {
+    worksFilterList[i].selectedArray = [];    
+  }
+}
+// #endregion ！！过滤区域 -----------------------------------------------------------------------
 
 
 // #region 右侧函数
 
-// 初始化默认删去 Relevant
-const dropdownSortTypeArray = ref(sortTypeArray.filter(
+// 排序方式下拉栏DOM
+const sortDropdownTarget = ref(null);
+const expandSortDropdown = () => {
+  sortDropdownTarget.value.classList.contains('js--open') 
+    ? sortDropdownTarget.value.classList.remove('js--open')
+    : sortDropdownTarget.value.classList.add('js--open')
+}
+/**
+ * 根据用户选择的sort类型，构建出 sort 字段
+ * (对象类型)以便于发送给后端
+ * @return 一个对象
+ */
+const buildWorksSortKey = (worksSortType) => {
+  var sort = {};
+  switch (worksSortType) {
+    case "Relevance":
+      break;
+    case "Earliest":
+      sort["publication_date"] = "asc";
+      break;
+    case "Latest":
+      sort["publication_date"] = "desc";
+      break;
+    case "Cited":
+      sort["cited_by_count"] = "desc";
+      break;
+  }
+  return sort;
+}
+
+// 初始化默认删去当前选中的排序类型
+const worksSortTypeArray = ref(sortTypeArray.filter(
   (sortType) => sortType !== searchStore.sortType
 ));
-
-const handleDropdownClick = async (newSortType) => {
+/**
+ * 切换排序方式触发的搜索函数
+ * @param {String} newSortType 排序类型
+ */
+const handleWorksSortSearch = async (newSortType) => {
   // 点击以后立即收起下拉栏
   expandSortDropdown();
   searchStore.setSortType(newSortType);
-  dropdownSortTypeArray.value = sortTypeArray.filter(
+  worksSortTypeArray.value = sortTypeArray.filter(
     (sortType) => sortType !== searchStore.sortType
   );
   console.log(searchStore.sortType, searchStore.searchInputText, searchStore.searchType);
   // 确保搜索文本不为空
   if (searchStore.searchInputText) {
-    var res = null;
-    switch (newSortType) {
-      case "Relevance":
-        res = await Search.getSearchDataList({
-          "entity_type": searchStore.searchType,
-          "params": {
-            "search" : searchStore.searchInputText,
-            "page": 1,
-            "per_page": 15
-          }
-        })
-        break;
-      case "Earliest":
-        res = await Search.getSearchDataList({
-          "entity_type": searchStore.searchType,
-          "params": {
-            "search" : searchStore.searchInputText,
-            "sort": {
-              // "display_name" : "asc",
-              "publication_date": "asc"
-            },
-            "page": 1,
-            "per_page": 15
-          }
-        })
-        break;
-      case "Latest":
-        res = await Search.getSearchDataList({
-          "entity_type": searchStore.searchType,
-          "params": {
-            "search" : searchStore.searchInputText,
-            "sort": {
-              // "display_name" : "asc",
-              "publication_date": "desc"
-            },
-            "page": 1,
-            "per_page": 15
-          }
-        })
-        break;
-      case "Cited":
-        res = await Search.getSearchDataList({
-          "entity_type": searchStore.searchType,
-          "params": {
-            "search" : searchStore.searchInputText,
-            "sort": {
-              "cited_by_count": "desc",
-            },
-            "page": 1,
-            "per_page": 15
-          }
-        })
-        break;
-      default:
-        console.error("排序类型有误！");
-        break;
+    var data = {
+      "entity_type": searchStore.searchType,
+      "params": {
+        "filter": buildWorksFilterKey(),
+        "page": 1,
+        "per_page": 15,
+        "search" : searchStore.searchInputText,
+        "sort" : buildWorksSortKey(searchStore.sortType),
+      }
     }
-    if (res) {
+    console.log("切换排序方式搜索，前端发出的请求体");
+    console.log(data);
+    Search.getSearchDataList(data)
+    .then((res) => {
       if (res.data.result === 1) {
         searchDataList.value = res.data.list_of_data[0].results;
         totalSearchResNum.value = res.data.list_of_data[0].meta.count;
@@ -518,18 +593,29 @@ const handleDropdownClick = async (newSortType) => {
           duration: 3000
         });
       }
-    }
+    })
+    .catch((err) => {
+      console.log(err);
+    })
   }
 }
 
-
 /**
  * 核心搜索函数
+ * TODO 这里需要综合各个实体的 filter/sort 字段构造函数
  * @param {String} searchText 搜索文本
  * @param {String} searchEntityType 搜索实体类
  */
 const handleFinalSearch = (searchText, searchEntityType) => {
   console.log(searchText, searchEntityType);
+  var data = {
+    "entity_type": searchEntityType,
+    "params": {
+      "page": 1,
+      "per_page": 15,
+      "search" : searchText,
+    }
+  }
   Search.getSearchDataList({
     "entity_type": searchEntityType,
     "params": {
@@ -564,15 +650,21 @@ const handleFinalSearch = (searchText, searchEntityType) => {
 }
 
 // #region 卡片内部交互函数
-const toOpenAlexAuthorPage = (openAlexAuthorId) => {
+/**
+ * 跳转到作者详情页
+ * @param {String} openAlexAuthorId 作者的openAlexId
+ */
+const jumpToAuthorPage = (openAlexAuthorId) => {
   // console.log(openAlexAuthorId);
   router.push({
     name: 'OpenAlexAuthorDetail',
     params: {tokenid: openAlexAuthorId}
   });
 }
-
-
+/**
+ * 跳转到领域详情页
+ * @param {String} openAlexAuthorId 作者的openAlexId
+ */
 const handleConceptBubbleClick = (conceptEntity) => {
   ElNotification({
     title: "待开发",
@@ -581,12 +673,11 @@ const handleConceptBubbleClick = (conceptEntity) => {
     duration: 3000
   })
 }
-
 /**
  * 跳转到PDF在线预览网页
  * @param {String[URL]} pdfURL PDF在线预览网页
  */
-const viewPDFOnline = (pdfURL) => {
+const jumpToPDFOnlinePage = (pdfURL) => {
   // console.log(pdfURL);
   window.location.href = pdfURL;
 }
@@ -600,6 +691,8 @@ const jumpToWorkSourceWeb = (webURL) => {
 }
 
 // #endregion 卡片内部交互函数
+
+
 
 
 // #endregion 右侧函数

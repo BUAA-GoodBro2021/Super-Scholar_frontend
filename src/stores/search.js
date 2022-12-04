@@ -9,7 +9,7 @@ export const useSearchStore = defineStore({
       // TODO 可以考虑做一个字段限制检查，不是这5个的话报错
       searchType: useLocalStorage("searchType", "works", localStorage),
       // 搜索框的文本，需要做持久化处理
-      searchInputText: useLocalStorage("token", "", localStorage),
+      searchInputText: useLocalStorage("searchInputText", "", localStorage),
       // 对应于用户的搜索历史，是一个 String 类型的数组
       historyList: useLocalStorage("historyList", [], localStorage),
       // 搜索结果排序类型
