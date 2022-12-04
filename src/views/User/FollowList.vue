@@ -26,14 +26,6 @@
                                     <span class="user-name hover-item" @click="toAuthor(scope.row)">{{
                                            scope.row.display_name
                                     }}</span>
-                                    <!-- <div class="authors_wrap">
-                            <span class="document_authors" v-for="(item, index) in scope.row.authorships"
-                                :key="index">{{
-                                        item.author.display_name
-                                }}
-                                <span v-if="index != scope.row.authorships.length - 1">/&nbsp;</span>
-                            </span>
-                        </div> -->
                                 </template>
                             </el-table-column>
                             <el-table-column prop="last_known_institution" label="机构" min-width="25%" align="center">
@@ -81,40 +73,7 @@ const deleteDialog = ref(false)
 const userNow = ref()
 const filterusers = ref([]) // 过滤后的文件夹
 const userids = ref([])
-const users = ref([
-    {
-        active: false,
-        type: 0,
-        size: 122,
-        sum: 2,
-        id: 1,
-        name: 'Harbour'
-    },
-    {
-        active: false,
-        type: 0,
-        size: 122,
-        sum: 2,
-        id: 2,
-        name: 'Harboure'
-    },
-    {
-        active: false,
-        type: 1,
-        size: 122,
-        sum: 2,
-        id: 3,
-        name: 'Harbur'
-    },
-    {
-        active: false,
-        type: 1,
-        size: 122,
-        sum: 2,
-        id: 4,
-        name: 'Harboure'
-    },
-])
+const users = ref([])
 
 onMounted(() => {
     getAuthorList()
