@@ -8,7 +8,7 @@
                 <div class="network" id="network" v-if="chart2Show"></div>
                 <el-dialog v-model="chart2Dialog" width="50%" height="60%">
                     <template #header>
-                        <span class="dialog-title">与{{ nodedata[choseLine].value }}合著作品如下</span>
+                        <span class="dialog-title">与{{ nodedata.value[choseLine].value }}合著作品如下</span>
                     </template>
                     <div class="dialog-wrap">
                         <div v-for="(item, index) in chart2DialogData" :key="index">
@@ -30,7 +30,9 @@
 <script setup>
 import * as echarts from 'echarts'
 import { watch } from 'vue';
+import { useRouter } from 'vue-router';
 // import { nextTick, reactive, readonly } from "vue"
+const router = useRouter()
 
 const props = defineProps({
     dataCountByYear: Object,
@@ -67,8 +69,11 @@ const dataCount = ref([
     },
 ])
 let chart1, chart2;
-let x1data = [], countdata = [], citedata = []
-let nodedata = [], linedata = []
+const x1data = ref([])
+const countdata = ref([])
+const citedata = ref([])
+const nodedata = ref([])
+const linedata = ref([])
 const chart1Show = ref(false)
 const chart2Show = ref(false)
 const chart2Dialog = ref(false)
@@ -79,39 +84,67 @@ const changeToDataAnalyse = ref(false) // 记录跳转到数据分析tab页面�
 onMounted(() => {
     //todo
     //处理documentList 将publication_year与publication_date连接起来
-    // data1PreProcess(x1data, countdata, citedata)
-    // // initChart1(x1data, countdata, citedata)
-    // data2PreProcess(nodedata, linedata)
+    // data1PreProcess()
+    // // initChart1()
+    // data2PreProcess()
 })
 
 watch(() => props.tabChange, (newVal) => {
     if (newVal) changeToDataAnalyse.value = true
     if (newVal && chart1Show.value == false) {
         console.log('发表文献->数据分析')
-        data1PreProcess(x1data, countdata, citedata)
-        nextTick(() => {
-            chart1Show.value = true
-            nextTick(() => {
-                initChart1(x1data, countdata, citedata)
-                window.onresize = () => chart1.resize()
-                window.addEventListener('resize', () => {
-                    chart1.resize()
-                })
-            })
-        })
+        reInitChart1()
+    }
+    if (newVal && changeToDataAnalyse.value && activeName.value == 'authorNetWork') {
+        chart2Show.value = false
+        reInitChart2()
+    }
+
+    if (newVal && changeToDataAnalyse.value && activeName.value == 'countByYear') {
+        chart1Show.value = false
+        reInitChart1()
     }
 })
 
-// watch(() => props.authorNetWork, (newVal) => {
-//     if (changeToDataAnalyse.value == true) {
-//         data2PreProcess(nodedata, linedata)
+const reInitChart1 = () => {
+    nextTick(() => {
+        chart1Show.value = true
+        data1PreProcess()
+        nextTick(() => {
+            initChart1()
+            window.onresize = () => chart1.resize()
+            window.addEventListener('resize', () => {
+                chart1.resize()
+            })
+        })
+    })
+}
+
+const reInitChart2 = () => {
+    nextTick(() => {
+        chart2Show.value = true
+        data2PreProcess()
+        nextTick(() => {
+            initChart2()
+            window.onresize = () => chart2.resize()
+            window.addEventListener('resize', () => {
+                chart2.resize()
+            })
+        })
+    })
+}
+
+// watch(() => props.authorNetWork, (newVal) => { // 如果数据发生了变化 可能是跳转导致的
+//     if (changeToDataAnalyse.value == true) { // 如果之前点击过数据分析 说明第二个panel的dom已经创建
+//         data2PreProcess()
+//         if(chart2Show.value) chart2Show.value = false // 如果之前初始化过 需要重新初始化 没有初始化过 数据预处理之后设置chartshow为true即可
 //         nextTick(() => {
 //             chart2Show.value = true
 //             nextTick(() => {
-//                 initChart2(nodedata, linedata)
+//                 initChart2()
 //                 window.onresize = () => chart2.resize()
 //                 window.addEventListener('resize', () => {
-//                     chart1.resize()
+//                     chart2.resize()
 //                 })
 //             })
 //         })
@@ -120,67 +153,62 @@ watch(() => props.tabChange, (newVal) => {
 
 // watch(() => props.dataCountByYear, (newVal) => {
 //     console.log('props.dataCountbyYear changed')
+//     if (changeToDataAnalyse.value == true) {
+//         data1PreProcess()
+//         if(chart1Show.value) chart1Show.value = false
+//         nextTick(() => {
+//             chart1Show.value = true
+//             nextTick(() => {
+//                 data1PreProcess()
+//                 window.onresize = () => chart1.resize()
+//                 window.addEventListener('resize', () => {
+//                     chart1.resize()
+//                 })
+//             })
+//         })
+//     }
 // })
 
 const handleClick = (tab) => {
     if (tab.paneName == 'authorNetWork') {
         if (chart2Show.value == false) {
-            nextTick(() => {
-                chart2Show.value = true
-                data2PreProcess(nodedata, linedata)
-                nextTick(() => {
-                    initChart2(nodedata, linedata)
-                    window.onresize = () => chart2.resize()
-                    window.addEventListener('resize', () => {
-                        chart2.resize()
-                        chart1.resize()
-                    })
-                })
-
-            })
+            reInitChart2()
+        } else {
+            chart2Show.value = false
+            reInitChart2()
         }
-    } else if (tab.paneName == 'countByYear' && chart1Show.value == false) {
+    } else if (tab.paneName == 'countByYear') {
         if (chart1Show.value == false) {
-            nextTick(() => {
-                chart1Show.value = true
-                data1PreProcess(x1data, countdata, citedata)
-                nextTick(() => {
-                    initChart1(x1data, countdata, citedata)
-
-                    window.onresize = () => chart1.resize()
-                    window.addEventListener('resize', () => {
-                        chart2.resize()
-                        chart1.resize()
-                    })
-                })
-                console.log(document.getElementById('count'))
-            })
+            reInitChart1()
+        } else {
+            chart1Show.value = false
+            reInitChart1()
         }
     }
 }
 
-const data1PreProcess = (xdata, countdata, citedata) => {
+const data1PreProcess = () => {
     dataCount.value = []
-    // xdata = []
-    // countdata = []
-    // citedata = []
+    x1data.value = []
+    countdata.value = []
+    citedata.value = []
     dataCount.value.push(...props.dataCountByYear)
     dataCount.value.sort(function (a, b) {
         return a.year - b.year
     })
     dataCount.value.forEach((item, index) => {
-        xdata.push(item.year)
-        countdata.push(item.works_count)
-        citedata.push(item.cited_by_count)
+        x1data.value.push(item.year)
+        countdata.value.push(item.works_count)
+        citedata.value.push(item.cited_by_count)
     })
 }
 
 const colors = reactive(['#ff8400', '#03fc62', '#aa61b2', '#0a95e6', '#00fff7', '#f06467', '#f06467', '#03fc62', '#00fff7', '#f06467'])
 
-const data2PreProcess = (nodedata, linedata) => {
-    // nodedata
-    // linedata = []
-    nodedata.push({
+const data2PreProcess = () => {
+    nodedata.value = []
+    linedata.value = []
+    nodedata.value.push({
         "name": 0,
         "value": props.authorName,
         x: 65,
@@ -202,7 +230,7 @@ const data2PreProcess = (nodedata, linedata) => {
     })
     for (let i = 0; i < props.authorNetWork.length; i++) {
         if (i == 20) break;
-        nodedata.push(
+        nodedata.value.push(
             {
                 "name": i + 1,
                 "value": props.authorNetWork[i].author_name,
@@ -226,8 +254,8 @@ const data2PreProcess = (nodedata, linedata) => {
         )
     }
 
-    for (let i = 1; i < nodedata.length; i++) {
-        linedata.push({
+    for (let i = 1; i < nodedata.value.length; i++) {
+        linedata.value.push({
             source: 0,
             target: i,
             value: props.authorNetWork[i - 1].cooperation_author_count,
@@ -240,7 +268,7 @@ const data2PreProcess = (nodedata, linedata) => {
     }
 }
 
-const initChart1 = (xdata, countdata, citedata) => {
+const initChart1 = () => {
     chart1 = document.getElementById('count')
     chart1 = echarts.init(chart1)
     const colors = ['#5470C6', '#91CC75', '#EE6666'];
@@ -273,7 +301,7 @@ const initChart1 = (xdata, countdata, citedata) => {
                     alignWithLabel: true
                 },
                 // prettier-ignore
-                data: xdata
+                data: x1data.value
             }
         ],
         yAxis: [
@@ -314,13 +342,13 @@ const initChart1 = (xdata, countdata, citedata) => {
             {
                 name: '发表文献',
                 type: 'bar',
-                data: countdata
+                data: countdata.value
             },
             {
                 name: '引用数量',
                 type: 'bar',
                 yAxisIndex: 1,
-                data: citedata
+                data: citedata.value
             },
         ]
     };
@@ -329,7 +357,7 @@ const initChart1 = (xdata, countdata, citedata) => {
     // window.addEventListener('resize', () => chart1.resize())
 }
 
-const initChart2 = (nodedata, linedata) => {
+const initChart2 = () => {
     chart2 = document.getElementById('network')
     chart2 = echarts.init(chart2)
     let option = {
@@ -360,8 +388,8 @@ const initChart2 = (nodedata, linedata) => {
                     fontStyle: '400',
                 }
             },
-            data: nodedata,
-            links: linedata
+            data: nodedata.value,
+            links: linedata.value
         }]
     }
 
@@ -372,6 +400,15 @@ const initChart2 = (nodedata, linedata) => {
             chart2DialogData.value = node.data.coArticles
             choseLine.value = node.data.target
             chart2Dialog.value = true
+        } else if (node.dataType == 'node') {
+            if (node.data.name != 0) { // 不是自身 跳转
+                let { href } = router.resolve({
+                    name: 'OpenAlexAuthorDetail',
+                    params: { tokenid: props.authorNetWork[node.data.name - 1].author_id }
+                })
+
+                window.open(href, "_blank")
+            }
         }
     })
 }
@@ -392,11 +429,13 @@ const initChart2 = (nodedata, linedata) => {
     width: 600px; */
     height: 100%;
     width: 100%;
+    min-height: 400px;
 }
 
 .network {
     width: 100%;
     height: 100%;
+    min-height: 400px;
 }
 
 

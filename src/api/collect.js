@@ -4,7 +4,8 @@ const url = {
     deleteCollection: '/collection/delete_collection_package',
     renameCollection: '/collection/change_package_name',
     cancelDocument: '/collection/cancel_work',
-    getCollection: '/collection/get_collection_package_list'
+    getCollection: '/collection/get_collection_package_list',
+    getDocumentList: '/search/get_list_of_data_view'
 }
 // 详细参考见：https://www.axios-http.cn/docs/req_config
 export class Collection{
@@ -63,4 +64,15 @@ export class Collection{
           data,
         });
     }
+
+    static async GetDocumentList(data) {
+      return service(url.getDocumentList, {
+        // 方法，默认为 get
+        method: "post",
+        // 返回值类型，默认为json
+        responseType: "json",
+        // 这里是 data: data的简写
+        data,
+      });
+  }
 }

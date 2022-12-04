@@ -3,14 +3,14 @@
         <div class="coauthors-title">合著作者</div>
         <div class="author-list" v-if="claimed == 1">
             <div class="author-card" v-for="(item, index) in authorList" :key="index">
-                <ul>
+                <ul class="list-item">
                     <li>
                         <el-avatar :size="70"
                             :src="item.avatar_url ? avatar_url : 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png'"
                             style="cursor: pointer;" @click="toAuthor(item)"></el-avatar>
                     </li>
-                    <li>
-                        <span class="coauthor-name" @click="toAuthor(item)" >{{ item.author_name }}</span>
+                    <li class="coauthor-name-li">
+                        <span class="coauthor-name" @click="toAuthor(item)" :title="item.author_name">{{ item.author_name }}</span>
                     </li>
                     <li class="right-arrow-li">
                         <span class="right-arrow-wrap">
@@ -48,10 +48,11 @@ const props = defineProps({
 const pageCurrent = ref(1)
 
 const toAuthor = (item) => {
-    router.push({
+    let {href} = router.resolve({
         name: 'OpenAlexAuthorDetail',
         params: {tokenid: item.author_id}
     })
+    window.open(href, "_blank")
 }
 
 const PageChange = () => {
@@ -107,12 +108,19 @@ const PageChange = () => {
     width: 100%;
     height: 100px;
     margin-top: 5px;
+
 }
 
 
 .author-card ul {
     margin: 0;
     height: 90%;
+    width: 100%;
+}
+
+.author-card ul:hover {
+    background-color: #f1f5fa;
+    border-radius: 10px;
 }
 
 .el-divider--horizontal {
@@ -127,6 +135,14 @@ const PageChange = () => {
     vertical-align: middle;
 }
 
+.author-card .coauthor-name-li {
+    width: calc(100% - 160px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    
+}
+
 .author-card .coauthor-name {
     font-size: 15px;
     font-weight: 800;
@@ -134,7 +150,15 @@ const PageChange = () => {
     display: flex;
     align-items: center;
     height: 80%;
+    width: 100%;
     cursor: pointer;
+    /* height: 20%;
+    margin-top: 5; */
+    /* display: block; */
+}
+
+.author-card .coauthor-name:hover {
+    color: #409eff;
     /* height: 20%;
     margin-top: 5; */
     /* display: block; */
@@ -153,6 +177,10 @@ const PageChange = () => {
     line-height: 100%;
     display: flex;
     align-items: center;
+}
+
+.right-arrow-wrap:hover{
+    color: #409eff;
 }
 
 .empty {
