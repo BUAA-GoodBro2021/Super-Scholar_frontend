@@ -19,7 +19,7 @@
                 <el-dropdown-item class="dropdown-item" :icon="Star" @click="toCollection">
                     <span class="dropdown-text">收藏夹</span>
                 </el-dropdown-item>
-                <el-dropdown-item class="dropdown-item" :icon="Star" @click="toFollowList">
+                <el-dropdown-item class="dropdown-item" :icon="User" @click="toFollowList">
                     <span class="dropdown-text">关注列表</span>
                 </el-dropdown-item>
                 <el-dropdown-item class="dropdown-item" :icon="Notification" @click="checkMessage">
@@ -33,7 +33,7 @@
     </el-dropdown>
 </template>
 <script setup>
-import { Check, More, Notification, Star, SwitchButton } from '@element-plus/icons-vue'
+import { Check, More, Notification, Star, SwitchButton, User } from '@element-plus/icons-vue'
 import { useRouter } from 'vue-router';
 import  Message  from './Message.vue';
 import { useGlobalStore } from '../../stores/global';
