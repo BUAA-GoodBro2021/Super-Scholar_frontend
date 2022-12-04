@@ -4,14 +4,16 @@ export const useSearchStore = defineStore({
   id: "search",
   state: () => {
     return {
-      // 进行搜索的类型（五大实体）这里默认为论文，不做持久化处理
+      // 进行搜索的类型（五大实体）这里默认为论文，并且做持久化处理
       // works authors venues institutions concepts
       // TODO 可以考虑做一个字段限制检查，不是这5个的话报错
-      searchType: "works",
-      // 搜索框的文本
+      searchType: useLocalStorage("searchType", "works", localStorage),
+      // 搜索框的文本，需要做持久化处理
       searchInputText: useLocalStorage("token", "", localStorage),
       // 对应于用户的搜索历史，是一个 String 类型的数组
-      historyList: useLocalStorage("historyList", [], localStorage)
+      historyList: useLocalStorage("historyList", [], localStorage),
+      // 搜索结果排序类型
+      sortType: useLocalStorage("sortType", "Relevance", localStorage),
     }
   },
   actions: {
@@ -54,6 +56,12 @@ export const useSearchStore = defineStore({
 		 */
 		deleteAllHistory() {
 			this.historyList = [];
-		}
+		},
+    /**
+     * 改变排序类型
+     */
+    setSortType(newSortType) {
+      this.sortType = newSortType;
+    }
   }
 });

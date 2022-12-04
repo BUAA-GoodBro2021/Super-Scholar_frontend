@@ -43,6 +43,7 @@ import Search from "../components/SearchInput/Search.vue";
 	background-size: cover;
    position: sticky;
    top: 64px;
+   z-index: 1;
    .search {
       position: absolute;
       left: 5vw;
@@ -70,11 +71,11 @@ import Search from "../components/SearchInput/Search.vue";
       }
    }
    .right-content-wrap{
-   width: 30vw;
-   .right-content{
-      height: 100%;
-      background-color: bisque;
-   }
+      width: 30vw;
+      .right-content{
+         height: 100%;
+         background-color: bisque;
+      }
    }
    @media screen and (max-width: 768px) {
       .right-content-wrap{

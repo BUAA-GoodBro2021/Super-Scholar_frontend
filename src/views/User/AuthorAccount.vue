@@ -26,12 +26,13 @@ import CoAuthorsVue from '../../components/UserComponents/CoAuthors.vue';
 import { useGlobalStore } from "../../stores/global.js";
 import { User } from "../../api/userDetail"
 import { ElNotification } from "element-plus";
+import { watch, inject} from 'vue';
 import { UserFilled } from '@element-plus/icons-vue';
 const globalStore = useGlobalStore();
 
 
 const route = useRoute()
-const openAlexId = route.params.tokenid
+const openAlexId = ref(route.params.tokenid)
 const claimed = ref(1) // 0 未认证 1 认证 2认证中 在openalexaccount为0时候有效 当网站用户认证的时候 发表文献和数据分析以合作作者采用openalex作者页面的数据
 const openAlexAccount = ref(0) // 0 网站用户 1 openalex作者
 // const otherAcountType = ref() // 他人账户 0 未认证的网站用户 1 认证的网站用户或者是未认证的原生作者
@@ -93,16 +94,27 @@ const authorNet = ref([])
 const pageTotalSize = ref(10)
 const authorTotalSize = ref(5)
 const coAuthorList = ref([])
+const reload = inject('reload') //使页面重新刷新
 // const docummentList = ref([])
 
+// 当路由参数变化时，页面数据无法更新的时候
 
 onMounted(() => {
+    init()
+})
+
+watch(() => route.params.tokenid, (newval) => {
+    init()
+})
+
+const init = () => {
+    openAlexId.value = route.params.tokenid
     getOpenAlexAuthor()
     let data = {
         "entity_type": "works",
         "params": {
             "filter": {
-                "author.id": openAlexId
+                "author.id": openAlexId.value
             },
             "page": 1,
             "per_page": 10
@@ -111,7 +123,7 @@ onMounted(() => {
     getDocumentList(data)
     getAuthorNet()
     getFollowList()
-})
+}
 
 const getFollowList = async () => {
     User.GetFollowList({}).then((res) => {
@@ -119,8 +131,8 @@ const getFollowList = async () => {
             // todo 根据关注列表确定follow字段
             userInfo.value.is_follow = false 
             res.data.follow_id_list.forEach(element => {
-                if(element == openAlexId) userInfo.value.is_follow = true
-                console.log(element, openAlexId)
+                if(element == openAlexId.value) userInfo.value.is_follow = true
+                console.log(element, openAlexId.value)
             });
             // if(res.data.follow_id_list.array.indexOf(openAlexId) != -1) userInfo.value.is_follow = false 
             // else userInfo.value.is_follow = true
@@ -147,7 +159,7 @@ const getOpenAlexAuthor = async () => {
     User.GetOpenAlexAuthorById({
         "entity_type": "authors",
         "params": {
-            "id": openAlexId
+            "id": openAlexId.value
         }
     }).then((res) => {
         if (res.data.result == 1) {
@@ -199,7 +211,7 @@ const getDocumentList = async (data) => {
 
 const getAuthorNet = async () => {
     User.GetAuthorNetById({
-        author_id: openAlexId
+        author_id: openAlexId.value
     }).then((res) => {
         if (res.data.result == 1) {
             authorNet.value = res.data.cooperation_author_list
@@ -228,7 +240,7 @@ const pageChange = async (page) => {
         "entity_type": "works",
         "params": {
             "filter": {
-                "author.id": openAlexId
+                "author.id": openAlexId.value
             },
             "page": page,
             "per_page": 10
@@ -267,14 +279,14 @@ const UpdateCoAuthor = (page) => {
 
 .avatar_wrap {
     width: 70%;
-    min-width: 1280px;
+    /* min-width: 1280px; */
     margin: 0.5% 0 0.5% 0;
     height: 27%;
 }
 
 .article_data_wrap {
     width: 70%;
-    min-width: 1280px;
+    /* min-width: 1280px; */
     height: 72%;
     display: flex;
 
@@ -289,5 +301,39 @@ const UpdateCoAuthor = (page) => {
 .article_data_wrap .right {
     width: 30%;
     /* box-shadow: 3px 6px 10px 5px #888888; */
+}
+
+@media (max-width: 1500px) {
+    .avatar_wrap {
+        width: 90%;
+        /* border: 2px solid red; */
+    }
+
+    .article_data_wrap {
+        width: 90%;
+    }
+}
+
+@media (max-width: 1200px) {
+    .avatar_wrap {
+        width: 98%;
+        /* border: 2px solid red; */
+    }
+
+    .article_data_wrap {
+        width: 98%;
+        flex-wrap: wrap;
+    }
+
+    .article_data_wrap .left {
+        width: 100%;
+        margin: 10px 0 10px 0;
+        /* box-shadow: 3px 6px 10px 5px #888888; */
+    }
+
+    .article_data_wrap .right {
+        width: 100%;
+        /* box-shadow: 3px 6px 10px 5px #888888; */
+    }
 }
 </style>

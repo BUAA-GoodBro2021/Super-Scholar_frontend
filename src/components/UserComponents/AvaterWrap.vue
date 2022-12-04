@@ -10,7 +10,7 @@
                         </el-avatar>
                     </div>
                 </li>
-                <li style="min-width: 60%; height: 100%; max-width: 70%;">
+                <li style="min-width: 60%; height: 100%; max-width: 70%;" class="title-profile-li">
                     <div class="title_profile">
                         <div class="title-profile-block">
                             <span class="name">
@@ -31,7 +31,9 @@
                                 <el-icon>
                                     <HomeFilled />
                                 </el-icon> &nbsp;
-                                <span v-if="openAlexAccount == 1">{{ userInfo.last_known_institution ?
+                                <span v-if="openAlexAccount == 1" @click="toOrganization()" class="single-organization"
+                                        :title="userInfo.last_known_institution ?
+                                        userInfo.last_known_institution : '暂无机构信息'">{{ userInfo.last_known_institution ?
                                         userInfo.last_known_institution : '暂无机构信息'
                                 }}</span>
                                 <span v-else>{{ userInfo.email }}</span>
@@ -41,8 +43,8 @@
                                     <Menu />
                                 </el-icon> &nbsp;
                                 <div class="areas-content">
-                                    <span style="cursor: pointer;" v-for="(item, index) in userInfo.x_concepts"
-                                    :key="index">{{
+                                    <span style="cursor: pointer;" v-for="(item, index) in userInfo.x_concepts.slice(0, 11)"
+                                    :key="index" @click="toArea(item)" class="single-area">{{
                                             item.display_name
                                     }}<span v-if="index != userInfo.x_concepts.length - 1">/&nbsp;</span></span>
                                 </div>
@@ -163,7 +165,9 @@ import { nextTick } from 'vue'
 import { ClaimPortal } from '../../api/claimPortal'
 import { defineEmits } from 'vue';
 import { User } from "../../api/userDetail"
+import { useRouter } from 'vue-router';
 const emit = defineEmits(["pageChange", "infoChange"])
+const router = useRouter()
 const props = defineProps({
     openAlexId: String,
     personAccount: Number, // 1 自己的账号 2 别人的账号
@@ -349,6 +353,22 @@ const cancelFollow = async () => {
 
 }
 
+const toArea = (item) => {
+//     let {href} = router.push({
+//         name: '',
+//         params: {}
+//     })
+//     window.open(href, "_blank")
+}
+
+const toOrganization = () => {
+    if(props.userInfo.last_known_institution) {
+        // todo 跳转
+    } else {
+        return
+    }
+}
+
 watch(() => props.userInfo.is_follow, (newVal) => {
     is_follow.value = newVal
 })
@@ -382,7 +402,7 @@ watch(() => props.userInfo.is_follow, (newVal) => {
 
 .card_body li {
     list-style: none;
-    margin-right: 20px;
+    /* margin-right: 20px; */
     display: inline-block;
     height: 100%;
     vertical-align: middle;
@@ -398,10 +418,14 @@ watch(() => props.userInfo.is_follow, (newVal) => {
 
 .title_profile {
     height: 100%;
-    margin-left: 30px;
+    /* margin-left: 30px; */
     width: 100%;
     display: flex;
     align-items: center;
+}
+
+.title-profile-li {
+    padding-left: 20px;
 }
 
 .title-profile-block {
@@ -429,19 +453,32 @@ watch(() => props.userInfo.is_follow, (newVal) => {
     align-items: center;
 }
 
+.single-organization:hover{
+    color: #0169d1;
+}
+
 .areas {
     font-size: 15px;
     color: #409eff;
-    height: 25%;
+    height: 45%;
     width: 100%;
     /* line-height: 50%; */
     text-align: left;
     display: flex;
     /* align-items: center; */
-
     /* display: block; */
     word-break: break-all;
     word-wrap: break-word;
+    ;
+}
+
+.areas-content{
+    overflow: scroll;
+    text-overflow: ellipsis;
+}
+
+.single-area:hover{
+    color: #0169d1;
 }
 
 .follow {
@@ -451,7 +488,7 @@ watch(() => props.userInfo.is_follow, (newVal) => {
 
 .right-btn-wrap {
     height: 100%;
-    width: 10%;
+    /* width: 10%; */
     display: flex !important;
     align-items: center;
 }

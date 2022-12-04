@@ -2,17 +2,18 @@
     <div class="personal-wrap">
         <div class="avatar_wrap">
             <AvaterWrapVue :personAccount="1" :userInfo="userInfo" :claimed="claimed" :openAlexAccount="0"
-                @AbandonPortal="AbandonPortal()" @infoChange="infoChange"/>
+                @AbandonPortal="AbandonPortal()" @infoChange="infoChange" />
         </div>
         <div class="article_data_wrap">
             <div class="left">
                 <ArticleAndDataVue :documentList="userInfo.documentList" :claimed="claimed"
-                    :pageTotalSize="pageTotalSize" @pageChange="pageChange" 
-                    :dataCountByYear="userInfo.counts_by_year" :author_id="replyUser.open_alex_id" 
-                    :authorNetWork="authorNet" :authorName="userInfo.open_alex_name" :personalAccount="1"/>
+                    :pageTotalSize="pageTotalSize" @pageChange="pageChange" :dataCountByYear="userInfo.counts_by_year"
+                    :author_id="replyUser.open_alex_id" :authorNetWork="authorNet" :authorName="userInfo.open_alex_name"
+                    :personalAccount="1" />
             </div>
             <div class="right">
-                <CoAuthorsVue :claimed="claimed" @coAuthorPageChange="coAuthorPageChange" :authorTotalSize="authorTotalSize" :authorList="coAuthorList"/>
+                <CoAuthorsVue :claimed="claimed" @coAuthorPageChange="coAuthorPageChange"
+                    :authorTotalSize="authorTotalSize" :authorList="coAuthorList" />
             </div>
         </div>
     </div>
@@ -257,7 +258,7 @@ const infoChange = () => {
 
 const UpdateCoAuthor = (page) => {
     coAuthorList.value = []
-    for(let i = 5 * (page - 1) ; i < 5 * page ; i++) {
+    for (let i = 5 * (page - 1); i < 5 * page; i++) {
         coAuthorList.value.push(authorNet.value[i])
     }
     // console.log(coAuthorList.value)
@@ -276,18 +277,17 @@ const UpdateCoAuthor = (page) => {
 
 .avatar_wrap {
     width: 70%;
-    min-width: 1280px;
     margin: 0.5% 0 0.5% 0;
     height: 27%;
 }
 
 .article_data_wrap {
     width: 70%;
-    min-width: 1280px;
     height: 72%;
     display: flex;
-    
+
 }
+
 
 .article_data_wrap .left {
     width: 68%;
@@ -298,5 +298,39 @@ const UpdateCoAuthor = (page) => {
 .article_data_wrap .right {
     width: 30%;
     /* box-shadow: 3px 6px 10px 5px #888888; */
+}
+
+@media (max-width: 1500px) {
+    .avatar_wrap {
+        width: 90%;
+        /* border: 2px solid red; */
+    }
+
+    .article_data_wrap {
+        width: 90%;
+    }
+}
+
+@media (max-width: 1200px) {
+    .avatar_wrap {
+        width: 98%;
+        /* border: 2px solid red; */
+    }
+
+    .article_data_wrap {
+        width: 98%;
+        flex-wrap: wrap;
+    }
+
+    .article_data_wrap .left {
+        width: 100%;
+        margin: 10px 0 10px 0;
+        /* box-shadow: 3px 6px 10px 5px #888888; */
+    }
+
+    .article_data_wrap .right {
+        width: 100%;
+        /* box-shadow: 3px 6px 10px 5px #888888; */
+    }
 }
 </style>
