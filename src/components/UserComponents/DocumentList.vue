@@ -4,7 +4,7 @@
             <el-table :data="documentList" style="width: 100%; height: 100%;">
                 <el-table-column prop="display_name" label="文献" min-width="60%">
                     <template #default="scope">
-                        <span class="document_title">{{ scope.row.display_name }}</span>
+                        <span class="document_title" @click="toDocument(scope.row)">{{ scope.row.display_name }}</span>
                         <!-- <div class="authors_wrap">
                             <span class="document_authors" v-for="(item, index) in scope.row.authorships"
                                 :key="index">{{
@@ -17,7 +17,7 @@
                 </el-table-column>
                 <el-table-column prop="publication_date" label="日期" min-width="17%" align="center" />
                 <el-table-column prop="cited_by_count" label="引用" min-width="13%" align="center" />
-                <el-table-column prop="pdf" label="状态" min-width="16%">
+                <el-table-column prop="pdf" label="状态" min-width="18%">
                     <template #default="scope">
                         <el-tag style="font-size: 10px;" v-if="scope.row.open_access.is_oa == -1" type="danger">暂无pdf
                         </el-tag>
@@ -27,7 +27,7 @@
                             type="success" @click="ToPdf(scope.row.open_access)">已有pdf</el-tag>
                     </template>
                 </el-table-column>
-                <el-table-column prop="pdf" label="操作" min-width="16%" v-if="personalAccount == 1">
+                <el-table-column prop="pdf" label="操作" min-width="18%" v-if="personalAccount == 1">
                     <template #default="scope">
                         <el-upload ref="uploadRef" class="upload-demo" v-if="scope.row.open_access.is_oa == -1" :limit="1"
                             :auto-upload="false" action="" :show-file-list="false" :on-change="(file, filelist) => changeFile(file, filelist, scope.row)" accept=".pdf">
@@ -71,7 +71,9 @@ import {
     SuccessFilled,
     Loading
 } from '@element-plus/icons-vue'
+import { useRouter } from 'vue-router';
 const emit = defineEmits(["pageChange"])
+const router = useRouter()
 const uploadRef = ref(null)
 const props = defineProps({
     documentList: Object,
@@ -189,6 +191,13 @@ const ToPdf = (data) => {
     console.log(data)
 }
 
+const toDocument = (item) => {
+    // router.push({
+    //     name: '',
+    //     params: {}
+    // })
+}
+
 </script>
 <style scoped>
 .document-list-wrap {
@@ -233,6 +242,10 @@ const ToPdf = (data) => {
     word-wrap: break-word;
     color: #409eff;
     cursor: pointer;
+}
+
+.document_title:hover{
+    color: #0169d1;
 }
 
 .authors_wrap {

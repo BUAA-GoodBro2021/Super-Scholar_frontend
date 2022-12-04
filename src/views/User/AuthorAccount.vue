@@ -26,7 +26,7 @@ import CoAuthorsVue from '../../components/UserComponents/CoAuthors.vue';
 import { useGlobalStore } from "../../stores/global.js";
 import { User } from "../../api/userDetail"
 import { ElNotification } from "element-plus";
-import { watch} from 'vue';
+import { watch, inject} from 'vue';
 import { UserFilled } from '@element-plus/icons-vue';
 const globalStore = useGlobalStore();
 
@@ -94,6 +94,7 @@ const authorNet = ref([])
 const pageTotalSize = ref(10)
 const authorTotalSize = ref(5)
 const coAuthorList = ref([])
+const reload = inject('reload') //使页面重新刷新
 // const docummentList = ref([])
 
 // 当路由参数变化时，页面数据无法更新的时候
@@ -278,14 +279,14 @@ const UpdateCoAuthor = (page) => {
 
 .avatar_wrap {
     width: 70%;
-    min-width: 1280px;
+    /* min-width: 1280px; */
     margin: 0.5% 0 0.5% 0;
     height: 27%;
 }
 
 .article_data_wrap {
     width: 70%;
-    min-width: 1280px;
+    /* min-width: 1280px; */
     height: 72%;
     display: flex;
 
@@ -300,5 +301,39 @@ const UpdateCoAuthor = (page) => {
 .article_data_wrap .right {
     width: 30%;
     /* box-shadow: 3px 6px 10px 5px #888888; */
+}
+
+@media (max-width: 1500px) {
+    .avatar_wrap {
+        width: 90%;
+        /* border: 2px solid red; */
+    }
+
+    .article_data_wrap {
+        width: 90%;
+    }
+}
+
+@media (max-width: 1200px) {
+    .avatar_wrap {
+        width: 98%;
+        /* border: 2px solid red; */
+    }
+
+    .article_data_wrap {
+        width: 98%;
+        flex-wrap: wrap;
+    }
+
+    .article_data_wrap .left {
+        width: 100%;
+        margin: 10px 0 10px 0;
+        /* box-shadow: 3px 6px 10px 5px #888888; */
+    }
+
+    .article_data_wrap .right {
+        width: 100%;
+        /* box-shadow: 3px 6px 10px 5px #888888; */
+    }
 }
 </style>
