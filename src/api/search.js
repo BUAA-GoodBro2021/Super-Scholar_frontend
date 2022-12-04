@@ -1,7 +1,8 @@
 import service from "../http/request";
 const url = {
     single: "/search/get_single_data_view",
-    getDataList: "/search/get_list_of_data_view",
+    getSearchDataList: "/search/get_list_of_data_view",
+    getGroupDataList: "/search/get_groups_of_data_view",
     getAssociateContent: "/search/associate_content_view",
 }
 // 详细参考见：https://www.axios-http.cn/docs/req_config
@@ -15,10 +16,17 @@ export class Search{
     }
     // 获取搜索数据列表
     static async getSearchDataList(data) {
-        return service(url.getDataList, {
+        return service(url.getSearchDataList, {
           method: "POST",
           data,
         });
+    }
+    // 获取分组后的搜索数据列表（用于在展开筛选单元时，获取筛选选项）
+    static async getGroupDataList(data) {
+      return service(url.getGroupDataList, {
+        method: 'POST',
+        data,
+      })
     }
     // 搜索联想提示
     static async getAssociateContent(data) {
@@ -27,4 +35,5 @@ export class Search{
           data,
         });
     }
+    
 }

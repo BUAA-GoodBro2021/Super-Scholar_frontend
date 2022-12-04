@@ -17,45 +17,37 @@
           <!-- 左侧筛选部分 -->
           <div class="col-lg-3 col-md-3 col-sm-4 ">
             <div class="sticko__child colored-block">
-              <div class="colored-block">
+              <!-- 单个筛选单元 -->
+              <div 
+                class="colored-block"
+                v-for="(item, index) in worksFilterList" 
+                :key="index" 
+                :ref="setWorksFilterDOM"
+              >
                 <!-- 筛选块标题 -->
-                <div class="colored-block-title clearfix">
-                  <div class="colored-block-title-context">Publication Year</div>
+                <div 
+                  class="colored-block-title clearfix" 
+                  @click="expandFilterDropDown(worksFilterDOM[index], index)"
+                >
+                  <div class="colored-block-title-context">{{item.title}}</div>
                   <i class="iconfont icon-arrowup colored-block-icon"></i>
                 </div>
                 <!-- 折叠栏 -->
                 <div class="colored-block-content">
                   <div class="filter-block">
                     <div class="accordion-content">
-                      <ul class="rlist expand__list">
-                        <li>
-                          <a href="#">
-                            <span class="expand__title">LiQie &nbsp;&nbsp;</span>
-                            <span class="expand__counter">(48)</span>
-                          </a>
-                        </li>
-                        <li>
-                          <a href="#">
-                            <span class="expand__title">LiQie &nbsp;&nbsp;</span>
-                            <span class="expand__counter">(48)</span>
-                          </a>
-                        </li>
-                        <li>
-                          <a href="#">
-                            <span class="expand__title">LiQie &nbsp;&nbsp;</span>
-                            <span class="expand__counter">(48)</span>
-                          </a>
-                        </li>
-                      </ul>
+                      <ElCheckboxGroup v-model="worksFilterList[index].selectedArray" @change="handleChange">
+                        <ul class="rlist expand__list">
+                          <li v-for="labelItem in worksFilterList[index].stringArray">
+                            <ElCheckbox :label="labelItem" />
+                          </li>
+                        </ul>
+                      </ElCheckboxGroup>
                     </div>
                   </div>
                   <!-- 底部色块 -->
                   <div class="end-dash"></div>
                 </div>
-              </div>
-              
-              <div class="colored-block">
-                下一个筛选块
               </div>
             </div>
           </div>
@@ -319,8 +311,8 @@ const sortTypeArray = ["Relevance", "Earliest", "Latest", "Cited"];
 import SearchInput from '../../components/SearchInput/Search.vue';
 import { Search } from '../../api/search';
 import { useSearchStore } from '../../stores/search.js';
-import { ElNotification } from "element-plus";
-import { onMounted, ref } from 'vue';
+import { ElCheckbox, ElCheckboxGroup, ElNotification, } from "element-plus";
+import { onMounted, reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
@@ -337,6 +329,111 @@ const expandSortDropdown = () => {
     ? sortDropdownTarget.value.classList.remove('js--open')
     : sortDropdownTarget.value.classList.add('js--open')
 }
+
+// 过滤器下拉栏DOM
+const worksFilterDOM = ref([]);
+const setWorksFilterDOM = (DOMElement) => {
+  worksFilterDOM.value.push(DOMElement);
+}
+// onMounted(() => {console.log(worksFilterDOM.value)});
+
+
+// 过滤器筛选数据列表
+// 创造一个对象数组。这个数组有7个对象元素，每个对象有5个属性：
+const worksFilterList = reactive([
+  {
+    group: "publication_year",
+    title: "发表年份 Publication Year",
+    objectArray: [],
+    stringArray: [],
+    selectedArray: []
+  },
+  {
+    group: "host_venue.id",
+    title: "文献来源 Host Venue",
+    objectArray: [],
+    stringArray: [],
+    selectedArray: []
+  },
+  {
+    group: "authorships.author.id",
+    title: "作者 Author",
+    objectArray: [],
+    stringArray: [],
+    selectedArray: []
+  },
+  {
+    group: "authorships.institutions.id",
+    title: "机构 Institution",
+    objectArray: [],
+    stringArray: [],
+    selectedArray: []
+  },
+  {
+    group: "authorships.institutions.country_code",
+    title: "机构所属国家 Country",
+    objectArray: [],
+    stringArray: [],
+    selectedArray: []
+  },
+  {
+    group: "authorships.institutions.type",
+    title: "机构类型 Institution Type",
+    objectArray: [],
+    stringArray: [],
+    selectedArray: []
+  },
+  {
+    group: "concepts.id",
+    title: "文献领域 Concept",
+    objectArray: [],
+    stringArray: [],
+    selectedArray: []
+  },
+]);
+
+const expandFilterDropDown = (filterDOM, index) => {
+  console.log(index);
+  var data = {
+    "entity_type": searchStore.searchType,  // 理论上来说这里只能是 works
+    "params": {
+      "group_by": worksFilterList[index].group,
+      "page": 1,
+      "per_page": 15,
+      "search" : searchStore.searchInputText,
+      // "sort": {},
+    }
+  };
+  // 注意这里传入的不是 ref 包裹的DOM元素，而是在模板中自动解析以后的value，直接就是HTMLDOM
+  if (filterDOM.classList.contains('js--open')) {
+    filterDOM.classList.remove('js--open');   // 收起
+  } else {
+    Search.getGroupDataList(data)
+    .then((res) => {
+      console.log(res.data);
+      if (res.data.result === 1) {
+        let groupArray = res.data.groups_of_data.group_by;
+        worksFilterList[index].objectArray = groupArray;
+        worksFilterList[index].stringArray = groupArray.map(item => item.key_display_name);
+        // console.log(worksFilterList[index].objectArray);
+        // console.log(worksFilterList[index].stringArray);
+      }
+      filterDOM.classList.add('js--open');  // 展开
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+    
+  }
+}
+
+const handleChange = (newArray) => {
+  console.log(newArray);
+}
+
+
+// #region 右侧函数
+
 // 初始化默认删去 Relevant
 const dropdownSortTypeArray = ref(sortTypeArray.filter(
   (sortType) => sortType !== searchStore.sortType
@@ -503,6 +600,9 @@ const jumpToWorkSourceWeb = (webURL) => {
 }
 
 // #endregion 卡片内部交互函数
+
+
+// #endregion 右侧函数
 </script>
 
 <style scoped>
@@ -598,6 +698,7 @@ a, a:hover, a:focus {
   padding: .875rem 0;
   position: relative;
   box-sizing: border-box;
+  cursor: pointer;
   /* border: 1px solid black; */
 }
 .colored-block-title-context {
@@ -612,22 +713,39 @@ a, a:hover, a:focus {
   font-weight: 600;
 }
 
+.colored-block.js--open .colored-block-icon {
+  transform: rotate(360deg);
+}
 .colored-block-icon {
   position: absolute;
   z-index: 3;
-  top: 50%;
-  right: 0;
-  transform: translate(-50%, -50%);
+  top: 10px;
+  right: 12px;
   font-size: 18px;
+  transition: transform .5s;
+  transform: rotate(180deg);
   /* box-sizing: border-box;
   border: 1px solid black; */
 }
 
+.colored-block.js--open .colored-block-content {
+  display: block;
+  /* max-height: 300px; */
+  /* height: auto; */
+  /* overflow-y: auto; */
+}
+
 .colored-block-content {
+  display: none;
+  /* max-height: 0; */
+  /* height: 0; */
+  overflow: hidden;
   position: relative;
-  padding: 0 16px;
+  /* padding: 0 16px; */
+  padding: 0 8px;
   background-color: #fafafa;
   box-sizing: border-box;
+  transition: all .5s;
 }
 .end-dash{
   width: 1.125rem;
