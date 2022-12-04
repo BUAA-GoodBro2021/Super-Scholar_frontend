@@ -450,9 +450,9 @@ const Reclaim = async () => {
 }
 
 .claim-portal-body {
-    margin-top: 18vh;
+    margin-top: 17vh;
     height: 450px;
-    width: 60vw;
+    width: 60%;
 
     background-color: white;
     border-radius: 20px;
@@ -463,6 +463,12 @@ const Reclaim = async () => {
 
     box-shadow: 3px 3px 3px 3px #dedede;
     padding: 30px 30px;
+}
+
+@media (max-width: 900px) {
+    .claim-portal-body {
+        width: 95%;
+    }
 }
 
 .steps {
