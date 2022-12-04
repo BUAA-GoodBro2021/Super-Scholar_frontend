@@ -15,6 +15,7 @@ export const useGlobalStore = defineStore({
     },
     isAuth(state){
       if(state.token)return state.token.length > 0;
+      else return false;
     },
     claimStatus(state) {
       return state.userInfo.is_professional
