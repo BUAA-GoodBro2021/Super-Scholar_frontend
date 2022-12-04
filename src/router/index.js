@@ -79,6 +79,11 @@ const router = createRouter({
           component: ()=>import('../views/User/Collection.vue'),
         },
         {
+          path: 'followlist',
+          name: 'FollowList',
+          component: ()=>import('../views/User/FollowList.vue'),
+        },
+        {
           path: 'paper/:paperid',
           name: 'PaperDetail',
           component: ()=>import('../views/paper/Paper.vue'),

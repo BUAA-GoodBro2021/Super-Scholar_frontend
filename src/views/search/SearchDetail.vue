@@ -16,33 +16,50 @@
         <div class="row clearfix">
           <!-- 左侧筛选部分 -->
           <div class="col-lg-3 col-md-3 col-sm-4 ">
-            <div class="hidden-sm hidden-xs">
-              <div class="sticko__child">
-                <div class="colored-block">
-                  <div class="colored-block">
-                    <div class="colored-block-title clearfix">
-                      <h4 class="colored-block-title-context">People</h4>
-                    </div>
-                    <div class="colored-block-content">
-                      <div class="filter-list">
-                        <div class="filter-block accordion">
-                          <!-- 展开标题 -->
-                          <a class="filter-block-control accordion__control">
-                            <h4 class="filter-block-title">Names</h4>
-                            <i class="iconfont icon-arrowup"></i>
-                          </a>
-                          <!-- 折叠栏 -->
-                          <div class="accordion-content">
-                            <!-- TODO -->
-                          </div>
-                        </div>
-                        <div class="filter-block">Institutions</div>
-                        <div class="filter-block">Authors</div>
-                        <div class="filter-block">Editors</div>
-                      </div>
-                      <div class="end-dash"></div>
+            <ElButton v-if="confirmFilterSearch" @click="handleFilterSearch">确认更改测试</ElButton>
+            <ElButton v-if="confirmFilterSearch" @click="cancelFilterSearch">取消更改测试</ElButton>
+            <div class="sticko__child colored-block">
+              <!-- 单个筛选单元 -->
+              <div 
+                class="colored-block"
+                v-for="(item, index) in worksFilterList" 
+                :key="index" 
+                :ref="setWorksFilterDOM"
+              >
+                <!-- 筛选块标题 -->
+                <div 
+                  class="colored-block-title clearfix" 
+                  @click="handleWorksGroupSearch(worksFilterDOM[index], index)"
+                >
+                  <div class="colored-block-title-context">{{item.title}}</div>
+                  <i class="iconfont icon-arrowup colored-block-icon"></i>
+                </div>
+                <!-- 折叠栏 -->
+                <div class="colored-block-content">
+                  <div class="filter-block">
+                    <div class="accordion-content">
+                      <ElCheckboxGroup 
+                        v-model="worksFilterList[index].selectedArray" 
+                        @change="handleChange(index)"
+                      >
+                        <ul class="rlist expand__list">
+                          <li v-for="labelItem in worksFilterList[index].objectArray">
+                            <!-- 
+                              VERY IMPORTANT 
+                              这里 label属性 代表选中时，添加进入 ElCheckboxGroup 的v-model绑定的数组的值
+                              我们选择 labelItem 代表的这项（实际上是根据labelItem.key_display_name选择）
+                              实际上是把 labelItem.key 添加进入了对应的数组
+                             -->
+                            <ElCheckbox :label="labelItem.key">
+                              {{labelItem.key_display_name}}&nbsp;&nbsp;({{labelItem.count}})
+                            </ElCheckbox>
+                          </li>
+                        </ul>
+                      </ElCheckboxGroup>
                     </div>
                   </div>
+                  <!-- 底部色块 -->
+                  <div class="end-dash"></div>
                 </div>
               </div>
             </div>
@@ -68,15 +85,14 @@
                   <div class="sort-type" ref="sortDropdownTarget">
                     <button class="sort-type-btn" @click="expandSortDropdown">
                       <b>Sort Type: </b>
-                      <!-- <span> Relevance</span> -->
                       <span> {{searchStore.sortType}}</span>
                       <i class="iconfont icon-arrowup"></i>
                     </button>
                     <div class="sort-dropdown">
-                      <ul class="sort-dropdown-ul">
+                      <ul class="rlist">
                         <li 
-                          v-for="item in dropdownSortTypeArray"
-                          @click="handleDropdownClick(item)"
+                          v-for="item in worksSortTypeArray"
+                          @click="handleWorksSortSearch(item)"
                         >
                           {{item}}
                         </li>
@@ -89,7 +105,37 @@
               <ul class="search-result__list">
                 <!-- 单个搜索结果卡片 -->
                 <li class="result-item" v-for="(item, index) in searchDataList">
-                  <div class="result-item-checkbox-container"></div>
+                  <!-- <div class="result-item-checkbox-container">
+                    <label style="
+                      cursor: pointer;
+                      color: #333;
+                      margin-bottom: .375rem;    
+                      display: block;
+                      float: none;
+                      font-size: 12px;
+                      font-weight: 700;
+                      box-sizing: border-box;">
+                      <input type="checkbox"
+                        style="
+                          position: absolute;
+                          width: 1px;
+                          height: 1px;
+                          margin-bottom: 10px;
+                          margin-right: 10px;
+                          padding: 0;
+                          box-sizing: border-box;
+                          max-height: 44px;
+                          background: inherit;
+                          font-size: 15px;
+                          line-height: 16px;
+                          color: #63666a;
+                          overflow: hidden;
+                          clip: rect(0,0,0,0);
+                          white-space: nowrap;
+                          border: 0;"
+                      />
+                    </label>
+                  </div> -->
                   <div class="result-item-card clearfix">
                     <div class="result-item__citation">
                       <div class="citation-heading">research-article</div>
@@ -109,7 +155,7 @@
                       <ul class="card-author-list">
                         <li v-for="(author, authorIndex) in item.authorships">
                           <!-- 跳转到对应的作者主页 -->
-                          <a @click="toOpenAlexAuthorPage(author.author.id.slice(21))">
+                          <a @click="jumpToAuthorPage(author.author.id.slice(21))">
                             <img
                               class="author-avator"  
                               src="https://dl.acm.org/pb-assets/icons/DOs/default-profile-1543932446943.svg"
@@ -150,6 +196,7 @@
                         </div>
                       </div>
                       
+                      <!-- 论文底部简略信息和快捷操作 -->
                       <div class="card-footer clearfix">
                         <!-- 论文底部简略信息 -->
                         <div class="card-footer-left">
@@ -199,10 +246,23 @@
                               </div>
                             </li>
                           </ul>
-                          <ul class="rlist--inline dot-separator" style="float: right;">
-                            <!-- TODO 添加跳转到PDF在线预览的窗口 -->
-                            <li>
-                              <div class="card-tool-btn pdf-btn">
+                          <ul 
+                            class="rlist--inline dot-separator" 
+                            style="float: right;"
+                            v-if="(item.open_access.is_oa === 1 || item.host_venue.id || item.doi)"
+                          >
+                            <!-- 
+                              跳转到PDF在线预览的网页
+                              open_access.is_oa
+                              -1  表示没有PDF
+                              0   表示有人已经提交PDF但是正在审核
+                              1   表示有PDF且审核通过
+                             -->
+                            <li v-if="(item.open_access.is_oa === 1)">
+                              <div 
+                                class="card-tool-btn pdf-btn" 
+                                @click="jumpToPDFOnlinePage(item.open_access.oa_url)"
+                              >
                                 <i class="iconfont icon-pdf1" style="font-size: 0.9rem;"></i>
                                 <span class="card-btn-hint">
                                   <span class="card-btn-hint-arrow"></span>
@@ -210,9 +270,20 @@
                                 </span>
                               </div>
                             </li>
-                            <!-- TODO 添加跳转到论文源网页的超链接 -->
-                            <li>
-                              <div class="card-tool-btn web-btn">
+                            <!-- 
+                              跳转到论文源网页的超链接
+                                有论文所属机构的id（URL）时，跳转到对应URL
+                                没有时，跳转到 doi
+                             -->
+                            <li v-if="(item.host_venue.id || item.doi)">
+                              <div 
+                                class="card-tool-btn web-btn" 
+                                @click="jumpToWorkSourceWeb(
+                                  item.host_venue.id 
+                                  ? item.host_venue.id
+                                  : item.doi
+                                )"
+                              >
                                 <i class="iconfont icon-signal-source" style="font-size: 1.3rem;"></i>
                                 <span class="card-btn-hint">
                                   <span class="card-btn-hint-arrow"></span>
@@ -252,8 +323,8 @@ const sortTypeArray = ["Relevance", "Earliest", "Latest", "Cited"];
 import SearchInput from '../../components/SearchInput/Search.vue';
 import { Search } from '../../api/search';
 import { useSearchStore } from '../../stores/search.js';
-import { ElNotification } from "element-plus";
-import { onMounted, ref } from 'vue';
+import { ElButton, ElCheckbox, ElCheckboxGroup, ElNotification, } from "element-plus";
+import { onMounted, reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
@@ -263,86 +334,254 @@ const searchDataList = ref([]);
 // 搜索结果总数
 var totalSearchResNum = ref(0);
 
-// 搜索类型下拉栏DOM
+// #region ！！过滤区域 -----------------------------------------------------------------------
+// 过滤器下拉栏DOM
+const worksFilterDOM = ref([]);
+const setWorksFilterDOM = (DOMElement) => {
+  worksFilterDOM.value.push(DOMElement);
+}
+
+// 过滤器筛选数据列表。创造一个对象数组。这个数组有7个对象元素，每个对象有5个属性：
+const worksFilterList = reactive([
+  {
+    group: "publication_year",
+    title: "发表年份 Publication Year",
+    objectArray: [],
+    stringArray: [],
+    selectedArray: []
+  },
+  {
+    group: "host_venue.id",
+    title: "文献来源 Host Venue",
+    objectArray: [],
+    stringArray: [],
+    selectedArray: []
+  },
+  {
+    // 可以不带有 authorships
+    group: "authorships.author.id",
+    title: "作者 Author",
+    objectArray: [],
+    stringArray: [],
+    selectedArray: []
+  },
+  {
+    group: "authorships.institutions.id",
+    title: "机构 Institution",
+    objectArray: [],
+    stringArray: [],
+    selectedArray: []
+  },
+  {
+    group: "authorships.institutions.country_code",
+    title: "机构所属国家 Country",
+    objectArray: [],
+    stringArray: [],
+    selectedArray: []
+  },
+  {
+    group: "authorships.institutions.type",
+    title: "机构类型 Institution Type",
+    objectArray: [],
+    stringArray: [],
+    selectedArray: []
+  },
+  {
+    group: "concepts.id",
+    title: "文献领域 Concept",
+    objectArray: [],
+    stringArray: [],
+    selectedArray: []
+  },
+]);
+
+/**
+ * 展开/收起过滤单元的下拉栏
+ * 并触发 “分组搜索”
+ * @param {HTMLElement} filterDOM 对应的过滤单元的DOM
+ * @param {Number} index 过滤单元在整个DOM数组中的位置
+ */
+const handleWorksGroupSearch = (filterDOM, index) => {
+  var data = {
+    "entity_type": searchStore.searchType,  // 理论上来说这里只能是 works
+    "params": {
+      "filter": buildWorksFilterKey(),
+      "group_by": worksFilterList[index].group,
+      "page": 1,
+      "per_page": 15,
+      "search" : searchStore.searchInputText,
+      "sort": buildWorksSortKey(searchStore.sortType),
+    }
+  };
+  console.log("分组搜索前端发出的请求体");
+  console.log(data);
+  // 注意这里传入的不是 ref 包裹的DOM元素，而是在模板中自动解析以后的value，直接就是HTMLDOM
+  if (filterDOM.classList.contains('js--open')) {
+    filterDOM.classList.remove('js--open');   // 收起
+  } else {
+    Search.getGroupDataList(data)
+    .then((res) => {
+      // console.log(res.data);
+      if (res.data.result === 1) {
+        let groupArray = res.data.groups_of_data.group_by;
+        worksFilterList[index].objectArray = groupArray;
+        worksFilterList[index].stringArray = groupArray.map(item => item.key_display_name);
+        // console.log(worksFilterList[index].objectArray);
+        // console.log(worksFilterList[index].stringArray);
+      }
+      filterDOM.classList.add('js--open');  // 展开
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+    
+  }
+}
+
+// 出现“确认”“取消”勾选的过滤器的按钮
+const confirmFilterSearch = ref(false);
+const handleChange = (index) => {
+  console.log(worksFilterList[index].selectedArray);
+  confirmFilterSearch.value = true;
+}
+/**
+ * 遍历所有的works筛选字段。
+ * 将用户已经勾选的条目构建出 filter 字段
+ * (对象类型)以便于发送给后端
+ * @return 一个对象
+ */
+const buildWorksFilterKey = () => {
+  var filter = {};
+  for (let i = 0; i < 7; i++) {
+    // 利用 [] 给对象创建一个键字段
+    filter[worksFilterList[i].group] = "";
+    // 遍历每一个筛选单元中， 代表“选中”的 label 数组
+    for(let j = 0; j < worksFilterList[i].selectedArray.length; j++) {
+      filter[worksFilterList[i].group] += worksFilterList[i].selectedArray[j] + "|";
+    }
+    // 去掉最后一个 '|' 字符
+    filter[worksFilterList[i].group] = filter[worksFilterList[i].group].slice(0, -1);
+  }
+  return filter;
+};
+/**
+ * 确定要进行 “带有搜索筛选字段” 的 搜索
+ */
+const handleFilterSearch = () => {
+  confirmFilterSearch.value = false;
+  for(let i = 0; i < 7; i++) {
+    if (worksFilterDOM.value[i].classList.contains('js--open')) {
+      worksFilterDOM.value[i].classList.remove('js--open');
+    }
+  }
+  var data = {
+    "entity_type": searchStore.searchType,  // 理论上来说这里只能是 works
+    "params": {
+      "filter": buildWorksFilterKey(),
+      "page": 1,
+      "per_page": 15,
+      "search" : searchStore.searchInputText,
+      "sort": buildWorksSortKey(searchStore.sortType),
+    }
+  };
+  console.log("用户筛选搜索，前端发出的请求体");
+  console.log(data);
+  Search.getSearchDataList(data)
+  .then((res) => {
+    if (res.data.result === 1) {
+      searchDataList.value = res.data.list_of_data[0].results;
+      totalSearchResNum.value = res.data.list_of_data[0].meta.count;
+      console.log(searchDataList);
+      ElNotification({
+        title: "恭喜您",
+        message: `搜索成功，用时 ${res.data.list_of_data[0].meta.db_response_time_ms / 1000} s`,
+        type: "success",
+        duration: 3000
+      });
+    }
+  })
+  .catch((err) => {
+    console.log(err);
+  })
+}
+/**
+ * 取消要进行 “带有搜索筛选字段” 的 搜索
+ * 并清空所有已经勾选的筛选条目
+ */
+const cancelFilterSearch = () => {
+  confirmFilterSearch.value = false;
+  // 清空所有选择
+  for (let i = 0; i < 7; i++) {
+    worksFilterList[i].selectedArray = [];    
+  }
+}
+// #endregion ！！过滤区域 -----------------------------------------------------------------------
+
+
+// #region 右侧函数
+
+// 排序方式下拉栏DOM
 const sortDropdownTarget = ref(null);
 const expandSortDropdown = () => {
   sortDropdownTarget.value.classList.contains('js--open') 
     ? sortDropdownTarget.value.classList.remove('js--open')
     : sortDropdownTarget.value.classList.add('js--open')
 }
-// 初始化默认删去 Relevant
-const dropdownSortTypeArray = ref(sortTypeArray.filter(
+/**
+ * 根据用户选择的sort类型，构建出 sort 字段
+ * (对象类型)以便于发送给后端
+ * @return 一个对象
+ */
+const buildWorksSortKey = (worksSortType) => {
+  var sort = {};
+  switch (worksSortType) {
+    case "Relevance":
+      break;
+    case "Earliest":
+      sort["publication_date"] = "asc";
+      break;
+    case "Latest":
+      sort["publication_date"] = "desc";
+      break;
+    case "Cited":
+      sort["cited_by_count"] = "desc";
+      break;
+  }
+  return sort;
+}
+
+// 初始化默认删去当前选中的排序类型
+const worksSortTypeArray = ref(sortTypeArray.filter(
   (sortType) => sortType !== searchStore.sortType
 ));
-
-const handleDropdownClick = async (newSortType) => {
+/**
+ * 切换排序方式触发的搜索函数
+ * @param {String} newSortType 排序类型
+ */
+const handleWorksSortSearch = async (newSortType) => {
   // 点击以后立即收起下拉栏
   expandSortDropdown();
   searchStore.setSortType(newSortType);
-  dropdownSortTypeArray.value = sortTypeArray.filter(
+  worksSortTypeArray.value = sortTypeArray.filter(
     (sortType) => sortType !== searchStore.sortType
   );
   console.log(searchStore.sortType, searchStore.searchInputText, searchStore.searchType);
   // 确保搜索文本不为空
   if (searchStore.searchInputText) {
-    var res = null;
-    switch (newSortType) {
-      case "Relevance":
-        res = await Search.getSearchDataList({
-          "entity_type": searchStore.searchType,
-          "params": {
-            "search" : searchStore.searchInputText,
-            "page": 1,
-            "per_page": 15
-          }
-        })
-        break;
-      case "Earliest":
-        res = await Search.getSearchDataList({
-          "entity_type": searchStore.searchType,
-          "params": {
-            "search" : searchStore.searchInputText,
-            "sort": {
-              // "display_name" : "asc",
-              "publication_date": "asc"
-            },
-            "page": 1,
-            "per_page": 15
-          }
-        })
-        break;
-      case "Latest":
-        res = await Search.getSearchDataList({
-          "entity_type": searchStore.searchType,
-          "params": {
-            "search" : searchStore.searchInputText,
-            "sort": {
-              // "display_name" : "asc",
-              "publication_date": "desc"
-            },
-            "page": 1,
-            "per_page": 15
-          }
-        })
-        break;
-      case "Cited":
-        res = await Search.getSearchDataList({
-          "entity_type": searchStore.searchType,
-          "params": {
-            "search" : searchStore.searchInputText,
-            "sort": {
-              "cited_by_count": "desc",
-            },
-            "page": 1,
-            "per_page": 15
-          }
-        })
-        break;
-      default:
-        console.error("排序类型有误！");
-        break;
+    var data = {
+      "entity_type": searchStore.searchType,
+      "params": {
+        "filter": buildWorksFilterKey(),
+        "page": 1,
+        "per_page": 15,
+        "search" : searchStore.searchInputText,
+        "sort" : buildWorksSortKey(searchStore.sortType),
+      }
     }
-    if (res) {
+    console.log("切换排序方式搜索，前端发出的请求体");
+    console.log(data);
+    Search.getSearchDataList(data)
+    .then((res) => {
       if (res.data.result === 1) {
         searchDataList.value = res.data.list_of_data[0].results;
         totalSearchResNum.value = res.data.list_of_data[0].meta.count;
@@ -354,18 +593,29 @@ const handleDropdownClick = async (newSortType) => {
           duration: 3000
         });
       }
-    }
+    })
+    .catch((err) => {
+      console.log(err);
+    })
   }
 }
 
-
 /**
  * 核心搜索函数
+ * TODO 这里需要综合各个实体的 filter/sort 字段构造函数
  * @param {String} searchText 搜索文本
  * @param {String} searchEntityType 搜索实体类
  */
 const handleFinalSearch = (searchText, searchEntityType) => {
   console.log(searchText, searchEntityType);
+  var data = {
+    "entity_type": searchEntityType,
+    "params": {
+      "page": 1,
+      "per_page": 15,
+      "search" : searchText,
+    }
+  }
   Search.getSearchDataList({
     "entity_type": searchEntityType,
     "params": {
@@ -400,15 +650,21 @@ const handleFinalSearch = (searchText, searchEntityType) => {
 }
 
 // #region 卡片内部交互函数
-const toOpenAlexAuthorPage = (openAlexAuthorId) => {
+/**
+ * 跳转到作者详情页
+ * @param {String} openAlexAuthorId 作者的openAlexId
+ */
+const jumpToAuthorPage = (openAlexAuthorId) => {
   // console.log(openAlexAuthorId);
   router.push({
     name: 'OpenAlexAuthorDetail',
     params: {tokenid: openAlexAuthorId}
   });
 }
-
-
+/**
+ * 跳转到领域详情页
+ * @param {String} openAlexAuthorId 作者的openAlexId
+ */
 const handleConceptBubbleClick = (conceptEntity) => {
   ElNotification({
     title: "待开发",
@@ -417,11 +673,33 @@ const handleConceptBubbleClick = (conceptEntity) => {
     duration: 3000
   })
 }
+/**
+ * 跳转到PDF在线预览网页
+ * @param {String[URL]} pdfURL PDF在线预览网页
+ */
+const jumpToPDFOnlinePage = (pdfURL) => {
+  // console.log(pdfURL);
+  window.location.href = pdfURL;
+}
+/**
+ * 跳转到论文源网址
+ * @param {String[URL]} webURL 论文源网址
+ */
+const jumpToWorkSourceWeb = (webURL) => {
+  // console.log(webURL);
+  window.location.href = webURL;
+}
 
 // #endregion 卡片内部交互函数
+
+
+
+
+// #endregion 右侧函数
 </script>
 
 <style scoped>
+/* 这里的样式造成了在a标签中 图标i标签在hover时的变色 */
 a, a:hover, a:focus {
   color: inherit;
   text-decoration: none;
@@ -498,39 +776,69 @@ a, a:hover, a:focus {
   padding-right: 15px;
 }
 
-.hidden-sm {
-  display: block;
-}
-.hidden-xs {
-  display: block;
-}
 .sticko__child {
   overflow-x: hidden;
+  /* border: 1px solid black; */
 }
 
 .colored-block {
   /* 20px */
   margin-bottom: 1.25rem;
+  box-sizing: border-box;
 }
 .colored-block-title {
   background-color: #f0f0f0;
   padding: .875rem 0;
+  position: relative;
+  box-sizing: border-box;
+  cursor: pointer;
+  /* border: 1px solid black; */
 }
 .colored-block-title-context {
-  border-left: .5rem solid;
-  padding-left: .5rem;
-  border-color: #1975ae;
+  /* 下面三行创造 标题左边的黑色色块 */
+  border-left: 8px solid;
+  padding-left: 8px;
+  border-color: #000000;
   margin: 0;
-  font-style: italic;
-  font-size: 1.125rem;
+  font-size: 18px;
+  line-height: 18px;
+  font-family: 'Times New Roman', Times, "Microsoft YaHei", serif;
   font-weight: 600;
-  line-height: 1.125rem;
+}
+
+.colored-block.js--open .colored-block-icon {
+  transform: rotate(360deg);
+}
+.colored-block-icon {
+  position: absolute;
+  z-index: 3;
+  top: 10px;
+  right: 12px;
+  font-size: 18px;
+  transition: transform .5s;
+  transform: rotate(180deg);
+  /* box-sizing: border-box;
+  border: 1px solid black; */
+}
+
+.colored-block.js--open .colored-block-content {
+  display: block;
+  /* max-height: 300px; */
+  /* height: auto; */
+  /* overflow-y: auto; */
 }
 
 .colored-block-content {
+  display: none;
+  /* max-height: 0; */
+  /* height: 0; */
+  overflow: hidden;
   position: relative;
-  padding: 16px;
+  /* padding: 0 16px; */
+  padding: 0 8px;
   background-color: #fafafa;
+  box-sizing: border-box;
+  transition: all .5s;
 }
 .end-dash{
   width: 1.125rem;
@@ -546,58 +854,10 @@ a, a:hover, a:focus {
 }
 .filter-block {
   border-color: rgba(0,0,0,.12);
+  border-bottom: .0625rem solid #ddd;
   padding: 0 .9375rem;
   margin-right: -.9375rem;
   margin-left: -.9375rem;
-  border-bottom: .0625rem solid #ddd;
-}
-.filter-list .filter-block:first-child .accordion__control {
-  margin-top: 0;
-}
-.filter-block.accordion .accordion__control {
-  margin-bottom: .5rem;
-}
-.accordion__control {
-  color: #6b6b6b;
-  font-size: .875rem;
-  font-weight: 500;
-  display: block;
-  width: 100%;
-  cursor: pointer;
-}
-.filter-block-control {
-  position: relative;
-}
-
-.accordion__control i{
-  font-size: .5rem;
-  font-family: icomoon!important;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: 900;
-  -webkit-font-smoothing: antialiased;
-  text-transform: none;
-  line-height: 1;
-  margin-top: .5rem;
-  margin-left: .625rem;
-  position: absolute;
-  right: 0;
-  top: 0;
-  transition: transform .5s;
-}
-.filter-block-title {
-  text-transform: none;
-  color: #000;
-  font-weight: 500;
-  font-size: .875rem;
-  /* 5px */
-  padding-bottom: .3125rem;
-  margin-top: 0;
-  /* 7px */
-  margin-bottom: .4375rem;
-}
-.expand-icon:before {
-  content: "\e61c";
 }
 
 .accordion-content{
@@ -606,7 +866,35 @@ a, a:hover, a:focus {
   width: 100%;
   clear: both;
 }
-
+.expand__list {
+  font-size: .75rem;
+  font-weight: 600;
+  color: #454545;
+}
+.expand__list li {
+  box-sizing: border-box;
+  margin: 0 -.9375rem;
+  background-color: #fff;
+  padding: 13px 15px;
+  line-height: 14px;
+  border: 1px solid rgba(0,0,0,.07);
+  border-top-color: rgba(0,0,0,.12);
+  border-bottom: none;
+}
+.expand__list li a {
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 18px;
+  word-wrap: break-word;
+}
+.expand__title {
+  vertical-align: middle;
+}
+.expand__counter {
+  vertical-align: middle;
+  font-weight: 400;
+}
 /* #endregion 筛选条件区域结束 */
 
 /* #region 搜索结果区域 */
@@ -705,7 +993,7 @@ a, a:hover, a:focus {
   font-weight: 300 !important;
 }
 .search-result__sort-right .sort-type.js--open .sort-type-btn i{
-  transform: rotate(180deg);
+  transform: rotate(360deg);
 }
 /* VERY IMPORTANT
 ransform在行内元素不起作用，要给i加上display:inline-block的样式转为行内块元素。 */
@@ -717,6 +1005,7 @@ ransform在行内元素不起作用，要给i加上display:inline-block的样式
   vertical-align: middle;
   padding-right: 0;
   transition: transform .5s;
+  transform: rotate(180deg)
 }
 
 .search-result__sort-right .sort-type.js--open .sort-dropdown {
@@ -738,12 +1027,12 @@ ransform在行内元素不起作用，要给i加上display:inline-block的样式
   right: 0;
   box-shadow: 0 0.125rem 0.625rem rgb(82 82 82 / 43%);
 }
-.search-result__sort-right .sort-type .sort-dropdown .sort-dropdown-ul {
+.rlist {
   list-style: none;
   padding: 0;
   margin: 0;
 }
-.search-result__sort-right .sort-type .sort-dropdown .sort-dropdown-ul li{
+.search-result__sort-right .sort-type .sort-dropdown .rlist li{
   padding: .375rem .9375rem;
   display: block;
   cursor: pointer;
@@ -751,7 +1040,7 @@ ransform在行内元素不起作用，要给i加上display:inline-block的样式
   /* font-style: italic; */
   font-weight: 300;
 }
-.search-result__sort-right .sort-type .sort-dropdown .sort-dropdown-ul li:hover {
+.search-result__sort-right .sort-type .sort-dropdown .rlist li:hover {
   background-color: #d9d9d9;
 }
 
@@ -770,6 +1059,7 @@ ransform在行内元素不起作用，要给i加上display:inline-block的样式
 .result-item-checkbox-container {
   position: relative;
   top: 1.5625rem;
+  border: 1px solid black;
 }
 .result-item-card {
   /* 30px */
@@ -970,6 +1260,7 @@ img {
 }
 
 /* #endregion 卡片底部左侧简略信息结束 */
+
 /* #region 卡片底部右侧快捷操作 */
 .card-footer-right {
   float: right;
@@ -1082,6 +1373,7 @@ img {
 /* #endregion 搜索结果区域结束 */
 
 /* #region 响应式布局 */
+/* 75rem = 1200px */
 @media screen and (max-height: 75rem) {
   .filter-block-title {
     max-width: 9.375rem;

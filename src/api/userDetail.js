@@ -11,6 +11,7 @@ const url = {
   getFollowList: '/follow/follow_list',
   cancelFollow: '/follow/unfollow_author?=',
   followAuthor: '/follow/follow_author',
+  getAuthorEntity: '/search/get_list_of_data_view',
 
   uploadPdf: '/work/user_upload_pdf',
   cancelPdf: '/work/user_give_up_upload_pdf'
@@ -58,9 +59,16 @@ export class User {
       data,
     });
   }
-  static async GetFollowList() {
+  static async GetFollowList(data) {
     return service(url.getFollowList, {
       method: "post",
+      data
+    });
+  }
+  static async GetAuthorEntity(data) {
+    return service(url.getAuthorEntity, {
+      method: "post",
+      data
     });
   }
   static async CancelFollow(data) {

@@ -6,6 +6,7 @@
     <SearchInputFrame
       v-model="inputSearchValue"
       @search="handleSearch"
+      @clear="handleClear"
     >
       <!-- 下拉栏，命名组件的简写形式 <template v-slot:dropdown> -->
       <template #dropdown>
@@ -44,8 +45,8 @@ import SearchInputFrame from './SearchInputFrame.vue';
 
 const emits = defineEmits([EMIT_SEARCH]);
 
-const inputSearchValue = ref("");
 const searchStore = useSearchStore();
+const inputSearchValue = ref(searchStore.searchInputText);
 /**
  * 搜索回调
  * 在搜索回调中，必须更新 vuex/pinia 中的 searchInputText
@@ -67,6 +68,15 @@ const handleSearch = (val) => {
     // 触发 父组件进行搜索
     emits(EMIT_SEARCH, val, searchStore.searchType);
   };
+}
+/**
+ * 清空回调
+ * 清除输入框搜索文本 和 localStorage 中的搜索文本
+ */
+const handleClear = () => {
+  console.log("Clear");
+  inputSearchValue.value = "";
+  searchStore.setSearchInputText("");
 }
 
 </script>

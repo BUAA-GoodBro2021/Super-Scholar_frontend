@@ -8,14 +8,17 @@
             </span>
         <template #dropdown v-if="globalStore.isAuth">
             <el-dropdown-menu class="dropdown">
-                <el-dropdown-item class="dropdown-item" :icon="More" @click="getPersonalDetail">
+                <el-dropdown-item class="dropdown-item" :icon="More" @click="toPerconalAccount">
                     <span class="dropdown-text">个人详情</span>
                 </el-dropdown-item>
-                <el-dropdown-item class="dropdown-item" :icon="Check" @click="getPersonalDetail">
+                <el-dropdown-item class="dropdown-item" :icon="Check" @click="toClaimPortal">
                     <span class="dropdown-text">认领门户</span>
                 </el-dropdown-item>
-                <el-dropdown-item class="dropdown-item" :icon="Star" @click="getCollection">
+                <el-dropdown-item class="dropdown-item" :icon="Star" @click="toCollection">
                     <span class="dropdown-text">收藏夹</span>
+                </el-dropdown-item>
+                <el-dropdown-item class="dropdown-item" :icon="User" @click="toFollowList">
+                    <span class="dropdown-text">关注列表</span>
                 </el-dropdown-item>
                 <el-dropdown-item class="dropdown-item" :icon="Notification" @click="checkMessage">
                     <span class="dropdown-text"><Message/></span>
@@ -28,7 +31,7 @@
     </el-dropdown>
 </template>
 <script setup>
-import { Check, More, Notification, Star, SwitchButton } from '@element-plus/icons-vue'
+import { Check, More, Notification, Star, SwitchButton, User } from '@element-plus/icons-vue'
 import { useRouter } from 'vue-router';
 import  Message  from './Message.vue';
 import { useGlobalStore } from '../../stores/global';
@@ -46,11 +49,17 @@ const login = ()=>{
 const checkMessage = ()=>{
     router.push({name:"MessageList"});
 }
-const getPersonalDetail = ()=>{
+const toPerconalAccount = () => {
     router.push({name:"PersonalDetail"});
 }
-const getCollection = ()=>{
+const toCollection = () => {
     router.push({name:"Collection"});
+}
+const toClaimPortal = () => {
+    router.push({name:"ClaimPortal"});
+}
+const toFollowList = () => {
+    router.push({name:"FollowList"});
 }
 </script>
 <style lang="scss" >

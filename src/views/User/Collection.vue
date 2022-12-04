@@ -756,7 +756,7 @@ const toConcept = (item) => {
 }
 
 .video-container .video-main .active {
-    border: 1px solid #409eff;
+    border: 2px solid #409eff;
     border-radius: 8px;
 }
 

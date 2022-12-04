@@ -264,7 +264,8 @@ const toDocument = (item) => {
     color: #409eff;
 }
 
-::v-deep .el-table .cell {
+:deep(.el-table .cell) {
     font-size: 15px;
 }
+
 </style>

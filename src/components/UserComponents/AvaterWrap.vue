@@ -66,8 +66,8 @@
                     </div>
                 </li>
                 <li class="right-btn-wrap" style="float: right; vertical-align: middle;" v-if="personAccount == 1">
-                    <el-button class="right-btn" type="primary" plain @click="changeDialogShow = true"
-                        :icon="Edit">编辑
+                    <el-button class="right-btn" type="primary" plain @click="changeDialogShow = true">
+                       编辑
                     </el-button>
                 </li>
                 <li class="right-btn-wrap" v-if="personAccount != 1 && openAlexAccount == 1 && is_follow"
@@ -106,34 +106,11 @@
                             <span class="change-label">昵称:</span>
                             <el-input v-model="changeMessage.name" maxlength="20" show-word-limit></el-input>
                         </div>
-                        <!-- <div class="dialog-right-item change-organization">
-                            <span class="change-label">邮箱:</span>
-                            <el-input v-model="changeMessage.email"></el-input>
-                        </div> -->
-                        <!-- <div class="dialog-right-item change-password">
-                            <span class="change-label">密码:</span>
-                            <el-input v-model="changeMessage.password" type="password"></el-input>
-                        </div> -->
                         <div class="dialog-right-item change-introduction">
                             <span class="change-label">自我介绍:</span>
                             <el-input v-model="changeMessage.introduction" type="textarea" maxlength="120"
                                 show-word-limit></el-input>
                         </div>
-                        <!-- <div class="dialog-right-item change-areas">
-                        <span class="change-label" v-if="claimed == 0">确认密码:</span>
-                        <div class="change-area">
-                            <el-tag v-for="(tag, index) in changeMessage.areas" :key="index" class="area-tag" closable
-                                :disable-transitions="false" @close="areaTagClose(index)" style="margin-right: 10px;">
-                                {{ tag.display_name }}
-                            </el-tag>
-                            <el-input v-if="inputVisible" ref="InputRef" v-model="inputValue" class="ml-1 w-20"
-                                size="small" @keyup.enter="handleInputConfirm" @blur="handleInputConfirm"
-                                style="width: 100px;" maxlength="10" />
-                            <el-button v-else class="button-new-tag ml-1" size="small" @click="showInput()">
-                                + 领域
-                            </el-button>
-                        </div>
-                    </div> -->
                         <div class="dialog-right-btn confirm-button">
                             <el-button @click="cancelChange()" style="float: right;">取消</el-button>
                             <el-button @click="saveChange()" style="float: right; margin-right: 20px;">保存编辑</el-button>
@@ -448,9 +425,13 @@ watch(() => props.userInfo.is_follow, (newVal) => {
     margin-bottom: 5px;
     line-height: 100%;
     text-align: left;
-    cursor: pointer;
+    /* cursor: pointer; */
     display: flex;
     align-items: center;
+}
+
+.single-organization {
+    cursor: pointer;
 }
 
 .single-organization:hover{

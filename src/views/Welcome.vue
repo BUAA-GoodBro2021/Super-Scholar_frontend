@@ -43,7 +43,7 @@ import Search from "../components/SearchInput/Search.vue";
 	background-size: cover;
    position: sticky;
    top: 64px;
-   z-index: 1;
+   z-index: 0;
    .search {
       position: absolute;
       left: 5vw;
@@ -59,6 +59,7 @@ import Search from "../components/SearchInput/Search.vue";
 
 .content{
    position: relative;
+   z-index: 1;
    background-color: whitesmoke;
    height: 100vh;
    display: flex;
