@@ -16,34 +16,46 @@
         <div class="row clearfix">
           <!-- 左侧筛选部分 -->
           <div class="col-lg-3 col-md-3 col-sm-4 ">
-            <div class="hidden-sm hidden-xs">
-              <div class="sticko__child">
-                <div class="colored-block">
-                  <div class="colored-block">
-                    <div class="colored-block-title clearfix">
-                      <h4 class="colored-block-title-context">People</h4>
-                    </div>
-                    <div class="colored-block-content">
-                      <div class="filter-list">
-                        <div class="filter-block accordion">
-                          <!-- 展开标题 -->
-                          <a class="filter-block-control accordion__control">
-                            <h4 class="filter-block-title">Names</h4>
-                            <i class="iconfont icon-arrowup"></i>
+            <div class="sticko__child colored-block">
+              <div class="colored-block">
+                <!-- 筛选块标题 -->
+                <div class="colored-block-title clearfix">
+                  <div class="colored-block-title-context">Publication Year</div>
+                  <i class="iconfont icon-arrowup colored-block-icon"></i>
+                </div>
+                <!-- 折叠栏 -->
+                <div class="colored-block-content">
+                  <div class="filter-block">
+                    <div class="accordion-content">
+                      <ul class="rlist expand__list">
+                        <li>
+                          <a href="#">
+                            <span class="expand__title">LiQie &nbsp;&nbsp;</span>
+                            <span class="expand__counter">(48)</span>
                           </a>
-                          <!-- 折叠栏 -->
-                          <div class="accordion-content">
-                            <!-- TODO -->
-                          </div>
-                        </div>
-                        <div class="filter-block">Institutions</div>
-                        <div class="filter-block">Authors</div>
-                        <div class="filter-block">Editors</div>
-                      </div>
-                      <div class="end-dash"></div>
+                        </li>
+                        <li>
+                          <a href="#">
+                            <span class="expand__title">LiQie &nbsp;&nbsp;</span>
+                            <span class="expand__counter">(48)</span>
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#">
+                            <span class="expand__title">LiQie &nbsp;&nbsp;</span>
+                            <span class="expand__counter">(48)</span>
+                          </a>
+                        </li>
+                      </ul>
                     </div>
                   </div>
+                  <!-- 底部色块 -->
+                  <div class="end-dash"></div>
                 </div>
+              </div>
+              
+              <div class="colored-block">
+                下一个筛选块
               </div>
             </div>
           </div>
@@ -73,7 +85,7 @@
                       <i class="iconfont icon-arrowup"></i>
                     </button>
                     <div class="sort-dropdown">
-                      <ul class="sort-dropdown-ul">
+                      <ul class="rlist">
                         <li 
                           v-for="item in dropdownSortTypeArray"
                           @click="handleDropdownClick(item)"
@@ -89,7 +101,37 @@
               <ul class="search-result__list">
                 <!-- 单个搜索结果卡片 -->
                 <li class="result-item" v-for="(item, index) in searchDataList">
-                  <div class="result-item-checkbox-container"></div>
+                  <!-- <div class="result-item-checkbox-container">
+                    <label style="
+                      cursor: pointer;
+                      color: #333;
+                      margin-bottom: .375rem;    
+                      display: block;
+                      float: none;
+                      font-size: 12px;
+                      font-weight: 700;
+                      box-sizing: border-box;">
+                      <input type="checkbox"
+                        style="
+                          position: absolute;
+                          width: 1px;
+                          height: 1px;
+                          margin-bottom: 10px;
+                          margin-right: 10px;
+                          padding: 0;
+                          box-sizing: border-box;
+                          max-height: 44px;
+                          background: inherit;
+                          font-size: 15px;
+                          line-height: 16px;
+                          color: #63666a;
+                          overflow: hidden;
+                          clip: rect(0,0,0,0);
+                          white-space: nowrap;
+                          border: 0;"
+                      />
+                    </label>
+                  </div> -->
                   <div class="result-item-card clearfix">
                     <div class="result-item__citation">
                       <div class="citation-heading">research-article</div>
@@ -150,6 +192,7 @@
                         </div>
                       </div>
                       
+                      <!-- 论文底部简略信息和快捷操作 -->
                       <div class="card-footer clearfix">
                         <!-- 论文底部简略信息 -->
                         <div class="card-footer-left">
@@ -199,10 +242,23 @@
                               </div>
                             </li>
                           </ul>
-                          <ul class="rlist--inline dot-separator" style="float: right;">
-                            <!-- TODO 添加跳转到PDF在线预览的窗口 -->
-                            <li>
-                              <div class="card-tool-btn pdf-btn">
+                          <ul 
+                            class="rlist--inline dot-separator" 
+                            style="float: right;"
+                            v-if="(item.open_access.is_oa === 1 || item.host_venue.id || item.doi)"
+                          >
+                            <!-- 
+                              跳转到PDF在线预览的网页
+                              open_access.is_oa
+                              -1  表示没有PDF
+                              0   表示有人已经提交PDF但是正在审核
+                              1   表示有PDF且审核通过
+                             -->
+                            <li v-if="(item.open_access.is_oa === 1)">
+                              <div 
+                                class="card-tool-btn pdf-btn" 
+                                @click="viewPDFOnline(item.open_access.oa_url)"
+                              >
                                 <i class="iconfont icon-pdf1" style="font-size: 0.9rem;"></i>
                                 <span class="card-btn-hint">
                                   <span class="card-btn-hint-arrow"></span>
@@ -210,9 +266,20 @@
                                 </span>
                               </div>
                             </li>
-                            <!-- TODO 添加跳转到论文源网页的超链接 -->
-                            <li>
-                              <div class="card-tool-btn web-btn">
+                            <!-- 
+                              跳转到论文源网页的超链接
+                                有论文所属机构的id（URL）时，跳转到对应URL
+                                没有时，跳转到 doi
+                             -->
+                            <li v-if="(item.host_venue.id || item.doi)">
+                              <div 
+                                class="card-tool-btn web-btn" 
+                                @click="jumpToWorkSourceWeb(
+                                  item.host_venue.id 
+                                  ? item.host_venue.id
+                                  : item.doi
+                                )"
+                              >
                                 <i class="iconfont icon-signal-source" style="font-size: 1.3rem;"></i>
                                 <span class="card-btn-hint">
                                   <span class="card-btn-hint-arrow"></span>
@@ -418,10 +485,28 @@ const handleConceptBubbleClick = (conceptEntity) => {
   })
 }
 
+/**
+ * 跳转到PDF在线预览网页
+ * @param {String[URL]} pdfURL PDF在线预览网页
+ */
+const viewPDFOnline = (pdfURL) => {
+  // console.log(pdfURL);
+  window.location.href = pdfURL;
+}
+/**
+ * 跳转到论文源网址
+ * @param {String[URL]} webURL 论文源网址
+ */
+const jumpToWorkSourceWeb = (webURL) => {
+  // console.log(webURL);
+  window.location.href = webURL;
+}
+
 // #endregion 卡片内部交互函数
 </script>
 
 <style scoped>
+/* 这里的样式造成了在a标签中 图标i标签在hover时的变色 */
 a, a:hover, a:focus {
   color: inherit;
   text-decoration: none;
@@ -498,39 +583,51 @@ a, a:hover, a:focus {
   padding-right: 15px;
 }
 
-.hidden-sm {
-  display: block;
-}
-.hidden-xs {
-  display: block;
-}
 .sticko__child {
   overflow-x: hidden;
+  /* border: 1px solid black; */
 }
 
 .colored-block {
   /* 20px */
   margin-bottom: 1.25rem;
+  box-sizing: border-box;
 }
 .colored-block-title {
   background-color: #f0f0f0;
   padding: .875rem 0;
+  position: relative;
+  box-sizing: border-box;
+  /* border: 1px solid black; */
 }
 .colored-block-title-context {
-  border-left: .5rem solid;
-  padding-left: .5rem;
-  border-color: #1975ae;
+  /* 下面三行创造 标题左边的黑色色块 */
+  border-left: 8px solid;
+  padding-left: 8px;
+  border-color: #000000;
   margin: 0;
-  font-style: italic;
-  font-size: 1.125rem;
+  font-size: 18px;
+  line-height: 18px;
+  font-family: 'Times New Roman', Times, "Microsoft YaHei", serif;
   font-weight: 600;
-  line-height: 1.125rem;
+}
+
+.colored-block-icon {
+  position: absolute;
+  z-index: 3;
+  top: 50%;
+  right: 0;
+  transform: translate(-50%, -50%);
+  font-size: 18px;
+  /* box-sizing: border-box;
+  border: 1px solid black; */
 }
 
 .colored-block-content {
   position: relative;
-  padding: 16px;
+  padding: 0 16px;
   background-color: #fafafa;
+  box-sizing: border-box;
 }
 .end-dash{
   width: 1.125rem;
@@ -546,58 +643,10 @@ a, a:hover, a:focus {
 }
 .filter-block {
   border-color: rgba(0,0,0,.12);
+  border-bottom: .0625rem solid #ddd;
   padding: 0 .9375rem;
   margin-right: -.9375rem;
   margin-left: -.9375rem;
-  border-bottom: .0625rem solid #ddd;
-}
-.filter-list .filter-block:first-child .accordion__control {
-  margin-top: 0;
-}
-.filter-block.accordion .accordion__control {
-  margin-bottom: .5rem;
-}
-.accordion__control {
-  color: #6b6b6b;
-  font-size: .875rem;
-  font-weight: 500;
-  display: block;
-  width: 100%;
-  cursor: pointer;
-}
-.filter-block-control {
-  position: relative;
-}
-
-.accordion__control i{
-  font-size: .5rem;
-  font-family: icomoon!important;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: 900;
-  -webkit-font-smoothing: antialiased;
-  text-transform: none;
-  line-height: 1;
-  margin-top: .5rem;
-  margin-left: .625rem;
-  position: absolute;
-  right: 0;
-  top: 0;
-  transition: transform .5s;
-}
-.filter-block-title {
-  text-transform: none;
-  color: #000;
-  font-weight: 500;
-  font-size: .875rem;
-  /* 5px */
-  padding-bottom: .3125rem;
-  margin-top: 0;
-  /* 7px */
-  margin-bottom: .4375rem;
-}
-.expand-icon:before {
-  content: "\e61c";
 }
 
 .accordion-content{
@@ -606,7 +655,35 @@ a, a:hover, a:focus {
   width: 100%;
   clear: both;
 }
-
+.expand__list {
+  font-size: .75rem;
+  font-weight: 600;
+  color: #454545;
+}
+.expand__list li {
+  box-sizing: border-box;
+  margin: 0 -.9375rem;
+  background-color: #fff;
+  padding: 13px 15px;
+  line-height: 14px;
+  border: 1px solid rgba(0,0,0,.07);
+  border-top-color: rgba(0,0,0,.12);
+  border-bottom: none;
+}
+.expand__list li a {
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 18px;
+  word-wrap: break-word;
+}
+.expand__title {
+  vertical-align: middle;
+}
+.expand__counter {
+  vertical-align: middle;
+  font-weight: 400;
+}
 /* #endregion 筛选条件区域结束 */
 
 /* #region 搜索结果区域 */
@@ -705,7 +782,7 @@ a, a:hover, a:focus {
   font-weight: 300 !important;
 }
 .search-result__sort-right .sort-type.js--open .sort-type-btn i{
-  transform: rotate(180deg);
+  transform: rotate(360deg);
 }
 /* VERY IMPORTANT
 ransform在行内元素不起作用，要给i加上display:inline-block的样式转为行内块元素。 */
@@ -717,6 +794,7 @@ ransform在行内元素不起作用，要给i加上display:inline-block的样式
   vertical-align: middle;
   padding-right: 0;
   transition: transform .5s;
+  transform: rotate(180deg)
 }
 
 .search-result__sort-right .sort-type.js--open .sort-dropdown {
@@ -738,12 +816,12 @@ ransform在行内元素不起作用，要给i加上display:inline-block的样式
   right: 0;
   box-shadow: 0 0.125rem 0.625rem rgb(82 82 82 / 43%);
 }
-.search-result__sort-right .sort-type .sort-dropdown .sort-dropdown-ul {
+.rlist {
   list-style: none;
   padding: 0;
   margin: 0;
 }
-.search-result__sort-right .sort-type .sort-dropdown .sort-dropdown-ul li{
+.search-result__sort-right .sort-type .sort-dropdown .rlist li{
   padding: .375rem .9375rem;
   display: block;
   cursor: pointer;
@@ -751,7 +829,7 @@ ransform在行内元素不起作用，要给i加上display:inline-block的样式
   /* font-style: italic; */
   font-weight: 300;
 }
-.search-result__sort-right .sort-type .sort-dropdown .sort-dropdown-ul li:hover {
+.search-result__sort-right .sort-type .sort-dropdown .rlist li:hover {
   background-color: #d9d9d9;
 }
 
@@ -770,6 +848,7 @@ ransform在行内元素不起作用，要给i加上display:inline-block的样式
 .result-item-checkbox-container {
   position: relative;
   top: 1.5625rem;
+  border: 1px solid black;
 }
 .result-item-card {
   /* 30px */
@@ -970,6 +1049,7 @@ img {
 }
 
 /* #endregion 卡片底部左侧简略信息结束 */
+
 /* #region 卡片底部右侧快捷操作 */
 .card-footer-right {
   float: right;
@@ -1082,6 +1162,7 @@ img {
 /* #endregion 搜索结果区域结束 */
 
 /* #region 响应式布局 */
+/* 75rem = 1200px */
 @media screen and (max-height: 75rem) {
   .filter-block-title {
     max-width: 9.375rem;
