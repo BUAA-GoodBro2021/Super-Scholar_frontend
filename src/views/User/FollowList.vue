@@ -229,6 +229,7 @@ const deleteUser = () => {
             duration: 3000
         })
     })
+    deleteDialog.value = false
 }
 
 const removeItem = () => {
