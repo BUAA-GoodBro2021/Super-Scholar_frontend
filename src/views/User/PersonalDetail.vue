@@ -300,6 +300,8 @@ const UpdateCoAuthor = (page) => {
     /* box-shadow: 3px 6px 10px 5px #888888; */
 }
 
+/* 这里是指视口宽度小于等于1500时候的追加样式
+   同样的属性一定要放在原样式之后才能起到覆盖效果 */
 @media (max-width: 1500px) {
     .avatar_wrap {
         width: 90%;

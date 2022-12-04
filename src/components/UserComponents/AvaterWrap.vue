@@ -448,9 +448,13 @@ watch(() => props.userInfo.is_follow, (newVal) => {
     margin-bottom: 5px;
     line-height: 100%;
     text-align: left;
-    cursor: pointer;
+    /* cursor: pointer; */
     display: flex;
     align-items: center;
+}
+
+.single-organization {
+    cursor: pointer;
 }
 
 .single-organization:hover{

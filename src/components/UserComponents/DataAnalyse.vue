@@ -93,19 +93,46 @@ watch(() => props.tabChange, (newVal) => {
     if (newVal) changeToDataAnalyse.value = true
     if (newVal && chart1Show.value == false) {
         console.log('发表文献->数据分析')
-        data1PreProcess()
-        nextTick(() => {
-            chart1Show.value = true
-            nextTick(() => {
-                initChart1()
-                window.onresize = () => chart1.resize()
-                window.addEventListener('resize', () => {
-                    chart1.resize()
-                })
-            })
-        })
+        reInitChart1()
+    }
+    if (newVal && changeToDataAnalyse.value && activeName.value == 'authorNetWork') {
+        chart2Show.value = false
+        reInitChart2()
+    }
+
+    if (newVal && changeToDataAnalyse.value && activeName.value == 'countByYear') {
+        chart1Show.value = false
+        reInitChart1()
     }
 })
+
+const reInitChart1 = () => {
+    nextTick(() => {
+        chart1Show.value = true
+        data1PreProcess()
+        nextTick(() => {
+            initChart1()
+            window.onresize = () => chart1.resize()
+            window.addEventListener('resize', () => {
+                chart1.resize()
+            })
+        })
+    })
+}
+
+const reInitChart2 = () => {
+    nextTick(() => {
+        chart2Show.value = true
+        data2PreProcess()
+        nextTick(() => {
+            initChart2()
+            window.onresize = () => chart2.resize()
+            window.addEventListener('resize', () => {
+                chart2.resize()
+            })
+        })
+    })
+}
 
 // watch(() => props.authorNetWork, (newVal) => { // 如果数据发生了变化 可能是跳转导致的
 //     if (changeToDataAnalyse.value == true) { // 如果之前点击过数据分析 说明第二个panel的dom已经创建
@@ -145,36 +172,17 @@ watch(() => props.tabChange, (newVal) => {
 const handleClick = (tab) => {
     if (tab.paneName == 'authorNetWork') {
         if (chart2Show.value == false) {
-            nextTick(() => {
-                chart2Show.value = true
-                data2PreProcess()
-                nextTick(() => {
-                    initChart2()
-                    window.onresize = () => chart2.resize()
-                    window.addEventListener('resize', () => {
-                        chart2.resize()
-                        chart1.resize()
-                    })
-                })
-
-            })
+            reInitChart2()
+        } else {
+            chart2Show.value = false
+            reInitChart2()
         }
-    } else if (tab.paneName == 'countByYear' && chart1Show.value == false) {
+    } else if (tab.paneName == 'countByYear') {
         if (chart1Show.value == false) {
-            nextTick(() => {
-                chart1Show.value = true
-                data1PreProcess()
-                nextTick(() => {
-                    initChart1()
-
-                    window.onresize = () => chart1.resize()
-                    window.addEventListener('resize', () => {
-                        chart2.resize()
-                        chart1.resize()
-                    })
-                })
-                console.log(document.getElementById('count'))
-            })
+            reInitChart1()
+        } else {
+            chart1Show.value = false
+            reInitChart1()
         }
     }
 }
@@ -394,7 +402,7 @@ const initChart2 = () => {
             chart2Dialog.value = true
         } else if (node.dataType == 'node') {
             if (node.data.name != 0) { // 不是自身 跳转
-                let {href} = router.resolve({
+                let { href } = router.resolve({
                     name: 'OpenAlexAuthorDetail',
                     params: { tokenid: props.authorNetWork[node.data.name - 1].author_id }
                 })
@@ -421,11 +429,13 @@ const initChart2 = () => {
     width: 600px; */
     height: 100%;
     width: 100%;
+    min-height: 400px;
 }
 
 .network {
     width: 100%;
     height: 100%;
+    min-height: 400px;
 }
 
 
