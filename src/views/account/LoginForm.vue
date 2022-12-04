@@ -37,10 +37,12 @@ import SliderCaptcha from "./SliderCaptcha.vue";
 import { CirclePlus, UserFilled } from "@element-plus/icons-vue";
 import { ElNotification } from "element-plus";
 import {useGlobalStore} from "../../stores/global.js";
+import { useSearchStore } from "../../stores/search.js";
 import { Account } from "../../api/account";
 import { getTimeState } from "../../utils";
 import i18n from "../../language/index"
 const globalStore = useGlobalStore();
+const searchStore = useSearchStore();
 const router = useRouter();
 const loginFormRef = ref();
 const validateName = (rule,value,callback)=>{
@@ -81,7 +83,9 @@ const login = ()=>{
 		if(res.data.result===1){
 			globalStore.setToken(res.data.token);
 			globalStore.setUserInfo(res.data.user);
-			console.log(i18n);
+			res.data.history_list.forEach(element => {
+				searchStore.addHistory(element);
+			})
 			ElNotification({
 				title: getTimeState(),
 				message: `${i18n.global.t("header.welcome")},${res.data.user.username}`,

@@ -14,7 +14,7 @@ export const useGlobalStore = defineStore({
       return state.userInfo.is_super;
     },
     isAuth(state){
-      return state.token.length > 0;
+      if(state.token)return state.token.length > 0;
     },
     claimStatus(state) {
       return state.userInfo.is_professional
@@ -30,5 +30,11 @@ export const useGlobalStore = defineStore({
     updateLanguage(language) {
       this.language = language;
     },
+    logout(){
+      this.token = null;
+      this.userInfo = null;
+      this.language = null;
+      localStorage.clear();
+    }
   },
 })

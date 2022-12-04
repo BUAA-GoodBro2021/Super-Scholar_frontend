@@ -1,12 +1,28 @@
 <template>
     <el-card class="msgCard">
         <div class="title">
-            <span class="title-user">{{ props.msg.send_name }}</span>
+            <h3 class="title-user">
+                {{ props.msg.send_name }}
+            </h3>
             <el-button class="title-btn" type="danger" :icon="Delete" @click="handleDelete" circle />
         </div>
         <div class="content">
-            <span>{{ props.msg.msg }}</span>
-            <span v-if="props.msg.message_type==4">在{{props.msg.work_open_alex_id}}下回复{{props.msg.reply}}</span>
+            <span v-if="props.msg.message_type==2">
+                拒绝了您为<a>{{props.msg.work_name}}</a>上传的
+                <a :href="props.msg.url" target="_blank">
+                    {{props.msg.pdf}}
+                </a>
+            </span>
+            <span v-else-if="props.msg.message_type==3">
+                通过了您为<a>{{props.msg.work_name}}</a>上传的
+                <a :href="props.msg.url" target="_blank">
+                    {{props.msg.pdf}}
+                </a>
+            </span>
+            <span v-else-if="props.msg.message_type==4">
+                在{{props.msg.work_open_alex_id}}下回复{{props.msg.reply}}
+            </span>
+            <span v-else>{{ props.msg.msg }}</span>
             <span class="content-date">{{ formatted }}</span>
         </div>
         <div>
@@ -43,21 +59,34 @@ const handleDelete = () => {
 }
 </script>
 <style lang="scss" scoped>
+a{
+    text-decoration: none;
+}
 .msgCard {
     margin: 1rem;
-
+    .title::before {
+        content: "";
+        width: 5px;
+        height:2rem;
+        position: absolute;
+        top: 0;
+        left: 0;
+        background: gray;
+    }
     .title {
         padding-bottom: 1rem;
         border-bottom: solid 1px #eeeeee;
-
+        position: relative;
         .title-user {
             font-size: large;
-            font-weight: 900;
+            font-weight: 800;
+            line-height: normal;
+            margin-left: 0.8rem;
         }
-
         .title-btn {
-            float: right;
-            margin-top: -.5rem;
+            position: absolute;
+            right: 1vw;
+            margin-top: -1.5rem;
         }
     }
 

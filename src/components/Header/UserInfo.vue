@@ -1,14 +1,12 @@
 <template>
    <el-dropdown>
-        <span>
-            <template v-if="globalStore.isAuth">
+            <span v-if="globalStore.isAuth">
                 <el-avatar :size="45" :src="circleUrl"></el-avatar>
-            </template>
-            <template v-else>
-                <el-button type="info" @click="login">登录</el-button>
-            </template>
-        </span>
-        <template #dropdown>
+            </span>
+            <span v-else>
+                <el-button type="info" @click="login" style="margin-top:0.5rem">登录</el-button>
+            </span>
+        <template #dropdown v-if="globalStore.isAuth">
             <el-dropdown-menu class="dropdown">
                 <el-dropdown-item class="dropdown-item" :icon="More" @click="getPersonalDetail">
                     <span class="dropdown-text">个人详情</span>
@@ -39,7 +37,7 @@ const globalStore = useGlobalStore();
 const router = useRouter();
 const circleUrl = globalStore.userInfo.avatar_url;
 const logout = ()=>{
-    localStorage.clear();
+    globalStore.logout();
     router.push({name:"Login"});
 }
 const login = ()=>{

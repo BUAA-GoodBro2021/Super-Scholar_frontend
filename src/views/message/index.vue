@@ -25,6 +25,9 @@
                   :key="index"
                   :msg="item">
                </MessageCard>
+               <div v-if="systemList.length===0">
+                  暂无消息捏
+               </div>
             </template>
             <template v-else>
                <MessageCard 
@@ -33,9 +36,11 @@
                   :key="index"
                   :msg="item">
                </MessageCard>
+               <div v-if="userList.length===0">
+                  暂无消息捏
+               </div>
             </template>
-            {{systemList}}
-            {{userList}}
+               
          </div>
       </div>
    </div>
@@ -61,7 +66,6 @@ const getList = ()=>{
       systemList.value.length = 0;
       userList.value.length = 0;
       res.data.message_list.forEach((item)=>{
-         console.log(item,"1");
          switch (item.message_type) {
             case -1:
                item.msg = "管理员解除了您的门户";
@@ -92,7 +96,7 @@ const getList = ()=>{
                break;
             case 6:
                item.msg = "请注意，您已成功修改密码";
-               systemList.value.push(items);
+               systemList.value.push(item);
                break;
          }
       })
@@ -116,7 +120,7 @@ onMounted(() => {
    margin: 0 auto;
    height: 80vh;
    max-height: 90vh;
-   overflow: hidden;
+
    background-color: white;
    border-radius: 20px;
    box-shadow: 3px 3px 3px 3px #dedede;
@@ -129,6 +133,7 @@ onMounted(() => {
    &-right {
       flex: 1;
       border-left: solid 1px var(--el-menu-border-color);
+      overflow: auto;
       .chat-content{
          padding: 2rem;
       }
