@@ -26,7 +26,7 @@ service.interceptors.response.use(
     function(response){
         // 2xx 都会触发该函数
         // 如果不喜欢可以在开发过程中注释掉这行
-        console.log("🚀response data🚀",response.data);
+        // console.log("🚀response data🚀",response.data);
         return response;
     },
     function (error){
