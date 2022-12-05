@@ -1124,8 +1124,8 @@ a, a:hover, a:focus {
   border-right: .0625rem solid #d9d9d9;
   padding-right: .3125rem;
   display: inline-block;
-  font-size: .875rem;
   box-sizing: border-box;
+  font-size: 16px;
   /* border: 1px solid black; */
 }
 .search-result__sort-right .per-page .per-page-label {
@@ -1159,9 +1159,11 @@ a, a:hover, a:focus {
 .search-result__sort-right .sort-type .sort-type-btn {
   display: inline-block;
   position: relative;
-  width: 170px;
+  width: 175px;
+  /* width: auto; */
   /* padding: .3125rem 0 1.25rem; */
-  padding: 0;
+  /* 这里主要是调整 Sort Type 和 Per Page 差不多高 */
+  padding: 2px 0 0;
   margin: 0;
   line-height: 1.15;
   box-sizing: border-box;
@@ -1172,11 +1174,13 @@ a, a:hover, a:focus {
   text-transform: none;
 }
 .search-result__sort-right .sort-type .sort-type-btn b {
+  font-size: 16px;
   font-family: 'Times New Roman', Times, "Microsoft YaHei", serif;
   color: black;
   font-weight: 600;
 }
 .search-result__sort-right .sort-type .sort-type-btn span {
+  font-size: 16px;
   font-family: 'Times New Roman', Times, "Microsoft YaHei", serif;
   color: black;
   font-weight: 300 !important;

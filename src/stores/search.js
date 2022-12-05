@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { useLocalStorage } from "@vueuse/core";
+import { Search } from "../api/search";
 export const useSearchStore = defineStore({
   id: "search",
   state: () => {
@@ -30,7 +31,16 @@ export const useSearchStore = defineStore({
       this.searchInputText = newSearchInputText;
     },
     /**
-		 * 新增
+     * 设置历史记录
+     */
+    setSearchHistory(newSearchHistoryArray) {
+      this.historyList = newSearchHistoryArray;
+    },
+    /**
+		 * 新增单条历史记录
+     * >>> 用户登录时获取到和改用户绑定的历史记录
+     * 遍历一次数组逐个加入即可
+     * >>> 用户输入搜索文本后完成一次搜索
 		 * 1.新增的历史记录位于头部
 		 * 2.不可出现重复的记录
 		 */
@@ -44,18 +54,30 @@ export const useSearchStore = defineStore({
       }
       // 新增记录
       this.historyList.unshift(newHistory);
+      // 将新的历史记录更新至后端
+      Search.postSearchHistory({
+        "history_list": this.historyList
+      });
     },
     /**
 		 * 删除单个历史
 		 */
 		deleteHistory(index) {
 			this.historyList.splice(index, 1);
+      // 将新的历史记录更新至后端
+      Search.postSearchHistory({
+        "history_list": this.historyList
+      });
 		},
     /**
 		 * 全部删除历史
 		 */
 		deleteAllHistory() {
 			this.historyList = [];
+      // 将新的历史记录更新至后端
+      Search.postSearchHistory({
+        "history_list": this.historyList
+      });
 		},
     /**
      * 改变排序类型
