@@ -51,7 +51,8 @@
                               实际上是把 labelItem.key 添加进入了对应的数组
                              -->
                             <ElCheckbox :label="labelItem.key">
-                              {{labelItem.key_display_name}}&nbsp;&nbsp;({{labelItem.count}})
+                              <span class="chose-label">{{labelItem.key_display_name}}</span>&nbsp;&nbsp;
+                              <span class="chose-num">({{labelItem.count}})</span>
                             </ElCheckbox>
                           </li>
                         </ul>
@@ -123,7 +124,7 @@
               <ul class="rlist">
                 <!-- 单个搜索结果卡片 -->
                 <li class="result-item" v-for="(item, index) in searchDataList">
-                  <WorksResCard :item="item"/>
+                  <!-- <WorksResCard :item="item"/> -->
                   <div class="result-item-card clearfix">
                     <div class="result-item__citation">
                       <div class="citation-heading">research-article</div>
@@ -288,14 +289,17 @@
               </ul>
 
               <div class="search-result__pagination">
-                <ElPagination 
-                  v-model:current-page="searchResPageIndex"
-                  v-model:page-size="searchResPageSize"
-                  :total="(totalSearchResNum > 10000 
-                    ? 10000 
-                    : totalSearchResNum)"
-                  layout="prev, pager, next, jumper"
-                />
+                <div class="pagination-container">
+                  <ElPagination
+                    hide-on-single-page
+                    v-model:current-page="searchResPageIndex"
+                    v-model:page-size="searchResPageSize"
+                    :total="(totalSearchResNum > 10000 
+                      ? 10000 
+                      : totalSearchResNum)"
+                    layout="prev, pager, next, jumper"
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -1014,19 +1018,26 @@ a, a:hover, a:focus {
   border-top-color: rgba(0,0,0,.12);
   border-bottom: none;
 }
-.expand__list li a {
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 18px;
-  word-wrap: break-word;
-}
-.expand__title {
+.expand__list li .chose-label {
+  display: inline-block;
   vertical-align: middle;
+  /* 至关重要，这里不设置宽一些会导致字段在垂直方向上显示不全 */
+  line-height: 1.125rem;
+  white-space: nowrap;
+  max-width: 12rem;
+  overflow: hidden; 
+  text-overflow: ellipsis;
 }
-.expand__counter {
+.expand__list li .chose-num {
+  display: inline-block;
   vertical-align: middle;
-  font-weight: 400;
+  line-height: 1.125rem;
+}
+@media (max-width: 768px) {
+  /* 在半屏适配下，增大文本显示的最大宽度 */
+  .expand__list li .chose-label {
+    max-width: 38rem;
+  }
 }
 /* #endregion 筛选条件区域结束 */
 
@@ -1542,6 +1553,21 @@ img {
   text-align: center;
   font-size: 14px;
   box-sizing: border-box;
+}
+.search-result__pagination .pagination-container {
+  width: 100%;
+  height: 40px;
+  box-sizing: border-box;
+  /* border: 1px solid black; */
+  padding: 0 auto;
+  position: relative;
+}
+
+div.el-pagination {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 
 
