@@ -43,6 +43,7 @@
         />
       </div>
       <div class="right">
+          <div style="font-size: 1.4em; margin-top: 3vh; margin-left: 1vw; margin-bottom: 1vh">相关机构</div>
           <div v-for="(item, index) in conceptInfo.related_concepts" class="hbb">
               <a :href="item.id" target="_blank" class="href_box">
                     <span class="related_hrefs">{{item.display_name}}</span>
