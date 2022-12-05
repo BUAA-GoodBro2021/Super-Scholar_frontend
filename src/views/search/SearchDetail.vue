@@ -36,6 +36,7 @@
                 </div>
                 <!-- 折叠栏 -->
                 <div class="colored-block-content">
+                  <!-- 过滤块 -->
                   <div class="filter-block">
                     <div class="accordion-content">
                       <ElCheckboxGroup 
@@ -958,15 +959,8 @@ a, a:hover, a:focus {
   border: 1px solid black; */
 }
 
-.colored-block.js--open .colored-block-content {
-  display: block;
-  /* max-height: 300px; */
-  /* height: auto; */
-  /* overflow-y: auto; */
-}
-
 .colored-block-content {
-  display: none;
+  /* display: none; */
   /* max-height: 0; */
   /* height: 0; */
   overflow: hidden;
@@ -978,24 +972,60 @@ a, a:hover, a:focus {
   transition: all .5s;
 }
 .end-dash{
+  /* display: none; */
   width: 1.125rem;
   height: .25rem;
   background: #000;
   position: absolute;
-  bottom: 0;
+  /* bottom: 0; */
+  bottom: 1px;
   right: 1rem;
 }
 
-.filter-block:not(:last-child) {
-  margin-bottom: 0;
+.colored-block.js--open .colored-block-content .filter-block {
+  /* display: block; */
+  max-height: 237px;
+  overflow-y: auto;
 }
+/* 
+  VERY IMPORTANT
+  妙手偶得，通过负数外边距、正数内边距，
+  可以创造出一个隐藏滚动条的水平侧空间
+*/
 .filter-block {
+  /* display: none; */
+  max-height: 0;
+  overflow: hidden;
   border-color: rgba(0,0,0,.12);
   border-bottom: .0625rem solid #ddd;
   padding: 0 .9375rem;
   margin-right: -.9375rem;
   margin-left: -.9375rem;
+  transition: all .5s;
 }
+.filter-block:not(:last-child) {
+  margin-bottom: 0;
+}
+
+/* ::-webkit-scrollbar 滚动条整体部分，可以设置宽度之类的 */
+.filter-block::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+/* ::-webkit-scrollbar-corner 边角 */
+.filter-block::-webkit-scrollbar-corner {
+  background-color: initial;
+}
+/* ::-webkit-scrollbar-thumb 滚动条里面可以拖动的那个 */
+.filter-block::-webkit-scrollbar-thumb {
+  background-color: #e4e4e7 !important;
+  border-radius: 10px;
+}
+/* ::-webkit-scrollbar-track 外层轨道 */
+.filter-block::-webkit-scrollbar-track {
+  background-color: transparent !important;
+}
+
 
 .accordion-content{
   padding: 0;
