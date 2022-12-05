@@ -25,7 +25,7 @@
         </div>
         <div class="co-author-pagination" v-if="claimed == 1">
             <el-pagination layout="prev, pager, next" :total="authorTotalSize" @current-change="PageChange()"
-                v-model:current-page="pageCurrent" hide-on-single-page :page-sizes="[1, 2, 3, 4, 5]" />
+                v-model:current-page="pageCurrent" hide-on-single-page :page-sizes="[1, 2, 3, 4, 5]" :pager-count="4"/>
         </div>
         <div class="empty" v-if="claimed == 0">
             该用户尚未认证
@@ -67,6 +67,7 @@ const PageChange = () => {
     border-radius: 20px;
     box-shadow: 3px 3px 3px 3px #dedede;
     height: 100%;
+    padding-top: 10px;
 
     display: flex;
     flex-direction: column;
@@ -77,14 +78,14 @@ const PageChange = () => {
     font-size: 18px;
     font-weight: 800;
     text-align: left;
-    margin-top: 30px;
-    margin-bottom: 30px;
     width: 90%;
+    height: 40px;
+    line-height: 40px;
 }
 
 .author-list {
     width: 90%;
-    height: 92%;
+    height: calc(100% - 76px);
     overflow-y: auto;
 }
 

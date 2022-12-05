@@ -37,17 +37,16 @@ import Search from "../components/SearchInput/Search.vue";
    height: calc(100vh - 64px);
 }
 .main{
-   height:75vh;
+   height:60vh;
    background-color: #eeeeee;
    background-image: url("../assets/images/login_bg.svg");
 	background-size: cover;
    position: sticky;
    top: 64px;
-   z-index: 0;
    .search {
       position: absolute;
-      left: 5vw;
-      top: 30vh;
+      left:5vw;
+      top: 26vh;
       width: 40vw;
    }
    @media screen and (max-width:992px) {
@@ -59,7 +58,6 @@ import Search from "../components/SearchInput/Search.vue";
 
 .content{
    position: relative;
-   z-index: 1;
    background-color: whitesmoke;
    height: 100vh;
    display: flex;
@@ -72,11 +70,11 @@ import Search from "../components/SearchInput/Search.vue";
       }
    }
    .right-content-wrap{
-      width: 30vw;
-      .right-content{
-         height: 100%;
-         background-color: bisque;
-      }
+   width: 30vw;
+   .right-content{
+      height: 100%;
+      background-color: bisque;
+   }
    }
    @media screen and (max-width: 768px) {
       .right-content-wrap{

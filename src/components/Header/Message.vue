@@ -7,6 +7,7 @@ import { Message } from "../../api/message.js";
 import { useGlobalStore } from "../../stores/global";
 const globalStore = useGlobalStore();
 const unRead  = ref(false);
+let interVal = null;
 const getUnread = ()=>{
     Message.lookUnreadMsgCount({}).then((res)=>{
         unRead.value = res.data.unread_message_count > 0; 
@@ -17,10 +18,16 @@ const getUnread = ()=>{
 onMounted(
     ()=>{
         if(globalStore.isAuth){
-            setInterval(getUnread,5000)
+            interVal = setInterval(getUnread,5000)
         }
     }
 );
+onBeforeUnmount(
+    ()=>{
+        clearInterval(interVal);
+        console.log("定时器已被清除")
+    }
+)
 </script>
 <style>
 .red-point{

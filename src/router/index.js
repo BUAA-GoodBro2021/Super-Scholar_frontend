@@ -1,4 +1,4 @@
-import { ElMessage } from 'element-plus';
+import { ElNotification } from 'element-plus';
 import { createRouter, createWebHistory } from 'vue-router'
 import {useGlobalStore} from "../stores/global"
 const router = createRouter({
@@ -114,6 +114,12 @@ router.beforeEach((to,from)=>{
     // TODO: 权限
     const globalStore = useGlobalStore();
     if(!globalStore.isAuth&&to.name!="Login"&&to.name!="Welcome"&&to.name!="Register"){
+      ElNotification({
+        title: "很遗憾",
+        message: "请先登录",
+        type: "error",
+        duration: 3000
+      })
       return{name:"Login"};
     }
 })

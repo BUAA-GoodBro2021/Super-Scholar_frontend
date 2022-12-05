@@ -55,6 +55,7 @@ const pageChange = (page) => {
     border-radius: 20px;
     box-shadow: 3px 3px 3px 3px #dedede;
     height: 100%;
+    padding-top: 10px;
 
     display: flex;
     justify-content: center;
@@ -63,9 +64,9 @@ const pageChange = (page) => {
 
 .demo-tabs {
     width: 90%;
-    height: 90%;
-    margin-top: 30px;
-    margin-bottom: 5%;
+    /* 页码高度是36px */
+    height: calc(100% - 36px);
+    margin-bottom: 36px;
 }
 
 :deep(.demo-tabs .el-tabs__item) {

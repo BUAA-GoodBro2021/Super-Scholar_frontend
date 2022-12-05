@@ -75,7 +75,7 @@ const validateEmail = (rule,value,callback)=>{
 	}
 }
 const validatePassword = (rule,value,callback)=>{
-	let reg = /^[a-zA-Z0-9\_\@]{6,15}$/
+	let reg = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,16}$/
 	if(!value.length){
 		callback(new Error("请输入密码"))
 	}else if(value.length<8||value.length>16){
@@ -113,6 +113,7 @@ const login = ()=>{
 }
 // 提交前进行表单验权
 const submit = (formRef)=>{
+	console.log("FORMREF",formRef)
 	formRef.validate((valid)=>{
 		if(valid) isSliderCaptchaShow.value = true
 	})
@@ -158,7 +159,7 @@ onMounted(() => {
 	document.onkeydown = (e) => {
 		e = window.event || e;
 		if (e.code === "Enter" || e.code === "enter" || e.code === "NumpadEnter") {
-			submit(registerFormRef);
+			submit(registerFormRef.value);
 		}
 	};
 });

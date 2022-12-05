@@ -1,14 +1,12 @@
 <template>
    <el-dropdown>
-        <span>
-            <template v-if="globalStore.isAuth">
+            <span v-if="globalStore.isAuth">
                 <el-avatar :size="45" :src="circleUrl"></el-avatar>
-            </template>
-            <template v-else>
-                <el-button type="info" @click="login">登录</el-button>
-            </template>
-        </span>
-        <template #dropdown>
+            </span>
+            <span v-else>
+                <el-button type="info" @click="login" style="margin-top:0.5rem">登录</el-button>
+            </span>
+        <template #dropdown v-if="globalStore.isAuth">
             <el-dropdown-menu class="dropdown">
                 <el-dropdown-item class="dropdown-item" :icon="More" @click="toPerconalAccount">
                     <span class="dropdown-text">个人详情</span>
@@ -19,7 +17,7 @@
                 <el-dropdown-item class="dropdown-item" :icon="Star" @click="toCollection">
                     <span class="dropdown-text">收藏夹</span>
                 </el-dropdown-item>
-                <el-dropdown-item class="dropdown-item" :icon="Star" @click="toFollowList">
+                <el-dropdown-item class="dropdown-item" :icon="User" @click="toFollowList">
                     <span class="dropdown-text">关注列表</span>
                 </el-dropdown-item>
                 <el-dropdown-item class="dropdown-item" :icon="Notification" @click="checkMessage">
@@ -33,15 +31,16 @@
     </el-dropdown>
 </template>
 <script setup>
-import { Check, More, Notification, Star, SwitchButton } from '@element-plus/icons-vue'
+import { Check, More, Notification, Star, SwitchButton, User } from '@element-plus/icons-vue'
 import { useRouter } from 'vue-router';
 import  Message  from './Message.vue';
 import { useGlobalStore } from '../../stores/global';
+
 const globalStore = useGlobalStore();
 const router = useRouter();
 const circleUrl = globalStore.userInfo.avatar_url;
 const logout = ()=>{
-    localStorage.clear();
+    globalStore.logout();
     router.push({name:"Login"});
 }
 const login = ()=>{
@@ -73,7 +72,7 @@ const toFollowList = () => {
 .dropdown-text{
     margin-left: 1vw;
 }
-@media screen and (max-width:768px){
+@media screen and (max-width:928px){
     .dropdown-text{
         display: none;
     }
