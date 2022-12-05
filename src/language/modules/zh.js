@@ -24,6 +24,8 @@ export default {
         SSPassageNum: "发表文章数量",
         UAApplyTime: "申请时间",
         GlancePdf: "查看pdf",
-        clearInstitution: "清除"
+        clearInstitution: "清除",
+        UA: "审核PDF",
+        CA: "认领申请"
     }
 }

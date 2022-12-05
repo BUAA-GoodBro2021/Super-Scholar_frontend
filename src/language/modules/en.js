@@ -24,6 +24,8 @@ export default {
         SSPassageNum: "Number of published articles",
         UAApplyTime: "apply time",
         GlancePdf: "glance pdf",
-        clearInstitution: "clear"
+        clearInstitution: "clear",
+        UA: "Check PDF",
+        CA: "Claim Application"
     }
 }

@@ -1,8 +1,12 @@
 <template>
     <div>
-        <div class="top">
-            <el-button type="primary" plain>{{$t('header.CAAllPass')}}</el-button>
-            <el-button type="info" plain>{{$t('header.CARefuseAll')}}</el-button>
+        <div class="toptitle">
+            <svg style="margin: 0; padding: 0; width: 15; height: 15;">
+                <rect width="10" height="14"
+                style="fill:rgb(0,0,0);stroke-width:1;stroke:rgb(0,0,0)"/>
+            </svg>
+            <span>&nbsp;&nbsp;</span>
+            <span style="color: rgb(0,0,0)">{{$t('header.CA')}}</span>
         </div>
         <!-- <el-checkbox
             v-model="checkAll"
@@ -22,44 +26,55 @@
                 :span="7"
                 :offset="(index%3) > 0 ? 1 : 0"
                 >
-                    <el-card :body-style="{ padding: '0px'}" style="margin-bottom: 1vh">
+                    <el-card :body-style="{ padding: '0px'}" style="margin-bottom: 2.5vh; height: 34vh; min-width: 180px">
                         <!-- <el-checkbox :key="o.user_id" label="" class="checkbox"></el-checkbox> -->
-                        <div style="padding: 14px">
-                            <span class="card_header">{{o.real_name}}</span>
+                        <div style="padding: 14px; height: 17vh;">
+                            <span class="card_header">
+                                <svg style="margin: 0; padding: 0; width: 7; height: 11;">
+                                    <rect width="20" height="8"
+                                    style="fill:rgb(0,0,0);stroke-width:1;stroke:rgb(0,0,0)"/>
+                                </svg>
+                                {{o.real_name}} - {{ o.author_name }}
+                            </span>
                             <div class="bottom">
-                                    <span>{{$t('header.claimTime')}}</span>
+                                    <span class="name">{{$t('header.claimTime')}}</span>
                                     <time class="time">{{ o.claim_time }}</time>
                             </div>
-                            <div class="bottom-ins">
-                                <span>{{$t('header.institution')}}</span>
+                            <div class="bottom">
+                                <span class="name">{{$t('header.institution')}}</span>
                                 <span class="time">{{o.institution}}</span>
                                 <!-- <el-button text class="button">Operating</el-button> -->
                             </div>
                             <div class="bottom">
-                                <span>{{$t('header.claimReason')}}</span>
+                                <span class="name">{{$t('header.claimReason')}}</span>
                                 <span class="time">{{ o.content }}</span>
                             </div>
                         </div>
-                        <el-divider content-position="right"><el-icon><star-filled /></el-icon></el-divider>
-                        <div style="padding: 14px">
-                            <span class="card_header">{{ o.author_name }}</span>
+                        <!-- <el-divider content-position="right"><el-icon><star-filled /></el-icon></el-divider> -->
+                        <el-divider content-position="right">
+                            <svg width="10" height="10">
+                                <polygon points="5,0 8,10 0.5,4 9.5,4 2,10" style="fill:rgb(0,0,0);stroke:rgb(0,0,0);stroke-width:1;"/>
+                            </svg>
+                        </el-divider>
+                        <div style="padding: 14px; padding-top: 0px; padding-bottom: 0px; height: 10vh;">
+                            <!-- <span class="card_header">{{ o.author_name }}</span> -->
                             <div class="bottom">
-                                    <span>{{$t('header.worksCount')}}</span>
+                                    <span class="name">{{$t('header.worksCount')}}</span>
                                     <span class="time">{{ o.works_count }}</span>
                             </div>
                             <div class="bottom">
-                                <span>{{$t('header.institution')}}</span>
+                                <span class="name">{{$t('header.institution')}}</span>
                                 <span class="time">{{o.institution}}</span>
                                 <!-- <el-button text class="button">Operating</el-button> -->
                             </div>
                             <div class="bottom">
-                                <span>{{$t('header.authorUrl')}}</span>
+                                <span class="name">{{$t('header.authorUrl')}}</span>
                                 <a class="time" :href="o.author_url" target="_blank">{{ o.author_url }}</a>
                             </div>
                         </div>
                         <div class="bottomButton">
-                            <el-button type="primary" style="margin-bottom: 0.2vh; height: 3vh" @click="pass(o.user_id, pages.currentPage*6 - 6 + index)">{{$t('header.CAPass')}}</el-button>
-                            <el-button type="info" plain style="margin-bottom: 0.2vh; height: 3vh" @click="refuse(o.user_id, pages.currentPage*6 - 6 + index)">{{$t('header.CARefuse')}}</el-button>
+                            <el-button type="primary" style="margin-bottom: 0.2vh; height: 3vh; background-color: rgb(0,0,0); border-color: rgb(0,0,0); border-radius: 2px" @click="pass(o.user_id, pages.currentPage*6 - 6 + index)">{{$t('header.CAPass')}}</el-button>
+                            <el-button type="info" plain style="margin-bottom: 0.2vh; height: 3vh;  border-radius: 2px" @click="refuse(o.user_id, pages.currentPage*6 - 6 + index)">{{$t('header.CARefuse')}}</el-button>
                         </div>
                     </el-card>
                 </el-col>
@@ -158,25 +173,11 @@ function refuse(uid, num){
 </script>
 
 <style>
-.time {
-  font-size: 12px;
-  color: #999;
-}
 
 .bottom {
   margin-top: 13px;
-  line-height: 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.bottom-ins {
-  margin-top: 13px;
-  line-height: 12px !important;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  line-height: 12px;
+  text-align: left;
 }
 
 .button {
@@ -193,20 +194,39 @@ function refuse(uid, num){
      margin: 0.5vh 0 !important;
      background: 0 0 !important;
  }
+
+.el-pagination.is-background .el-pager li:not(.is-disabled).is-active {
+    background-color: black !important;
+    color: var(--el-color-white);
+    font-weight: 700;
+}
+
+.el-pagination.is-background .el-pager li:not(.is-disabled):hover {
+    color: rgb(139, 139, 139);
+}
+.el-pager li:focus-visible {
+    outline: 1px solid black;
+}
 </style>
 
 <style scoped>
 .card_header {
     font-size: 1.3em !important;
+    display: block;
+    position: relative;
+    left: 0;
+    text-align: left;
+    /* color: rgb(0, 125, 255); */
 }
 
 .top {
-    margin-top: 1vh;
-    margin-bottom: 3vh;
+    margin-top: 1.5vh;
+    margin-bottom: 4vh;
 }
 
 .bottomButton {
-    margin-bottom: 1vh;
+    margin-bottom: 0vh;
+    height: 2vh;
 }
 
 .checkbox {
@@ -218,11 +238,38 @@ function refuse(uid, num){
 .pagination {
     border-radius: 30px;
     padding-right: 3.5vw;
+    margin-top: 3vh;
 }
 .paginationBox {
     display: flex;
     justify-content: center;
     align-items: center;
-    height:10vh;
+    height:8vh;
 }
+
+.name {
+    text-align: left;
+}
+.time {
+    display: inline-block;
+    font-size: 12px;
+    color: #999;
+    float: right;
+    width: 11vw;
+    text-align: right;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    background-color: transparent;
+    z-index: auto;
+}
+
+.toptitle {
+    margin-top: 2vh;
+    margin-bottom: 5vh;
+    font-size: 1.7em;
+    text-align: left;
+    left: 0;
+}
+
 </style>

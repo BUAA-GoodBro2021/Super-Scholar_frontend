@@ -4,8 +4,8 @@
       <el-aside width="19vw">
         <div style="text-align: left">
           <el-radio-group v-model="isCollapse" style="margin-bottom: 20px">
-            <el-radio-button :label="false">expand</el-radio-button>
-            <el-radio-button :label="true">collapse</el-radio-button>
+            <el-radio-button :label="false" style="border-radius: 0">expand</el-radio-button>
+            <el-radio-button :label="true" class="radio-button">collapse</el-radio-button>
          </el-radio-group>
         </div>
         <el-menu
@@ -91,7 +91,7 @@ const handleClose = (key: string, keyPath: string[]) => {
 .el-menu-item:active,
 .el-submenu__title:hover,
 .el-submenu__title:active {
-  background-color: #fdf3e5e5;
+  background-color: rgba(223, 223, 223, 0.898);
 }
 ::v-deep .el-radio-button__inner {
   width: 6vh;
@@ -103,7 +103,7 @@ const handleClose = (key: string, keyPath: string[]) => {
   background: rgba(255, 255, 255, 0.4);
 }
 ::v-deep .el-radio-button__inner:hover {
-  background-color: #fdf3e5e5;
+  background-color: rgba(223, 223, 223, 0.898);
   color: #606266;
 }
 ::v-deep .el-menu-item.is-active {
@@ -117,14 +117,14 @@ const handleClose = (key: string, keyPath: string[]) => {
   background-color: #46c1fa;
 }
 ::v-deep .el-submenu__title:hover {
-  background-color: #fdf3e5e5;
+  background-color: rgba(223, 223, 223, 0.898);
 }
 ::v-deep .el-menu-item:active {
   color: #46c1fa;
 }
 ::v-deep .el-menu-item:focus,
 .el-menu-item:hover {
-  background-color: #fdf3e5e5;
+  background-color: rgba(223, 223, 223, 0.898);
 }
 ::v-deep .el-tabs__item:hover {
   color: #46c1fa;

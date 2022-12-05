@@ -1,8 +1,12 @@
 <template>
     <div>
-        <div class="top">
-            <el-button type="primary" plain>{{$t('header.CAAllPass')}}</el-button>
-            <el-button type="info" plain>{{$t('header.CARefuseAll')}}</el-button>
+        <div class="toptitle">
+            <svg style="margin: 0; padding: 0; width: 15; height: 15;">
+                <rect width="10" height="14"
+                style="fill:rgb(0,0,0);stroke-width:1;stroke:rgb(0,0,0)"/>
+            </svg>
+            <span>&nbsp;&nbsp;</span>
+            <span>{{$t('header.UA')}}</span>
         </div>
         <!-- <el-checkbox
             v-model="checkAll"
@@ -22,27 +26,33 @@
                 :span="7"
                 :offset="(index%3) > 0 ? 1 : 0"
                 >
-                    <el-card :body-style="{ padding: '0px'}" style="margin-bottom: 1vh">
+                    <el-card :body-style="{ padding: '0px'}" style="margin-bottom: 2.5vh; min-width: 190px">
                         <!-- <el-checkbox :key="o.user_id" label="" class="checkbox"></el-checkbox> -->
                         <div style="padding: 14px">
-                            <span class="card_header">{{o.author_name}}</span>
+                            <span class="card_header">
+                                <svg style="margin: 0; padding: 0; width: 7; height: 11;">
+                                    <rect width="20" height="8"
+                                    style="fill:rgb(0,0,0);stroke-width:1;stroke:rgb(0,0,0)"/>
+                                </svg>
+                                {{o.author_name}}
+                            </span>
                             <div class="bottom">
-                                    <span>{{$t('header.institution')}}</span>
+                                    <span class="name">{{$t('header.institution')}}</span>
                                     <time class="time">{{ o.institution }}</time>
                             </div>
                             <div class="bottom">
-                                <span>pdf</span>
+                                <span class="name">pdf</span>
                                 <a :href="o.url" target="_blank" class="time">{{$t('header.GlancePdf')}}</a>
                                 <!-- <el-button text class="button">Operating</el-button> -->
                             </div>
                             <div class="bottom">
-                                <span>{{$t('header.UAApplyTime')}}</span>
+                                <span class="name">{{$t('header.UAApplyTime')}}</span>
                                 <span class="time">{{ o.send_time }}</span>
                             </div>
                         </div>
                         <div class="bottomButton">
-                            <el-button type="primary" style="margin-bottom: 0.2vh; height: 3vh" @click="pass(o.id, pages.currentPage*9 - 9 + index)">{{$t('header.CAPass')}}</el-button>
-                            <el-button type="info" plain style="margin-bottom: 0.2vh; height: 3vh" @click="refuse(o.id, pages.currentPage*9 - 9 + index)">{{$t('header.CARefuse')}}</el-button>
+                            <el-button type="primary" style="margin-bottom: 0.2vh; height: 3vh; background-color: rgb(0,0,0); border-color: rgb(0,0,0); border-radius: 2px" @click="pass(o.id, pages.currentPage*9 - 9 + index)">{{$t('header.CAPass')}}</el-button>
+                            <el-button type="info" plain style="margin-bottom: 0.2vh; height: 3vh;  border-radius: 2px" @click="refuse(o.id, pages.currentPage*9 - 9 + index)">{{$t('header.CARefuse')}}</el-button>
                         </div>
                     </el-card>
                 </el-col>
@@ -116,8 +126,8 @@ const func1= () => {
                     }
                 }).then((res)=>{
                     console.log(res.data)
-                    Object.assign(requestData.list[0], {"author_name": res.data.single_data.display_name});
-                    Object.assign(requestData.list[0], {"institution": res.data.single_data.last_known_institution.display_name});
+                    Object.assign(requestData.list[i], {"author_name": res.data.single_data.display_name});
+                    Object.assign(requestData.list[i], {"institution": res.data.single_data.last_known_institution.display_name});
                 });
             }
         });
@@ -157,10 +167,8 @@ function refuse(uid, num){
 
 .bottom {
   margin-top: 13px;
-  line-height: 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  line-height: 12px;
+  text-align: left;
 }
 
 .button {
@@ -177,11 +185,30 @@ function refuse(uid, num){
      margin: 0.5vh 0 !important;
      background: 0 0 !important;
  }
+
+.el-pagination.is-background .el-pager li:not(.is-disabled).is-active {
+    background-color: black !important;
+    color: var(--el-color-white);
+    font-weight: 700;
+}
+
+.el-pagination.is-background .el-pager li:not(.is-disabled):hover {
+    color: rgb(139, 139, 139);
+}
+.el-pager li:focus-visible {
+    outline: 1px solid black;
+}
 </style>
 
 <style scoped>
+
 .card_header {
     font-size: 1.3em !important;
+    display: block;
+    position: relative;
+    left: 0;
+    text-align: left;
+    /* color: rgb(0, 125, 255); */
 }
 
 .top {
@@ -207,6 +234,31 @@ function refuse(uid, num){
     display: flex;
     justify-content: center;
     align-items: center;
-    height:10vh;
+    height:8vh;
+    padding-top: 8vh;
+}
+
+.toptitle {
+    margin-top: 2vh;
+    margin-bottom: 5vh;
+    font-size: 1.7em;
+    text-align: left;
+    left: 0;
+}
+
+.name {
+    text-align: left;
+}
+.time {
+    display: inline-block;
+    font-size: 12px;
+    color: #999;
+    float: right;
+    width: 11vw;
+    text-align: right;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    background-color: transparent;
 }
 </style>
