@@ -123,37 +123,7 @@
               <ul class="rlist">
                 <!-- 单个搜索结果卡片 -->
                 <li class="result-item" v-for="(item, index) in searchDataList">
-                  <!-- <div class="result-item-checkbox-container">
-                    <label style="
-                      cursor: pointer;
-                      color: #333;
-                      margin-bottom: .375rem;    
-                      display: block;
-                      float: none;
-                      font-size: 12px;
-                      font-weight: 700;
-                      box-sizing: border-box;">
-                      <input type="checkbox"
-                        style="
-                          position: absolute;
-                          width: 1px;
-                          height: 1px;
-                          margin-bottom: 10px;
-                          margin-right: 10px;
-                          padding: 0;
-                          box-sizing: border-box;
-                          max-height: 44px;
-                          background: inherit;
-                          font-size: 15px;
-                          line-height: 16px;
-                          color: #63666a;
-                          overflow: hidden;
-                          clip: rect(0,0,0,0);
-                          white-space: nowrap;
-                          border: 0;"
-                      />
-                    </label>
-                  </div> -->
+                  <WorksResCard :item="item"/>
                   <div class="result-item-card clearfix">
                     <div class="result-item__citation">
                       <div class="citation-heading">research-article</div>
@@ -354,6 +324,7 @@ import { useSearchStore } from '../../stores/search.js';
 import { ElButton, ElCheckbox, ElCheckboxGroup, ElNotification, ElPagination } from "element-plus";
 import { onMounted, reactive, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
+import WorksResCard from './WorksResCard.vue';
 
 const router = useRouter();
 const searchStore = useSearchStore();
@@ -1256,11 +1227,6 @@ a, a:hover, a:focus {
   font-size: .875rem;
 }
 
-.result-item-checkbox-container {
-  position: relative;
-  top: 1.5625rem;
-  border: 1px solid black;
-}
 .result-item-card {
   /* 30px */
   margin-left: 1.875rem;
