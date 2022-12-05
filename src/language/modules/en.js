@@ -26,6 +26,9 @@ export default {
         GlancePdf: "glance pdf",
         clearInstitution: "clear",
         UA: "Check PDF",
-        CA: "Claim Application"
+        CA: "Claim Application",
+        action1:"logout",
+        welcome:"Welcome",
+        message:"message",
     }
 }

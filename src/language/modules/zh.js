@@ -26,6 +26,9 @@ export default {
         GlancePdf: "查看pdf",
         clearInstitution: "清除",
         UA: "审核PDF",
-        CA: "认领申请"
+        CA: "认领申请",
+        action1:"退出登录",
+        welcome:"欢迎登录",
+        message:"消息列表",
     }
 }

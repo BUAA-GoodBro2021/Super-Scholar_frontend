@@ -9,7 +9,9 @@ const url = {
   managerGetAllUser: "/form/manager_look_all_user",
   managerCheckUploadPdf: "/work/manager_check_upload_pdf",
   managerDealUploadPdf: "/work/manager_deal_upload_pdf",
-  managerDeleteUserAuthor: "/form/manager_delete_user_author"
+  managerDeleteUserAuthor: "/form/manager_delete_user_author",
+  findPassword:"/user/find_password",
+  humanVerification: "/user/human_verify"
 }
 // 详细参考见：https://www.axios-http.cn/docs/req_config
 export class Account {
@@ -69,6 +71,12 @@ export class Account {
   static async managerDeleteUserAuthor(data) {
     return service(url.managerDeleteUserAuthor, {
       method: "post",
+      data:JSON.stringify(data),
+    });
+  }
+  static async humanVerification(data) {
+    return service(url.humanVerification, {
+      method: "POST",
       data,
     });
   }

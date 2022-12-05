@@ -8,16 +8,29 @@
 				<div class="login-logo">
 					<img class="login-icon" src="/icon.png" alt="" />
 				</div>
-				<LoginForm />
+				<router-view v-slot="{route,Component}">
+					<transition name="fade" mode="out-in">
+						<keep-alive>
+							<component :is="Component"></component>
+						</keep-alive>
+					</transition>
+				</router-view>
 			</div>
 		</div>
 	</div>
 </template>
 <script setup>
-
-import LoginForm from "./LoginForm.vue";
 </script>
 <style lang="scss">
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
 .login-container {
 	position: relative;
 	min-width: 550px;
@@ -29,10 +42,22 @@ import LoginForm from "./LoginForm.vue";
 	background-size: 100% 100%;
 	background-size: cover;
 }
+.login-register {
+	font-size: 12px;
+	color:#409eff;
+	margin-left: 10px;
+}
 .flx-center {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+@media (max-width:768px){
+	.login-box{
+		.login-left{
+			display: none;
+		}
+	}
 }
 .login-box {
 		box-sizing: border-box;
@@ -55,7 +80,11 @@ import LoginForm from "./LoginForm.vue";
 			width: 420px;
 			padding: 50px 40px 45px;
 			border-radius: 10px;
-			box-shadow: 2px 3px 7px rgb(0 0 0 / 20%);
+			box-shadow: 0 0.7px 1.7px rgba(0, 0, 0, 0.248);
+			backdrop-filter: blur(6px);
+			&:hover {
+				box-shadow: 2px 3px 7px rgb(0 0 0 / 20%);
+			}
 			.login-logo {
 				display: flex;
 				align-items: center;
@@ -87,7 +116,16 @@ import LoginForm from "./LoginForm.vue";
 					width: 185px;
 				}
 			}
+			.register-btn{
+				display: flex;
+				justify-content: space-between;
+				width: 100%;
+				margin-top: 40px;
+				white-space: nowrap;
+				.el-button {
+					width: 350px;
+				}
+			}
 		}
 	}
-
 </style>
