@@ -27,7 +27,7 @@
       </ul>
       <!-- 论文的简要信息 -->
       <div class="card-simple-info">
-        <!-- TODO 跳转到对应的institution主页 -->
+        <!-- TODO 跳转到对应的期刊(venue)的主页 -->
         <span class="epub-section__title">
           {{ item.host_venue.display_name }}
         </span>
@@ -83,7 +83,7 @@
           <ul class="rlist--inline" style="float: left;">
             <!-- TODO 导出bibtex等引用格式 -->
             <li>
-              <div class="card-tool-btn">
+              <div class="card-tool-btn" @click="getBiBTeX(item), bibtexDialogVisible = true">
                 <i class="iconfont icon-quotes" style="font-size: 1.1rem;"></i>
                 <span class="card-btn-hint">
                   <span class="card-btn-hint-arrow"></span>
@@ -91,6 +91,18 @@
                 </span>
               </div>
             </li>
+            <el-dialog v-model="bibtexDialogVisible" title="BiBTeX 引用格式" width="60%">
+              <span style="white-space: pre-wrap">{{ bibtex }}</span>
+              <template #footer>
+                <span class="dialog-footer">
+                  <el-button @click="bibtexDialogVisible = false">取消</el-button>
+                  <el-button type="primary" @click="copy(bibtex)">
+                    <span v-if='!copied'>复制到剪切板</span>
+                    <span v-else>复制成功!</span>
+                  </el-button>
+                </span>
+              </template>
+            </el-dialog>
             <!-- TODO 添加收藏夹的浮窗 -->
             <li>
               <div class="card-tool-btn">
@@ -153,6 +165,7 @@
 import { ElNotification } from 'element-plus';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { useClipboard } from '@vueuse/core'
 
 const router = useRouter();
 const props = defineProps({
@@ -205,6 +218,29 @@ const jumpToWorkSourceWeb = (webURL) => {
 
 // #endregion 卡片内部交互函数
 
+// bibtex
+const bibtex = ref("");
+const { copy, copied } = useClipboard({ bibtex })
+const bibtexDialogVisible = ref(false);
+const getBiBTeX = (paperInfo) => {
+  // 需要的字段有
+  // 文章的标题 work.display_name
+  // 文章的作者 work.authorships 对其中每条 authorship.author.display_name
+  // 文章的journal host_venue.display_name
+  // 文章的出版年份 work.publication_year
+  const { display_name, authorships, publication_year, host_venue } = paperInfo;
+  const author = authorships.map((authorship) => {
+    return authorship.author.display_name;
+  });
+  const journal = host_venue.display_name;
+  bibtex.value = `@article{${display_name},
+    author = {${author}},
+    title = {${display_name}},
+    journal = {${journal}},
+    year = {${publication_year}},
+}`;
+  return bibtex.value;
+};
 </script>
 
 <style scoped>
