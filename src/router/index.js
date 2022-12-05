@@ -119,10 +119,15 @@ const router = createRouter({
           path: '/institution/:institutionid',
           name: 'InstitutionDetail',
           component: ()=>import('../views/institution/InstitutionDetail.vue'),
-        }
+        },
+        {
+          path: 'concept/:tokenid',
+          name: 'ConceptDetail',
+          component: ()=>import('../views/Concept/ConceptDetail.vue'),
+        },
       ],
     },
-    
+
   ]
 })
 // 全局前置守卫

@@ -19,7 +19,12 @@
             @change="handleCheckedAppliesChange"
             style="width: 100%; height: 100%; background: transpatrent"
         > -->
-            <el-row>
+            <el-row style="
+            background-color: rgb(247, 247, 247);
+            border-radius: 3px;
+            box-shadow: 2px 2px 2px 2px #dedede;
+            padding-top: 3vh;
+            padding-left: 3vw">
                 <el-col
                 v-for.sync="(o, index) in requestData.list.slice((pages.currentPage*6 - 6), (pages.currentPage*6))"
                 :key="o"
@@ -94,7 +99,7 @@
 
 <script setup>
 import { ref,reactive } from 'vue';
-import {Account} from "../../api/account";
+import {Admin} from "../../api/admin";
 const requestData = reactive({
     msg: "",
     list:[],
@@ -115,7 +120,7 @@ const pages = reactive({
     currentPage : 1
 })
 const func1= () => {
-    Account.checkClaim({}).then((res)=>{
+    Admin.checkClaim({}).then((res)=>{
             requestData.list = res.data.form_handling_dic_list;
             requestData.list.push(requestData.dead);
             requestData.list.push(requestData.dead);
@@ -131,7 +136,7 @@ const func1= () => {
             requestData.totalApply = Object.keys(requestData.list).length;
             requestData.totalPage = Math.floor(requestData.totalApply / 6) + 1;
             for(let i = 0; i<Object.keys(requestData.list).length; i = i + 1){
-                Account.getSingleData({
+                Admin.getSingleData({
                     "entity_type": "authors",
                     "params": {
                         "id": res.data.form_handling_dic_list[i].author_id
@@ -154,7 +159,7 @@ function pageCurrentChange(val){
 }
 
 function pass(uid, num){
-    Account.dealApply({
+    Admin.dealApply({
         "user_id": uid,
         "deal_result": 1
     }).then((res)=>{
@@ -163,7 +168,7 @@ function pass(uid, num){
 }
 
 function refuse(uid, num){
-    Account.dealApply({
+    Admin.dealApply({
         "user_id": uid,
         "deal_result": -1
     }).then((res)=>{

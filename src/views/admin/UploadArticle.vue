@@ -19,14 +19,19 @@
             @change="handleCheckedAppliesChange"
             style="width: 100%; height: 100%; background: transpatrent"
         > -->
-            <el-row>
+            <el-row style="
+            background-color: rgb(247, 247, 247);
+            border-radius: 3px;
+            box-shadow: 2px 2px 2px 2px #dedede;
+            padding-top: 3vh;
+            padding-left: 3vw">
                 <el-col
                 v-for.sync="(o, index) in requestData.list.slice((pages.currentPage*9 - 9), (pages.currentPage*9))"
                 :key="o"
                 :span="7"
                 :offset="(index%3) > 0 ? 1 : 0"
                 >
-                    <el-card :body-style="{ padding: '0px'}" style="margin-bottom: 2.5vh; min-width: 190px">
+                    <el-card :body-style="{ padding: '0px'}" style="margin-bottom: 2.5vh; min-width: 190px;">
                         <!-- <el-checkbox :key="o.user_id" label="" class="checkbox"></el-checkbox> -->
                         <div style="padding: 14px">
                             <span class="card_header">
@@ -72,7 +77,7 @@
 
 <script setup>
 import { ref,reactive } from 'vue';
-import {Account} from "../../api/account";
+import {Admin} from "../../api/admin";
 const requestData = reactive({
     msg: "",
     list:[],
@@ -99,7 +104,7 @@ const pages = reactive({
     currentPage : 1
 })
 const func1= () => {
-    Account.managerCheckUploadPdf({}).then((res)=>{
+    Admin.managerCheckUploadPdf({}).then((res)=>{
             requestData.list = res.data.upload_pdf_form_dic_list;
             console.log(requestData.list)
             requestData.list.push(requestData.dead);
@@ -119,7 +124,7 @@ const func1= () => {
             requestData.totalApply = Object.keys(requestData.list).length;
             requestData.totalPage = Math.floor(requestData.totalApply / 9) + 1;
             for(let i = 0; i < Object.keys(requestData.list).length; i++){
-                Account.getSingleData({
+                Admin.getSingleData({
                     "entity_type": "authors",
                     "params": {
                         "id": requestData.list[i].author_id
@@ -141,7 +146,7 @@ function pageCurrentChange(val){
 
 function pass(uid, num){
     console.log(num)
-    Account.managerDealUploadPdf({
+    Admin.managerDealUploadPdf({
         "work_id": uid,
         "deal_result": 1
     }).then((res)=>{
@@ -150,7 +155,7 @@ function pass(uid, num){
 }
 
 function refuse(uid, num){
-    Account.managerDealUploadPdf({
+    Admin.managerDealUploadPdf({
         "work_id": uid,
         "deal_result": -1
     }).then((res)=>{

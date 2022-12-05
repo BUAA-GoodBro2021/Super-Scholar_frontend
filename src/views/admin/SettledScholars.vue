@@ -10,14 +10,19 @@
             <span style="color: rgb(130, 130, 130)">{{requestData.totalUser}}</span>
             <span>{{$t('header.SSTitle2')}}</span>
         </div>
-        <el-row>
+        <el-row style="
+        background-color: rgb(247, 247, 247);
+        border-radius: 3px;
+        box-shadow: 2px 2px 2px 2px #dedede;
+        padding-top: 3vh;
+        padding-left: 3vw">
             <el-col
             v-for.sync="(o, index) in requestData.user.slice((pages.currentPage*9 - 9), (pages.currentPage*9))"
             :key="o"
             :span="7"
             :offset="(index%3) > 0 ? 1 : 0"
             >
-                <el-card :body-style="{ padding: '0px'}" style="margin-bottom: 3vh; min-width: 220px">
+                <el-card :body-style="{ padding: '0px'}" style="margin-bottom: 3vh; min-width: 220px;">
                     <!-- <el-checkbox :key="o.user_id" label="" class="checkbox"></el-checkbox> -->
                     <div style="padding: 14px">
                         <span class="card_header">
@@ -62,7 +67,7 @@
 
 <script setup>
 import { ref,reactive } from 'vue';
-import {Account} from "../../api/account";
+import {Admin} from "../../api/admin";
 const requestData = reactive({
     user:[],
     totalUser: 0,
@@ -89,7 +94,7 @@ const pages = reactive({
     currentPage: 1
 })
 const func1= () => {
-    Account.managerGetAllUser({}).then((res)=>{
+    Admin.managerGetAllUser({}).then((res)=>{
         for(let i = 0; i < Object.keys(res.data.user_list).length; i = i + 1){
             if(res.data.user_list[i].is_professional == 1){
                 requestData.totalUser += 1;
@@ -127,7 +132,7 @@ function pageCurrentChange(val){
 }
 
 function clearInstitution(o){
-     Account.managerDeleteUserAuthor({
+     Admin.managerDeleteUserAuthor({
          "user_id": o.user_id
      }).then((res)=>{
          console.log("over")
