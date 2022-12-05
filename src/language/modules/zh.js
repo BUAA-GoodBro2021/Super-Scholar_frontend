@@ -12,7 +12,7 @@ export default {
         action1: "退出登录",
         welcome: "欢迎登录",
         claimTime: "申请时间",
-        institution: "所属机构",
+        institution: "机构",
         claimReason: "申请理由",
         worksCount: "作品数量",
         citedByCount: "被引次数",
@@ -23,6 +23,7 @@ export default {
         SSCreatedTime: "入驻时间",
         SSPassageNum: "发表文章数量",
         UAApplyTime: "申请时间",
-        GlancePdf: "查看pdf"
+        GlancePdf: "查看pdf",
+        clearInstitution: "清除"
     }
 }

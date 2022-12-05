@@ -23,6 +23,7 @@ export default {
         SSCreatedTime: "Occupancy time",
         SSPassageNum: "Number of published articles",
         UAApplyTime: "apply time",
-        GlancePdf: "glance pdf"
+        GlancePdf: "glance pdf",
+        clearInstitution: "clear"
     }
 }

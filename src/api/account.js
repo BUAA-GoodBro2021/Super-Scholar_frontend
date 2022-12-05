@@ -8,7 +8,8 @@ const url = {
   dealApply: "/form/manager_deal_claim",
   managerGetAllUser: "/form/manager_look_all_user",
   managerCheckUploadPdf: "/work/manager_check_upload_pdf",
-  managerDealUploadPdf: "/work/manager_deal_upload_pdf"
+  managerDealUploadPdf: "/work/manager_deal_upload_pdf",
+  managerDeleteUserAuthor: "/form/manager_delete_user_author"
 }
 // 详细参考见：https://www.axios-http.cn/docs/req_config
 export class Account {
@@ -65,8 +66,8 @@ export class Account {
       data,
     });
   }
-  static async managerDealUploadPdf(data) {
-    return service(url.managerDealUploadPdf, {
+  static async managerDeleteUserAuthor(data) {
+    return service(url.managerDeleteUserAuthor, {
       method: "post",
       data,
     });

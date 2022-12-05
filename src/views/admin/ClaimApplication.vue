@@ -30,7 +30,7 @@
                                     <span>{{$t('header.claimTime')}}</span>
                                     <time class="time">{{ o.claim_time }}</time>
                             </div>
-                            <div class="bottom">
+                            <div class="bottom-ins">
                                 <span>{{$t('header.institution')}}</span>
                                 <span class="time">{{o.institution}}</span>
                                 <!-- <el-button text class="button">Operating</el-button> -->
@@ -102,6 +102,17 @@ const pages = reactive({
 const func1= () => {
     Account.checkClaim({}).then((res)=>{
             requestData.list = res.data.form_handling_dic_list;
+            requestData.list.push(requestData.dead);
+            requestData.list.push(requestData.dead);
+            requestData.list.push(requestData.dead);
+            requestData.list.push(requestData.dead);
+            requestData.list.push(requestData.dead);
+            requestData.list.push(requestData.dead);
+            requestData.list.push(requestData.dead);
+            requestData.list.push(requestData.dead);
+            requestData.list.push(requestData.dead);
+            requestData.list.push(requestData.dead);
+            requestData.list.push(requestData.dead);
             requestData.totalApply = Object.keys(requestData.list).length;
             requestData.totalPage = Math.floor(requestData.totalApply / 6) + 1;
             for(let i = 0; i<Object.keys(requestData.list).length; i = i + 1){
@@ -155,6 +166,14 @@ function refuse(uid, num){
 .bottom {
   margin-top: 13px;
   line-height: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.bottom-ins {
+  margin-top: 13px;
+  line-height: 12px !important;
   display: flex;
   justify-content: space-between;
   align-items: center;

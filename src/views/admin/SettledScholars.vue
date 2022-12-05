@@ -24,7 +24,7 @@
                         <div class="bottom">
                             <span>{{$t('header.institution')}}</span>
                             <span class="time">{{o.institution}}</span>
-                            <!-- <el-button text class="button">Operating</el-button> -->
+                            <el-button text class="button-opr" @click="clearInstitution(o)">{{$t('header.clearInstitution')}}</el-button>
                         </div>
                         <div class="bottom">
                             <span>{{$t('header.SSCreatedTime')}}</span>
@@ -77,6 +77,14 @@ func1();  //因为setup即相当于created:
 function pageCurrentChange(val){
     pages.currentPage = val;
 }
+
+function clearInstitution(o){
+     Account.managerDeleteUserAuthor({
+         "user_id": o.user_id
+     }).then((res)=>{
+         console.log("over")
+    });
+}
 </script>
 
 <style>
@@ -96,6 +104,7 @@ function pageCurrentChange(val){
 .button {
   padding: 0;
   min-height: auto;
+  height: 10px !important;
 }
 
 .image {
@@ -141,5 +150,13 @@ function pageCurrentChange(val){
     justify-content: center;
     align-items: center;
     height:5vh;
+}
+
+.button-opr {
+  padding: 0;
+}
+
+.el-button {
+    height: 12px !important;
 }
 </style>
