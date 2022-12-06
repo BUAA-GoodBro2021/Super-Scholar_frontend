@@ -367,16 +367,17 @@ const initChart2 = () => {
         },
         animationDurationUpdate: function (idx) {
             // 越往后的数据延迟越大
-            return idx * 100;
+            return idx * 1000;
         },
-        animationEasingUpdate: 'bounceIn',
+        // animationEasingUpdate: 'bounceIn',
         color: ['#fff', '#fff', '#fff'],
         series: [{
             type: 'graph',
             layout: 'force',
             force: {
-                repulsion: 20,
-                edgeLength: 7
+                repulsion: 10,
+                edgeLength: 7,
+                friction: 0.1
             },
             roam: true,
             label: {
