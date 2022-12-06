@@ -1,7 +1,12 @@
 <template>
     <div class="document-list-wrap" v-loading="loading">
         <el-table :data="paperList" @sort-change="sortChange">
-            <el-table-column prop="display_name" label="标题"/>
+            <el-table-column prop="display_name" label="标题">
+                <template #default="scope">
+                    <div class="authors_wrap" v-html="scope.row.display_name">
+                    </div>
+                </template>
+            </el-table-column>
             <el-table-column prop="authorships" label="第一作者" width="100px" align="center">
                 <template #default="scope">
                     <div class="authors_wrap">
