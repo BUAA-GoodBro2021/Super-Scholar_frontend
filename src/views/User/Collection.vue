@@ -374,11 +374,11 @@ const deleteFile = async () => {
 const RemoveWorks = (works) => {
     works.forEach((item) => {
         // 从后往前防止index变化带来的误差
-        for(let i = workList.value.length - 1; i >= 0; i--) {
-            if(workList.value[i].id.substring(21) == item) workList.value.splice(i, 1);
+        for (let i = workList.value.length - 1; i >= 0; i--) {
+            if (workList.value[i].id.substring(21) == item) workList.value.splice(i, 1);
         }
-        for(let i = filterWorkList.value.length - 1; i >= 0; i--) {
-            if(filterWorkList.value[i].id.substring(21) == item) filterWorkList.value.splice(i, 1);
+        for (let i = filterWorkList.value.length - 1; i >= 0; i--) {
+            if (filterWorkList.value[i].id.substring(21) == item) filterWorkList.value.splice(i, 1);
         }
     })
 }
@@ -408,7 +408,7 @@ const searchItems = () => {
     } else {
         filterWorkList.value = []
         workList.value.forEach((el) => {
-            if(el.display_name.includes(keyWord.value)) filterWorkList.value.push(el)
+            if (el.display_name.includes(keyWord.value)) filterWorkList.value.push(el)
         })
     }
 }
@@ -443,17 +443,17 @@ const SelectItem = (item) => {
     //第二页相同 将work实体放在selects中 displayname id.substring(21) 使用id作为唯一key完全没问题
     //如果已经放入则是二次点击 取消激活状态
     for (let i = 0; i < selects.value.length; i++) {
-            if (selects.value[i].id == item.id) {
-                selects.value.splice(i, 1)
-                item.active = false
-                if (selects.value.length == 0) hasSelect.value = false
-                return
-            }
+        if (selects.value[i].id == item.id) {
+            selects.value.splice(i, 1)
+            item.active = false
+            if (selects.value.length == 0) hasSelect.value = false
+            return
         }
-        // 转换为激活状态
-        item.active = true
-        selects.value.push(item)
-        hasSelect.value = true
+    }
+    // 转换为激活状态
+    item.active = true
+    selects.value.push(item)
+    hasSelect.value = true
 }
 
 //获取文献列表 先清空文献列表 然后重新拉取
@@ -522,6 +522,7 @@ const toConcept = (item) => {
 .hover-item {
     cursor: pointer;
 }
+
 .collection-body {
     width: 100%;
     height: 100%;
@@ -752,7 +753,7 @@ const toConcept = (item) => {
     opacity: 1 !important;
 }
 
- /* todo */
+/* todo */
 .video-container .video-main .active {
     border: 1px solid #409eff;
     border-radius: 8px;
@@ -774,6 +775,34 @@ const toConcept = (item) => {
 .video-container .video-main .active:hover .icon-work-selected {
     opacity: 1 !important;
 }
+
+.video-container .video-main .result-item{
+    position: relative
+}
+
+.video-container .video-main .result-item-checkbox {
+    position: absolute;
+    top: .9735rem;
+}
+
+:deep(.video-container .video-main .el-checkbox__inner) {
+    border-color: black;
+}
+
+:deep(.video-container .video-main .checkboxactive .el-checkbox__inner) {
+    border: none
+}
+
+:deep(.video-container .video-main .el-checkbox__inner .is-checked .el-checkbox__inner) {
+    border-color: #409eff ;
+}
+
+.video-container .video-main .resultitemactive {
+    background-color: #f1f5fa;
+}
+
+
+
 /* work勾选图标样式end */
 
 .video-container .video-main .loadding-message {
