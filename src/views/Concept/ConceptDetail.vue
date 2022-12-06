@@ -4,7 +4,7 @@
     <!-- 上半部分：基本信息 -->
     <div class="top_card">
         <div class="pic">
-            <!-- <el-image style="width: 100px; height: 100px" :src="conceptInfo.image_thumbnail_url" fit="fill" /> -->
+            <el-image style="width: 100px; height: 100px" :src="conceptInfo.image_thumbnail_url" fit="fill" />
         </div>
         <div class="word">
             <div class="title">
@@ -276,9 +276,11 @@ const UpdateAssociatedConcept = (page) => {
     top: 14vh;
     background-color: rgb(0, 0, 0);
     border-radius: 50%;
-    width: 100px;
-    height: 100px;
+    width: 120px;
+    height: 120px;
     z-index: 10;
+    overflow: hidden;
+    border: #999 solid 1px;
 }
 
 .right {
