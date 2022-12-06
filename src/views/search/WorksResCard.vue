@@ -9,16 +9,20 @@
       <!-- 论文的标题 -->
       <h5 class="card-title" @click="jumpToPaperPage(item.id.slice(21))">
         <!-- TODO 需要加跳转到论文详情+匹配高亮 -->
-        <span>
+        <span v-if="item.display_name != null">
           <!-- <a href="/doi/10.1145/3293353.3293383">HSD-<span onclick="highlight()" class="single_highlight_class">CNN</span>: Hierarchically self decomposing <span onclick="highlight()" class="single_highlight_class">CNN</span> architecture using class specific filter sensitivity analysis</a> -->
           {{ item.display_name.replace(/<\/?i>/ig, "") }}
+        </span>
+        <span v-if="item.display_name == null">
+          <!-- <a href="/doi/10.1145/3293353.3293383">HSD-<span onclick="highlight()" class="single_highlight_class">CNN</span>: Hierarchically self decomposing <span onclick="highlight()" class="single_highlight_class">CNN</span> architecture using class specific filter sensitivity analysis</a> -->
+          [Title Missed]
         </span>
       </h5>
       <!-- 论文的作者列表 -->
       <ul class="card-author-list">
         <li v-for="(author, authorIndex) in item.authorships">
           <!-- 跳转到对应的作者主页 -->
-          <a @click="jumpToAuthorPage(author.author.id 
+          <a @click="jumpToAuthorPage(author.author.id
             ? author.author.id.slice(21)
             : '')"
           >
@@ -31,10 +35,10 @@
       <!-- 论文的信息：来源（期刊会议）host_venue、发行日期、类型、doi网址 -->
       <div class="card-simple-info" v-if="notInCollection">
         <!-- 跳转到对应的host_venue主页 -->
-        <span 
-          class="epub-section__title" 
+        <span
+          class="epub-section__title"
           v-if="item.host_venue"
-          @click="jumpToVenuePage(item.host_venue.id 
+          @click="jumpToVenuePage(item.host_venue.id
             ? item.host_venue.id
             : '')"
         >
@@ -55,8 +59,8 @@
       </div>
       <!-- 论文的领域concepts气泡展示，这里只截取前11个 -->
       <div class="card-concepts clearfix" v-if="notInCollection">
-        <div 
-          class="card-concepts-wrap" 
+        <div
+          class="card-concepts-wrap"
           v-for="(concept, conceptIndex) in item.concepts.slice(0, 11)"
           @click="jumpToConceptPage(concept.id.slice(21))"
         >
@@ -129,7 +133,7 @@
           </ul>
           <ul class="rlist--inline dot-separator" style="float: right;"
             v-if="(item.open_access.is_oa === 1 || item.host_venue.id || item.doi)">
-            <!-- 
+            <!--
               跳转到PDF在线预览的网页
               open_access.is_oa
               -1  表示没有PDF
@@ -145,14 +149,14 @@
                 </span>
               </div>
             </li>
-            <!-- 
+            <!--
               跳转到论文源网页的超链接
                 有论文所属机构的id（URL）时，跳转到对应URL
                 没有时，跳转到 doi
              -->
             <li v-if="(item.host_venue.id || item.doi)">
-              <div 
-                class="card-tool-btn web-btn" 
+              <div
+                class="card-tool-btn web-btn"
                 @click="jumpToWorkSourceWeb(
                   item.host_venue.id
                     ? item.host_venue.id
@@ -189,7 +193,6 @@ const props = defineProps({
     default: true,
   }
 });
-
 // #region 卡片内部交互函数
 /**
  * 跳转到论文详情页
@@ -390,7 +393,7 @@ a:focus {
 }
 .card-author-list > li:not(:last-child) {
   margin-right: .3125rem;
-} 
+}
 .card-author-list > li {
   display: inline-block;
   line-height: 2rem;
@@ -587,7 +590,7 @@ img {
   z-index: 9020;
   max-width: 300px;
 }
-/* 
+/*
   经典的利用 宽度高度为0，边框宽度不为0，形成三角形
 */
 .card-footer-right .rlist--inline li:hover .card-tool-btn .card-btn-hint .card-btn-hint-arrow{

@@ -80,6 +80,7 @@ onMounted(() => {
       if (res.data.result == 1) {
         console.log(conceptid)
         conceptInfo.value = res.data.single_data;
+        console.log("displayname", conceptInfo.value.display_name)
         isLoading.value = false;
         UpdateAssociatedConcept(1);
       }
