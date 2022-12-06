@@ -23,19 +23,22 @@
                </div>
             </div>
          </div>
-         <div class="content" id="recommend">
+         <div v-if="loading">
+            loading...
+         </div>
+         <div v-else class="content" id="recommend">
             <div class="left-content-wrap">
                <div class="left-content">
                   <el-tabs v-model="activeName" class="demo-tabs" @tab-change="curPage=1">
                      <el-tab-pane label="为你推荐" name="count" >
                            <WorksResCard 
-                           v-for="(item,index) in recommendByCount.slice(itemIndex,itemIndex+4)" 
+                           v-for="(item,index) in recommendByCount.slice(itemIndex,itemIndex+5)" 
                            :key="index" 
                            :item="item" />
                      </el-tab-pane>
                      <el-tab-pane label="最新论文" name="date">
                         <WorksResCard 
-                           v-for="(item,index) in recommendByDate.slice(itemIndex,itemIndex+4)" 
+                           v-for="(item,index) in recommendByDate.slice(itemIndex,itemIndex+5)" 
                            :key="index" 
                            :item="item" />
                   </el-tab-pane>
@@ -81,6 +84,7 @@ const venueCount = ref(0);
 const activeName = ref("count");
 const oneWord = ref({});
 const curPage = ref(1);
+const loading = ref(true);
 const itemIndex = computed(()=>{
    return (curPage.value-1) * 5;
 })
@@ -122,6 +126,7 @@ onMounted(() => {
          institutionCount.value = res.data.institutions_count;
          workCount.value = res.data.work_count;
          venueCount.value = res.data.venues_count;
+         loading.value = false;
       }
    })
    getOneWord();
@@ -163,13 +168,14 @@ onMounted(() => {
       .box{
          .title{
             font-size: 20px;
-            font-weight: 800;
+            font-weight: 900;
             text-align: center;
-            color: #409eff;
+            color: #a2b3ff;
          }
          .data{
             font-size: large;
-            color: black;
+            font-weight: 900;
+            color: rgb(63, 43, 43);
             margin-top: 1rem;
             text-align: center;
          }
@@ -228,6 +234,9 @@ onMounted(() => {
             font-size: large;
             font-weight: bold;
             color: rgba(121, 116, 116, 0.9);
+         }
+         .text:last-child{
+            margin-bottom: 1rem;
          }
       }
    }
