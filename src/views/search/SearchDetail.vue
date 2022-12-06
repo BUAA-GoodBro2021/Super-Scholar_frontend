@@ -138,7 +138,7 @@
                         <!-- TODO 需要加跳转到论文详情+匹配高亮 -->
                         <span>
                           <!-- <a href="/doi/10.1145/3293353.3293383">HSD-<span onclick="highlight()" class="single_highlight_class">CNN</span>: Hierarchically self decomposing <span onclick="highlight()" class="single_highlight_class">CNN</span> architecture using class specific filter sensitivity analysis</a> -->
-                          {{item.display_name}}
+                          {{item.display_name.replace(/<\/?i>/ig, "")}}
                         </span>
                       </h5>
                       <!-- 论文的作者列表 -->
@@ -162,7 +162,7 @@
                           class="epub-section__title" 
                           v-if="item.host_venue"
                           @click="jumpToVenuePage(item.host_venue.id 
-                            ? item.host_venue.id
+                            ? item.host_venue.id.slice(21)
                             : '')"
                         >
                           {{item.host_venue.display_name}}
@@ -841,10 +841,10 @@ const jumpToVenuePage = (openAlexVenueId) => {
  */
 const jumpToConceptPage = (openAlexConceptId) => {
   console.log(openAlexConceptId);
-  // router.push({
-  //   name: '',
-  //   params: {tokenid: openAlexAuthorId}
-  // });
+  router.push({
+    name: 'ConceptDetail',
+    params: {tokenid: openAlexConceptId}
+  });
 };
 /**
  * 跳转到PDF在线预览网页
