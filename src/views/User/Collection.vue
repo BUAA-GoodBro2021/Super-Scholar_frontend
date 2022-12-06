@@ -74,38 +74,9 @@
                         <ul class="search-result__list">
                             <!-- 单个搜索结果卡片 -->
                             <li v-for="(item, index) in filterWorkList" :key="index" class="result-item">
-                                <div class="result-item-checkbox-container"></div>
-                                <div :class="{ active: item.active }" class="result-item-card clearfix">
-                                    <div class="result-item__citation">
-                                        <div class="citation-heading">research-article</div>
-                                        <!-- <div class="citation-date">May 20</div> -->
-                                        <div class="citation-date">{{ item.publication_date }}</div>
-                                    </div>
-                                    <div class="result-item__content">
-                                        <!-- 论文的标题 -->
-                                        <h5 class="card-title">
-                                            <!-- TODO 需要加跳转到论文详情+匹配高亮 -->
-                                            <span class="hover-item" @click="toArticle(item)">
-                                                <!-- <a href="/doi/10.1145/3293353.3293383">HSD-<span onclick="highlight()" class="single_highlight_class">CNN</span>: Hierarchically self decomposing <span onclick="highlight()" class="single_highlight_class">CNN</span> architecture using class specific filter sensitivity analysis</a> -->
-                                                {{ item.display_name }}
-                                            </span>
-                                        </h5>
-                                        <!-- 论文的内容摘要 -->
-                                        <div class="card-abstract">
-                                            <p>{{ item.abstract ? item.abstract : 'No Abstract' }}</p>
-                                        </div>
-                                        <!-- 论文的领域concepts气泡展示，这里只截取前11个 -->
-                                        <div class="card-concepts clearfix">
-                                            <div class="card-concepts-wrap hover-item"
-                                                v-for="(concept, conceptIndex) in item.concepts.slice(0, 11)"
-                                                :key="conceptIndex" @click="toConcept(concept)">
-                                                <i class="iconfont icon-menu"></i>
-                                                <div class="card-concept-context">{{ concept.display_name }}</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <i class="icon-work-selected" @click="SelectItem(item)"></i>
-                                </div>
+                                <el-checkbox v-model="item.active" 
+                                    @change="SelectItem(item)" class="result-item-checkbox" :class="{checkboxactive: item.active}"/>
+                                <WorksResCardVue :item="item" :class="{resultitemactive: item.active}"/>
                                 <!-- <i class="icon-work-selected" @click="SelectItem(item)"></i> -->
                             </li>
                         </ul>
@@ -151,6 +122,7 @@
 import { ArrowRight, Plus, Edit, Delete, Search } from '@element-plus/icons-vue';
 import { sliderEmits } from 'element-plus';
 import { Collection } from '../../api/collect'
+import WorksResCardVue from '../search/WorksResCard.vue';
 const pageOne = ref(true) // 第几页
 const hasSelect = ref(false) // 是否有选中的元素
 const selects = ref([]) //选中的元素
@@ -404,11 +376,11 @@ const deleteFile = async () => {
 const RemoveWorks = (works) => {
     works.forEach((item) => {
         // 从后往前防止index变化带来的误差
-        for(let i = workList.value.length - 1; i >= 0; i--) {
-            if(workList.value[i].id.substring(21) == item) workList.value.splice(i, 1);
+        for (let i = workList.value.length - 1; i >= 0; i--) {
+            if (workList.value[i].id.substring(21) == item) workList.value.splice(i, 1);
         }
-        for(let i = filterWorkList.value.length - 1; i >= 0; i--) {
-            if(filterWorkList.value[i].id.substring(21) == item) filterWorkList.value.splice(i, 1);
+        for (let i = filterWorkList.value.length - 1; i >= 0; i--) {
+            if (filterWorkList.value[i].id.substring(21) == item) filterWorkList.value.splice(i, 1);
         }
     })
 }
@@ -438,7 +410,7 @@ const searchItems = () => {
     } else {
         filterWorkList.value = []
         workList.value.forEach((el) => {
-            if(el.display_name.includes(keyWord.value)) filterWorkList.value.push(el)
+            if (el.display_name.includes(keyWord.value)) filterWorkList.value.push(el)
         })
     }
 }
@@ -473,17 +445,17 @@ const SelectItem = (item) => {
     //第二页相同 将work实体放在selects中 displayname id.substring(21) 使用id作为唯一key完全没问题
     //如果已经放入则是二次点击 取消激活状态
     for (let i = 0; i < selects.value.length; i++) {
-            if (selects.value[i].id == item.id) {
-                selects.value.splice(i, 1)
-                item.active = false
-                if (selects.value.length == 0) hasSelect.value = false
-                return
-            }
+        if (selects.value[i].id == item.id) {
+            selects.value.splice(i, 1)
+            item.active = false
+            if (selects.value.length == 0) hasSelect.value = false
+            return
         }
-        // 转换为激活状态
-        item.active = true
-        selects.value.push(item)
-        hasSelect.value = true
+    }
+    // 转换为激活状态
+    item.active = true
+    selects.value.push(item)
+    hasSelect.value = true
 }
 
 //获取文献列表 先清空文献列表 然后重新拉取
@@ -552,6 +524,7 @@ const toConcept = (item) => {
 .hover-item {
     cursor: pointer;
 }
+
 .collection-body {
     width: 100%;
     height: 100%;
@@ -708,9 +681,6 @@ const toConcept = (item) => {
     background-color: #f1f5fa;
 }
 
-.video-container .video-main .result-item-card:hover {
-    background-color: #f1f5fa;
-}
 
 /* 鼠标悬浮时收藏夹勾选图标透明度发生变化 */
 .video-container .video-main .list-item:hover .icon-file-selected {
@@ -785,7 +755,7 @@ const toConcept = (item) => {
     opacity: 1 !important;
 }
 
- /* todo */
+/* todo */
 .video-container .video-main .active {
     border: 1px solid #409eff;
     border-radius: 8px;
@@ -806,6 +776,34 @@ const toConcept = (item) => {
 .video-container .video-main .active:hover .icon-work-selected {
     opacity: 1 !important;
 }
+
+.video-container .video-main .result-item{
+    position: relative
+}
+
+.video-container .video-main .result-item-checkbox {
+    position: absolute;
+    top: .9735rem;
+}
+
+:deep(.video-container .video-main .el-checkbox__inner) {
+    border-color: black;
+}
+
+:deep(.video-container .video-main .checkboxactive .el-checkbox__inner) {
+    border: none
+}
+
+:deep(.video-container .video-main .el-checkbox__inner .is-checked .el-checkbox__inner) {
+    border-color: #409eff ;
+}
+
+.video-container .video-main .resultitemactive {
+    background-color: #f1f5fa;
+}
+
+
+
 /* work勾选图标样式end */
 
 .video-container .video-main .loadding-message {
@@ -835,340 +833,6 @@ const toConcept = (item) => {
     top: 1.5625rem;
 }
 
-.result-item-card {
-    /* 30px */
-    margin-left: 1.875rem;
-    margin-right: 1.875rem;
-    /* 15px */
-    margin-top: .9375rem;
-    padding: .9375rem;
-    box-shadow: 0 0.3125rem 0.5rem rgb(0 0 0 / 10%);
-    background: #fff;
-    word-break: break-word;
-    position: relative;
-}
-
-.result-item__citation {
-    vertical-align: top;
-    /* 12px */
-    font-size: .75rem;
-    text-transform: uppercase;
-}
-
-@media (min-width: 768px) {
-    .result-item__citation {
-        width: 8.75rem;
-        display: inline-block;
-        margin-bottom: 0;
-    }
-}
-
-.citation-heading {
-    margin-top: .25rem;
-    margin-right: .625rem;
-    font-weight: 600;
-}
-
-.citation-date {
-    display: inline-block;
-    color: #757575;
-    margin-bottom: .25rem;
-    font-size: .75rem;
-    font-weight: 400;
-    text-transform: capitalize;
-}
-
-.result-item__content {
-    display: inline-block;
-}
-
-@media (min-width: 992px) {
-    .result-item__content {
-        width: calc(100% - 8.75rem);
-        float: right;
-    }
-}
-
-.card-title {
-    color: #0077c2;
-    font-weight: 500;
-    /* font-family: Merriweather,serif; */
-    font-family: 'Times New Roman', Times, "Microsoft YaHei", serif;
-    font-size: 1.25rem;
-    margin-bottom: .625rem;
-    max-width: 97%;
-}
-
-@media (min-width: 992px) {
-    .card-title {
-        width: 100%;
-    }
-}
-
-.card-author-list {
-    list-style: none;
-    height: auto;
-    padding: 0;
-    margin: 0 0 .625rem;
-    color: #6b6b6b;
-    font-size: .875rem;
-}
-
-.card-author-list>li:not(:last-child) {
-    margin-right: .3125rem;
-}
-
-.card-author-list>li {
-    display: inline-block;
-    line-height: 2rem;
-}
-
-.card-author-list a {
-    text-decoration: underline;
-    color: inherit;
-    cursor: pointer;
-    background-color: transparent;
-}
-
-.card-author-list img {
-    filter: grayscale(100%);
-    transition: all .2s ease-in-out;
-}
-
-img {
-    max-width: 100%;
-    border-style: none;
-}
-
-.author-avator {
-    width: 1.5rem;
-    height: 1.5rem;
-    margin-right: .3125rem;
-    box-sizing: content-box;
-    vertical-align: middle;
-    padding-right: 0;
-    border-radius: 50%;
-    object-fit: cover;
-    object-position: top;
-}
-
-.card-simple-info {
-    color: #6b6b6b;
-    margin: .625rem 0;
-}
-
-.card-abstract {
-    height: auto;
-    margin: 0.9rem 0;
-    font-size: 1rem;
-    font-family: 'Times New Roman', Times, "Microsoft YaHei", serif;
-    /* FIXME 下面四行一起用可以实现多行溢出文本用省略号 "..." 代替，保证不超过一行 */
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 4;
-}
-
-.card-concepts {
-    height: auto;
-    margin-bottom: .8rem;
-}
-
-.card-concepts .card-concepts-wrap {
-    float: left;
-    margin-right: 10px;
-    margin-bottom: 5px;
-    padding: 3px 5px;
-    box-sizing: border-box;
-    border: 1.6px solid black;
-    border-radius: 5px;
-    font-size: 14px;
-    /* cursor: pointer; */
-}
-
-.card-concepts .card-concepts-wrap i {
-    display: inline-block;
-    margin-right: 3px;
-}
-
-.card-concepts .card-concepts-wrap .card-concept-context {
-    display: inline-block;
-    text-transform: capitalize;
-}
-
-
-.card-footer {
-    height: auto;
-}
-
-.rlist--inline {
-    cursor: default;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-
-.rlist--inline>li {
-    display: inline-block;
-}
-
-/* #region 卡片底部左侧简略信息 */
-.card-footer-left {
-    float: left;
-}
-
-.card-footer-left li {
-    /* 6px */
-    padding-right: .375rem;
-}
-
-.card-footer-left>ul>li {
-    vertical-align: text-top;
-}
-
-@media (min-width: 533px) {
-    .card-footer-left>ul>li {
-        border-right: .0625rem solid #d9d9d9;
-        margin-right: .4375rem;
-    }
-}
-
-.metric-holder {
-    outline: none;
-    position: relative;
-    display: inline-block;
-    font-weight: 600;
-}
-
-.card-footer-left .citation {
-    color: #0077c2;
-}
-
-.card-footer-left .metric {
-    color: #651fff;
-}
-
-.card-footer-left li i {
-    padding-right: .375rem;
-    vertical-align: sub;
-    transition: transform .5s;
-}
-
-/* #endregion 卡片底部左侧简略信息结束 */
-/* #region 卡片底部右侧快捷操作 */
-.card-footer-right {
-    float: right;
-}
-
-/**
-  这里因为上面规定了 .rlist--inline li 元素是 display:inline-block;
-  vertical-align 用来指定行内元素（inline）或表格单元格（table-cell）元素的垂直对齐方式。
-*/
-.card-footer-right .rlist--inline li {
-    vertical-align: middle;
-    position: relative;
-}
-
-/* #region 单个底部工具按钮+下拉栏 */
-.card-footer-right .rlist--inline li .card-tool-btn:hover {
-    background-color: #d7d7d7;
-    cursor: pointer;
-}
-
-.card-footer-right .rlist--inline li .card-tool-btn {
-    position: relative;
-    display: inline-block;
-    /* 32px */
-    width: 2rem;
-    height: 2rem;
-    line-height: 1.75rem;
-    padding: 0;
-    margin: 0 3px;
-    font-size: 17px;
-    border-radius: 2px;
-    color: #6b6b6b;
-    background: #f0f0f0;
-
-    display: inline-block;
-    white-space: nowrap;
-    text-align: center;
-    vertical-align: middle;
-}
-
-.card-footer-right .rlist--inline li .card-tool-btn.pdf-btn:hover {
-    /* background-color: #d44848; */
-    background-color: #e34444;
-}
-
-.card-footer-right .rlist--inline li .card-tool-btn.pdf-btn {
-    background-color: #d40c03;
-    color: white;
-}
-
-.card-footer-right .rlist--inline li .card-tool-btn.web-btn:hover {
-    background-color: #319ddf;
-}
-
-.card-footer-right .rlist--inline li .card-tool-btn.web-btn {
-    background-color: #0077c2;
-    color: white;
-}
-
-.card-footer-right .rlist--inline li .card-tool-btn i {
-    vertical-align: middle;
-    padding-right: 0;
-}
-
-.card-footer-right .rlist--inline li:hover .card-tool-btn .card-btn-hint {
-    display: inline-block;
-}
-
-.card-footer-right .rlist--inline li .card-tool-btn .card-btn-hint {
-    display: none;
-    position: absolute;
-    top: calc(2rem + 0.8rem);
-    left: 50%;
-    transform: translate(-50%, 0);
-    background: #6b6b6b;
-    padding: 10px 15px;
-    color: #fff;
-    border-radius: 3px;
-    font-size: 14px;
-    line-height: 20px;
-    z-index: 9020;
-    max-width: 300px;
-}
-
-/* 
-经典的利用 宽度高度为0，边框宽度不为0，形成三角形
-*/
-.card-footer-right .rlist--inline li:hover .card-tool-btn .card-btn-hint .card-btn-hint-arrow {
-    display: inline-block;
-}
-
-.card-footer-right .rlist--inline li .card-tool-btn .card-btn-hint .card-btn-hint-arrow {
-    display: none;
-    width: 0;
-    height: 0;
-    border: .625rem solid #6b6b6b;
-    transform: rotate(45deg);
-    position: absolute;
-    top: -.1875rem;
-    left: calc(50% - .625rem);
-    z-index: -1;
-}
-
-/* #endregion 单个底部工具按钮+下拉栏 结束 */
-
-.dot-separator::before {
-    color: #6b6b6b;
-    content: "•";
-    padding-right: 5px;
-    padding-left: 5px;
-    font-weight: 600;
-    font-size: 19px;
-    vertical-align: middle;
-}
 
 /* #endregion 卡片底部右侧快捷操作 */
 
