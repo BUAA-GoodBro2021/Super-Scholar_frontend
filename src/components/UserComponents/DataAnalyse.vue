@@ -8,7 +8,7 @@
                 <div class="network" id="network" v-if="chart2Show"></div>
                 <el-dialog v-model="chart2Dialog" width="50%" height="60%">
                     <template #header>
-                        <span class="dialog-title">与{{ nodedata.value[choseLine].value }}合著作品如下</span>
+                        <span class="dialog-title">与{{ nodedata[choseLine].value }}合著作品如下</span>
                     </template>
                     <div class="dialog-wrap">
                         <div v-for="(item, index) in chart2DialogData" :key="index">
@@ -367,16 +367,17 @@ const initChart2 = () => {
         },
         animationDurationUpdate: function (idx) {
             // 越往后的数据延迟越大
-            return idx * 100;
+            return idx * 1000;
         },
-        animationEasingUpdate: 'bounceIn',
+        // animationEasingUpdate: 'bounceIn',
         color: ['#fff', '#fff', '#fff'],
         series: [{
             type: 'graph',
             layout: 'force',
             force: {
-                repulsion: 20,
-                edgeLength: 7
+                repulsion: 10,
+                edgeLength: 7,
+                friction: 0.1
             },
             roam: true,
             label: {

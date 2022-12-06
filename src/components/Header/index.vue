@@ -4,9 +4,9 @@
             <router-link to="/" class="link">
                 <img src="/icon.png" class="logo" />
             </router-link>
-            <router-link to="/" class="link">
+            <!-- <router-link to="/" class="link">
                 <span>高级检索</span>
-            </router-link>
+            </router-link> -->
         </div>
         <div class="avatar">
             <UserInfo />

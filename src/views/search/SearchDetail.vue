@@ -36,6 +36,7 @@
                 </div>
                 <!-- 折叠栏 -->
                 <div class="colored-block-content">
+                  <!-- 过滤块 -->
                   <div class="filter-block">
                     <div class="accordion-content">
                       <ElCheckboxGroup 
@@ -51,7 +52,8 @@
                               实际上是把 labelItem.key 添加进入了对应的数组
                              -->
                             <ElCheckbox :label="labelItem.key">
-                              {{labelItem.key_display_name}}&nbsp;&nbsp;({{labelItem.count}})
+                              <span class="chose-label">{{labelItem.key_display_name}}</span>&nbsp;&nbsp;
+                              <span class="chose-num">({{labelItem.count}})</span>
                             </ElCheckbox>
                           </li>
                         </ul>
@@ -123,7 +125,7 @@
               <ul class="rlist">
                 <!-- 单个搜索结果卡片 -->
                 <li class="result-item" v-for="(item, index) in searchDataList">
-                  <WorksResCard :item="item"/>
+                  <!-- <WorksResCard :item="item"/> -->
                   <div class="result-item-card clearfix">
                     <div class="result-item__citation">
                       <div class="citation-heading">research-article</div>
@@ -132,31 +134,40 @@
                     </div>
                     <div class="result-item__content">
                       <!-- 论文的标题 -->
-                      <h5 class="card-title">
-                        <!-- TODO 需要加跳转到论文详情+匹配高亮 -->
-                        <span>
+                      <h5 class="card-title" @click="jumpToPaperPage(item.id.slice(21))">
+                        <!-- TODO 需要加匹配高亮 -->
+                        <span v-if="item.display_name !== null">
                           <!-- <a href="/doi/10.1145/3293353.3293383">HSD-<span onclick="highlight()" class="single_highlight_class">CNN</span>: Hierarchically self decomposing <span onclick="highlight()" class="single_highlight_class">CNN</span> architecture using class specific filter sensitivity analysis</a> -->
-                          {{item.display_name}}
+                          {{ item.display_name.replace(/<\/?i>/ig, "") }}
+                        </span>
+                        <span v-else>
+                          [Title Missed]
                         </span>
                       </h5>
                       <!-- 论文的作者列表 -->
                       <ul class="card-author-list">
                         <li v-for="(author, authorIndex) in item.authorships">
                           <!-- 跳转到对应的作者主页 -->
-                          <a @click="jumpToAuthorPage(author.author.id.slice(21))">
-                            <img
-                              class="author-avator"  
-                              src="https://dl.acm.org/pb-assets/icons/DOs/default-profile-1543932446943.svg"
-                            />
+                          <a @click="jumpToAuthorPage(author.author.id 
+                            ? author.author.id.slice(21)
+                            : '')"
+                          >
+                            <img class="author-avator"  src="https://dl.acm.org/pb-assets/icons/DOs/default-profile-1543932446943.svg" />
                             <span>{{author.author.display_name}}</span>
                           </a>
                           <span>, </span>
                         </li>
                       </ul>
-                      <!-- 论文的简要信息 -->
+                      <!-- 论文的信息：来源（期刊会议）host_venue、发行日期、类型、doi网址 -->
                       <div class="card-simple-info">
-                        <!-- TODO 跳转到对应的institution主页 -->
-                        <span class="epub-section__title">
+                        <!-- 跳转到对应的host_venue主页 -->
+                        <span 
+                          class="epub-section__title" 
+                          v-if="item.host_venue"
+                          @click="jumpToVenuePage(item.host_venue.id 
+                            ? item.host_venue.id.slice(21)
+                            : '')"
+                        >
                           {{item.host_venue.display_name}}
                         </span>
                         <!-- 这里由于伪元素位置的影响，必须span里面嵌套一个span -->
@@ -174,10 +185,11 @@
                       </div>
                       <!-- 论文的领域concepts气泡展示，这里只截取前11个 -->
                       <div class="card-concepts clearfix">
+                        <!-- 跳转到对应的concept主页 -->
                         <div 
                           class="card-concepts-wrap" 
                           v-for="(concept, conceptIndex) in item.concepts.slice(0, 11)"
-                          @click="handleConceptBubbleClick(concept)"
+                          @click="jumpToConceptPage(concept.id.slice(21))"
                         >
                           <i class="iconfont icon-menu"></i>
                           <div class="card-concept-context">{{concept.display_name}}</div>
@@ -288,14 +300,17 @@
               </ul>
 
               <div class="search-result__pagination">
-                <ElPagination 
-                  v-model:current-page="searchResPageIndex"
-                  v-model:page-size="searchResPageSize"
-                  :total="(totalSearchResNum > 10000 
-                    ? 10000 
-                    : totalSearchResNum)"
-                  layout="prev, pager, next, jumper"
-                />
+                <div class="pagination-container">
+                  <ElPagination
+                    hide-on-single-page
+                    v-model:current-page="searchResPageIndex"
+                    v-model:page-size="searchResPageSize"
+                    :total="(totalSearchResNum > 10000 
+                      ? 10000 
+                      : totalSearchResNum)"
+                    layout="prev, pager, next, jumper"
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -783,27 +798,57 @@ const handleFinalSearch = (searchText, searchEntityType) => {
 
 // #region 卡片内部交互函数
 /**
+ * 跳转到论文详情页
+ * item.id用于跳转到论文详情页---W2171852244 √
+ * @param {String} openAlexPaperId 论文的openAlexId
+ */
+const jumpToPaperPage = (openAlexPaperId) => {
+  // console.log(openAlexPaperId);
+  router.push({
+    name: "PaperDetail",
+    params: {paperid: openAlexPaperId}
+  });
+}
+/**
  * 跳转到作者详情页
+ * 每一个item.authorships[i].author.id用于跳转到作者详情页---A2164292938 √
  * @param {String} openAlexAuthorId 作者的openAlexId
  */
 const jumpToAuthorPage = (openAlexAuthorId) => {
   // console.log(openAlexAuthorId);
-  router.push({
-    name: 'OpenAlexAuthorDetail',
-    params: {tokenid: openAlexAuthorId}
-  });
+  if (openAlexAuthorId) {
+    router.push({
+      name: 'OpenAlexAuthorDetail',
+      params: {tokenid: openAlexAuthorId}
+    });
+  }
+};
+/**
+ * 跳转到期刊详情页
+ * item.host_venue.id用于跳转到期刊-- V1983995261 √
+ * （这个可能host_venue整个为空，也可能只有这个字段为空）
+ * @param {String} openAlexVenueId 作为论文来源的期刊/会议的openAlexId
+ */
+const jumpToVenuePage = (openAlexVenueId) => {
+  console.log(openAlexVenueId);
+  if (openAlexVenueId) {
+    // router.push({
+    //   name: '',
+    //   params: {tokenid: openAlexAuthorId}
+    // });
+  }
 };
 /**
  * 跳转到领域详情页
- * @param {String} openAlexAuthorId 作者的openAlexId
+ * 每一个item.concept[i].id用于跳转到领域详情页-- C2778805511 √
+ * @param {String} openAlexConceptId 论文领域的openAlexId
  */
-const handleConceptBubbleClick = (conceptEntity) => {
-  ElNotification({
-    title: "待开发",
-    message: conceptEntity,
-    type: "warning",
-    duration: 3000
-  })
+const jumpToConceptPage = (openAlexConceptId) => {
+  console.log(openAlexConceptId);
+  router.push({
+    name: 'ConceptDetail',
+    params: {tokenid: openAlexConceptId}
+  });
 };
 /**
  * 跳转到PDF在线预览网页
@@ -954,15 +999,8 @@ a, a:hover, a:focus {
   border: 1px solid black; */
 }
 
-.colored-block.js--open .colored-block-content {
-  display: block;
-  /* max-height: 300px; */
-  /* height: auto; */
-  /* overflow-y: auto; */
-}
-
 .colored-block-content {
-  display: none;
+  /* display: none; */
   /* max-height: 0; */
   /* height: 0; */
   overflow: hidden;
@@ -974,24 +1012,60 @@ a, a:hover, a:focus {
   transition: all .5s;
 }
 .end-dash{
+  /* display: none; */
   width: 1.125rem;
   height: .25rem;
   background: #000;
   position: absolute;
-  bottom: 0;
+  /* bottom: 0; */
+  bottom: 1px;
   right: 1rem;
 }
 
-.filter-block:not(:last-child) {
-  margin-bottom: 0;
+.colored-block.js--open .colored-block-content .filter-block {
+  /* display: block; */
+  max-height: 237px;
+  overflow-y: auto;
 }
+/* 
+  VERY IMPORTANT
+  妙手偶得，通过负数外边距、正数内边距，
+  可以创造出一个隐藏滚动条的水平侧空间
+*/
 .filter-block {
+  /* display: none; */
+  max-height: 0;
+  overflow: hidden;
   border-color: rgba(0,0,0,.12);
   border-bottom: .0625rem solid #ddd;
   padding: 0 .9375rem;
   margin-right: -.9375rem;
   margin-left: -.9375rem;
+  transition: all .5s;
 }
+.filter-block:not(:last-child) {
+  margin-bottom: 0;
+}
+
+/* ::-webkit-scrollbar 滚动条整体部分，可以设置宽度之类的 */
+.filter-block::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+/* ::-webkit-scrollbar-corner 边角 */
+.filter-block::-webkit-scrollbar-corner {
+  background-color: initial;
+}
+/* ::-webkit-scrollbar-thumb 滚动条里面可以拖动的那个 */
+.filter-block::-webkit-scrollbar-thumb {
+  background-color: #e4e4e7 !important;
+  border-radius: 10px;
+}
+/* ::-webkit-scrollbar-track 外层轨道 */
+.filter-block::-webkit-scrollbar-track {
+  background-color: transparent !important;
+}
+
 
 .accordion-content{
   padding: 0;
@@ -1014,19 +1088,26 @@ a, a:hover, a:focus {
   border-top-color: rgba(0,0,0,.12);
   border-bottom: none;
 }
-.expand__list li a {
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 18px;
-  word-wrap: break-word;
-}
-.expand__title {
+.expand__list li .chose-label {
+  display: inline-block;
   vertical-align: middle;
+  /* 至关重要，这里不设置宽一些会导致字段在垂直方向上显示不全 */
+  line-height: 1.125rem;
+  white-space: nowrap;
+  max-width: 12rem;
+  overflow: hidden; 
+  text-overflow: ellipsis;
 }
-.expand__counter {
+.expand__list li .chose-num {
+  display: inline-block;
   vertical-align: middle;
-  font-weight: 400;
+  line-height: 1.125rem;
+}
+@media (max-width: 768px) {
+  /* 在半屏适配下，增大文本显示的最大宽度 */
+  .expand__list li .chose-label {
+    max-width: 38rem;
+  }
 }
 /* #endregion 筛选条件区域结束 */
 
@@ -1280,6 +1361,7 @@ a, a:hover, a:focus {
   font-family: 'Times New Roman', Times, "Microsoft YaHei", serif;
   font-size: 1.25rem;
   margin-bottom: .625rem;
+  cursor: pointer;
 }
 
 .card-author-list {
@@ -1542,6 +1624,21 @@ img {
   text-align: center;
   font-size: 14px;
   box-sizing: border-box;
+}
+.search-result__pagination .pagination-container {
+  width: 100%;
+  height: 40px;
+  box-sizing: border-box;
+  /* border: 1px solid black; */
+  padding: 0 auto;
+  position: relative;
+}
+
+div.el-pagination {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 
 

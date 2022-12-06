@@ -275,6 +275,12 @@ onMounted(() => {
     changeMessage.value.introduction = props.userInfo.introduction
 })
 
+watch(props.userInfo, (newVal) => {
+    changeMessage.value.name = props.userInfo.display_name
+    changeMessage.value.email = props.userInfo.email
+    changeMessage.value.introduction = props.userInfo.introduction
+})
+
 const toOpenAlexAccount = () => {
     //跳转到认证的门户
 }

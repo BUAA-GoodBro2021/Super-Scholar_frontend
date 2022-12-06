@@ -1,9 +1,9 @@
 import service from "../http/request";
 const url = {
-    login: "/user/login",
-    register:"/user/register",
-    findPassword:"/user/find_password",
-    humanVerification: "/user/human_verify"
+  login: "/user/login",
+  register: "/user/register",
+  findPassword: "/user/find_password",
+  humanVerification: "/user/human_verify"
 }
 // 详细参考见：https://www.axios-http.cn/docs/req_config
 export class Account {
@@ -28,17 +28,6 @@ export class Account {
     return service(url.findPassword, {
       method: "post",
       data,
-    });
-  }
-  static async checkClaim(data) {
-    return service(url.CAGetList, {
-      method: "post",
-      data,
-    });
-  }
-  static async getSingleData(data) {
-    return service(url.getSingleData, {
-      data:JSON.stringify(data),
     });
   }
   static async humanVerification(data) {
