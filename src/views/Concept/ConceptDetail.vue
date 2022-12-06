@@ -60,7 +60,7 @@ import { Concept } from "../../api/concept";
 import PaperAndData from "../../components/Concept/PaperAndData";
 
 const route = useRoute();
-const conceptid = route.params.conceptid;
+const conceptid = route.params.tokenid;
 const conceptInfo = ref();
 const conceptPaperList = ref([]);
 const associatedConceptList = ref([]);
@@ -73,11 +73,12 @@ onMounted(() => {
   Concept.GetConceptDetail({
     entity_type: "concepts",
     params: {
-      id: "C2778407487",
+      id: conceptid,
     },
   })
     .then((res) => {
       if (res.data.result == 1) {
+        console.log(conceptid)
         conceptInfo.value = res.data.single_data;
         isLoading.value = false;
         UpdateAssociatedConcept(1);
@@ -90,7 +91,7 @@ onMounted(() => {
     entity_type: "works",
     params: {
       filter: {
-        "concepts.id": "C2778407487",
+        "concepts.id": conceptid,
       },
       page: 1,
       per_page: countPerPage,
@@ -103,7 +104,7 @@ const changePage = async (page) => {
     entity_type: "works",
     params: {
       filter: {
-        "concepts.id": "C2778407487",
+        "concepts.id": conceptid,
       },
       page: page,
       per_page: countPerPage,
