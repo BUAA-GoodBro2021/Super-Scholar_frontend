@@ -90,17 +90,6 @@
                                                 {{ item.display_name }}
                                             </span>
                                         </h5>
-                                        <!-- 论文的作者列表 -->
-                                        <ul class="card-author-list">
-                                            <li v-for="(author, authorIndex) in item.authorships" :key="authorIndex">
-                                                <!-- TODO 跳转到对应的作者主页 -->
-                                                <img class="author-avator hover-item"
-                                                    src="https://dl.acm.org/pb-assets/icons/DOs/default-profile-1543932446943.svg" @click="toAuthor()"/>
-                                                <!-- { "id": "https://openalex.org/A2473549963", "display_name": "Ross Girshick", "orcid": null } -->
-                                                <span class="hover-item" @click="toAuthor(author)">{{ author.author.display_name }}</span>
-                                                <span>, </span>
-                                            </li>
-                                        </ul>
                                         <!-- 论文的内容摘要 -->
                                         <div class="card-abstract">
                                             <p>{{ item.abstract ? item.abstract : 'No Abstract' }}</p>
