@@ -53,11 +53,13 @@ const router = createRouter({
         requiresAuth: true,
       },
       children: [
+        // 普通用户个人详情页
         {
           path: 'user/:tokenid',
           name: 'UserDetail',
           component: ()=>import('../views/User/UserDetail.vue'),
         },
+        // 认证学者个人详情页
         {
           path: 'openalex/author/:tokenid',
           name: 'OpenAlexAuthorDetail',
@@ -83,12 +85,13 @@ const router = createRouter({
           name: 'FollowList',
           component: ()=>import('../views/User/FollowList.vue'),
         },
+        // 论文详情页
         {
           path: 'paper/:paperid',
           name: 'PaperDetail',
           component: ()=>import('../views/paper/Paper.vue'),
         },
-        // 临时加一个路由页面，用于调试搜索详情页面，后续调整其位置
+        // 搜索详情页面，后续可能会调整其位置
         {
           path: '/search-detail',
           name: 'SearchDetail',
@@ -99,8 +102,9 @@ const router = createRouter({
           name: 'MessageList',
           component: ()=>import('../views/message/index.vue'),
         },
+        // 机构详情页
         {
-          path: '/institution/:institutionid',
+          path: 'institution/:institutionid',
           name: 'InstitutionDetail',
           component: ()=>import('../views/institution/InstitutionDetail.vue'),
         }
