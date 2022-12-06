@@ -29,7 +29,7 @@
         </li>
       </ul>
       <!-- 论文的信息：来源（期刊会议）host_venue、发行日期、类型、doi网址 -->
-      <div class="card-simple-info">
+      <div class="card-simple-info" v-if="notInCollection">
         <!-- 跳转到对应的host_venue主页 -->
         <span 
           class="epub-section__title" 
@@ -54,7 +54,7 @@
         <p>{{ item.abstract }}</p>
       </div>
       <!-- 论文的领域concepts气泡展示，这里只截取前11个 -->
-      <div class="card-concepts clearfix">
+      <div class="card-concepts clearfix" v-if="notInCollection">
         <div 
           class="card-concepts-wrap" 
           v-for="(concept, conceptIndex) in item.concepts.slice(0, 11)"

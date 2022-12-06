@@ -74,7 +74,7 @@
                         <ul class="search-result__list">
                             <!-- 单个搜索结果卡片 -->
                             <li v-for="(item, index) in filterWorkList" :key="index" class="result-item">
-                                <WorksResCardVue :item="item" :class="{active: item.active}"/>
+                                <WorksResCardVue :item="item" :class="{active: item.active}" :notInCollection="false"/>
                                 <i class="icon-work-selected" :class="{workiconactive: item.active}" @click="SelectItem(item)"></i>
                             </li>
                         </ul>
