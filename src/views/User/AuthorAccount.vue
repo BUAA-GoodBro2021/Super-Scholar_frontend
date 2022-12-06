@@ -104,7 +104,7 @@ onMounted(() => {
 })
 
 watch(() => route.params.tokenid, (newval) => {
-    init()
+    if(newval != undefined) init() // 可能跳转到别的路由
 })
 
 const init = () => {
