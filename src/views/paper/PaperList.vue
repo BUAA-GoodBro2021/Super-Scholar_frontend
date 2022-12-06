@@ -51,7 +51,7 @@ function updateData(){
     if(sortBy.value.length != 0){
         req.params.sort[sortBy.value] = sortSeq.value
     }
-    Search.list(
+    Search.getSearchDataList(
         req
     ).then((res)=>{
         paperList.value = res.data.list_of_data[0].results

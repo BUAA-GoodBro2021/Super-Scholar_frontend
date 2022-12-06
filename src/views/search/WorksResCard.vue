@@ -7,7 +7,7 @@
     </div>
     <div class="result-item__content">
       <!-- 论文的标题 -->
-      <h5 class="card-title">
+      <h5 class="card-title" @click="jumpToPaperPage(item.id.slice(21))">
         <!-- TODO 需要加跳转到论文详情+匹配高亮 -->
         <span>
           <!-- <a href="/doi/10.1145/3293353.3293383">HSD-<span onclick="highlight()" class="single_highlight_class">CNN</span>: Hierarchically self decomposing <span onclick="highlight()" class="single_highlight_class">CNN</span> architecture using class specific filter sensitivity analysis</a> -->
@@ -18,17 +18,26 @@
       <ul class="card-author-list">
         <li v-for="(author, authorIndex) in item.authorships">
           <!-- 跳转到对应的作者主页 -->
-          <a @click="jumpToAuthorPage(author.author.id.slice(21))">
+          <a @click="jumpToAuthorPage(author.author.id 
+            ? author.author.id.slice(21)
+            : '')"
+          >
             <img class="author-avator" src="https://dl.acm.org/pb-assets/icons/DOs/default-profile-1543932446943.svg" />
             <span>{{ author.author.display_name }}</span>
           </a>
           <span>, </span>
         </li>
       </ul>
-      <!-- 论文的简要信息 -->
+      <!-- 论文的信息：来源（期刊会议）host_venue、发行日期、类型、doi网址 -->
       <div class="card-simple-info">
-        <!-- TODO 跳转到对应的期刊(venue)的主页 -->
-        <span class="epub-section__title">
+        <!-- 跳转到对应的host_venue主页 -->
+        <span 
+          class="epub-section__title" 
+          v-if="item.host_venue"
+          @click="jumpToVenuePage(item.host_venue.id 
+            ? item.host_venue.id
+            : '')"
+        >
           {{ item.host_venue.display_name }}
         </span>
         <!-- 这里由于伪元素位置的影响，必须span里面嵌套一个span -->
@@ -41,13 +50,16 @@
         </span>
       </div>
       <!-- 论文的内容摘要 -->
-      <div class="card-abstract">
+      <div class="card-abstract" v-if="notInCollection">
         <p>{{ item.abstract }}</p>
       </div>
       <!-- 论文的领域concepts气泡展示，这里只截取前11个 -->
       <div class="card-concepts clearfix">
-        <div class="card-concepts-wrap" v-for="(concept, conceptIndex) in item.concepts.slice(0, 11)"
-          @click="handleConceptBubbleClick(concept)">
+        <div 
+          class="card-concepts-wrap" 
+          v-for="(concept, conceptIndex) in item.concepts.slice(0, 11)"
+          @click="jumpToConceptPage(concept.id.slice(21))"
+        >
           <i class="iconfont icon-menu"></i>
           <div class="card-concept-context">{{ concept.display_name }}</div>
         </div>
@@ -104,7 +116,7 @@
               </template>
             </el-dialog>
             <!-- TODO 添加收藏夹的浮窗 -->
-            <li>
+            <li v-if="notInCollection">
               <div class="card-tool-btn">
                 <i class="iconfont icon-folderplus-fill"></i>
                 <!-- <i class="iconfont icon-folder-add-fill"></i> -->
@@ -162,7 +174,6 @@
 </template>
 
 <script setup>
-import { ElNotification } from 'element-plus';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useClipboard } from '@vueuse/core'
@@ -172,32 +183,66 @@ const props = defineProps({
   item: {
     type: Object,
     required: true
+  },
+  notInCollection: {
+    type: Boolean,
+    default: true,
   }
 });
 
 // #region 卡片内部交互函数
 /**
+ * 跳转到论文详情页
+ * item.id用于跳转到论文详情页---W2171852244 √
+ * @param {String} openAlexPaperId 论文的openAlexId
+ */
+ const jumpToPaperPage = (openAlexPaperId) => {
+  // console.log(openAlexPaperId);
+  router.push({
+    name: "PaperDetail",
+    params: {paperid: openAlexPaperId}
+  });
+}
+/**
  * 跳转到作者详情页
+ * 每一个item.authorships[i].author.id用于跳转到作者详情页---A2164292938 √
  * @param {String} openAlexAuthorId 作者的openAlexId
  */
- const jumpToAuthorPage = (openAlexAuthorId) => {
+const jumpToAuthorPage = (openAlexAuthorId) => {
   // console.log(openAlexAuthorId);
-  router.push({
-    name: 'OpenAlexAuthorDetail',
-    params: {tokenid: openAlexAuthorId}
-  });
+  if (openAlexAuthorId) {
+    router.push({
+      name: 'OpenAlexAuthorDetail',
+      params: {tokenid: openAlexAuthorId}
+    });
+  }
+};
+/**
+ * 跳转到期刊详情页
+ * item.host_venue.id用于跳转到期刊-- V1983995261 √
+ * （这个可能host_venue整个为空，也可能只有这个字段为空）
+ * @param {String} openAlexVenueId 作为论文来源的期刊/会议的openAlexId
+ */
+const jumpToVenuePage = (openAlexVenueId) => {
+  console.log(openAlexVenueId);
+  if (openAlexVenueId) {
+    // router.push({
+    //   name: 'OpenAlexAuthorDetail',
+    //   params: {tokenid: openAlexAuthorId}
+    // });
+  }
 };
 /**
  * 跳转到领域详情页
- * @param {String} openAlexAuthorId 作者的openAlexId
+ * 每一个item.concept[i].id用于跳转到领域详情页-- C2778805511 √
+ * @param {String} openAlexConceptId 论文领域的openAlexId
  */
-const handleConceptBubbleClick = (conceptEntity) => {
-  ElNotification({
-    title: "待开发",
-    message: conceptEntity,
-    type: "warning",
-    duration: 3000
-  })
+const jumpToConceptPage = (openAlexConceptId) => {
+  console.log(openAlexConceptId);
+  // router.push({
+  //   name: 'OpenAlexAuthorDetail',
+  //   params: {tokenid: openAlexAuthorId}
+  // });
 };
 /**
  * 跳转到PDF在线预览网页
@@ -332,6 +377,7 @@ a:focus {
   font-family: 'Times New Roman', Times, "Microsoft YaHei", serif;
   font-size: 1.25rem;
   margin-bottom: .625rem;
+  cursor: pointer;
 }
 
 .card-author-list {
