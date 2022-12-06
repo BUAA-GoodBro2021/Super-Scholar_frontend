@@ -138,6 +138,30 @@ onMounted(() => {
          padding: 2rem;
       }
    }
+   /* 设置滚动条的样式 */
+   /* ::-webkit-scrollbar 滚动条整体部分，可以设置宽度之类的 */
+   &-right::-webkit-scrollbar {
+   width: 8px;
+   height: 8px;
+   }
+   /* ::-webkit-scrollbar-corner 边角 */
+   &-right::-webkit-scrollbar-corner {
+   background-color: initial;
+   }
+   /* ::-webkit-scrollbar-thumb 滚动条里面可以拖动的那个 */
+   &-right::-webkit-scrollbar-thumb {
+   background-color: transparent !important;
+   border-radius: 10px;
+   }
+   /* ::-webkit-scrollbar-track 外层轨道 */
+   &-right::-webkit-scrollbar-track {
+   background-color: transparent !important;
+   }
+   @media (min-width: 1280px) {
+      &-right::-webkit-scrollbar-thumb {
+         background-color: #e4e4e7 !important;
+      }
+   }
 }
 
 :deep(.el-menu) {

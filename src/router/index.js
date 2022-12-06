@@ -16,7 +16,7 @@ const router = createRouter({
       children:[
         // 登录
         {
-          path: 'login',
+          path: '/login',
           name: 'Login',
           meta:{
             transition: "animate__fadeInDown"
@@ -25,7 +25,7 @@ const router = createRouter({
         },
         // 注册
         {
-          path: 'register',
+          path: '/register',
           name: 'Register',
           meta:{
             transition: "animate__fadeInDown"

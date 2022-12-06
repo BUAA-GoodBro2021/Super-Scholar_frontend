@@ -16,7 +16,6 @@
 </template>
 
 <script setup>
-import { defineEmits } from "vue";
 import PaperList from "./PaperList.vue";
 import Data from "./Data.vue";
 const emit = defineEmits(["changePage"]);

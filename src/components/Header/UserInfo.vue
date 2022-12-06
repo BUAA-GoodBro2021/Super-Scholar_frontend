@@ -34,7 +34,7 @@
 import { Check, More, Notification, Star, SwitchButton, User } from '@element-plus/icons-vue'
 import { useRouter } from 'vue-router';
 import  Message  from './Message.vue';
-import { useGlobalStore } from '../../stores/global';
+import { useGlobalStore } from '../../stores/global.js';
 
 const globalStore = useGlobalStore();
 const router = useRouter();

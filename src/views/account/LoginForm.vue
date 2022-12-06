@@ -83,9 +83,7 @@ const login = ()=>{
 		if(res.data.result===1){
 			globalStore.setToken(res.data.token);
 			globalStore.setUserInfo(res.data.user);
-			res.data.history_list.forEach(element => {
-				searchStore.addHistory(element);
-			})
+			searchStore.setSearchHistory(res.data.history_list);
 			ElNotification({
 				title: getTimeState(),
 				message: `${i18n.global.t("header.welcome")},${res.data.user.username}`,

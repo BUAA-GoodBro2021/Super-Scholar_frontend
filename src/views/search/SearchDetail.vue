@@ -67,6 +67,7 @@
           <!-- 右侧结果/排序部分 -->
           <div class="col-lg-9 col-md-9 col-sm-8 " style="border: 1px solid black;">
             <div class="search-result">
+              <!-- 搜索结果顶部信息 -->
               <div class="search-result__info">
                 <div class="search-num-info">
                   <span class="left-border-span"></span>
@@ -75,13 +76,30 @@
                     <span> Results</span>
                     <span> for: </span>
                   </div>
+                  <div v-if="(totalSearchResNum > 10000)">
+                    由于搜索结果数量超过10,000，出于实用性考虑，下面的列表只会展示相关度排序的前10,000条
+                  </div>
                 </div>
               </div>
               <div class="search-result__tabs"></div>
               <!-- 随着滚动 sticky 在header下方的筛选栏 -->
               <div class="search-result__sort clearfix">
                 <div class="search-result__sort-right">
-                  <!-- <div class="per-page">per page: </div> -->
+                  <!-- 每页尺寸 -->
+                  <div class="per-page">
+                    <span class="per-page-label">Per Page: </span>
+                    <ul class="rlist--inline">
+                      <li 
+                        class="page-size-chose" 
+                        v-for="(size, index) in pageSizeArray"
+                        @click="handlePageSizeChangeSearch(index)"
+                        :ref="setPageSizeDom"
+                      >
+                        {{size}}
+                      </li>
+                    </ul>
+                  </div>
+                  <!-- 排序类型 -->
                   <div class="sort-type" ref="sortDropdownTarget">
                     <button class="sort-type-btn" @click="expandSortDropdown">
                       <b>Sort Type: </b>
@@ -102,40 +120,10 @@
                 </div>
               </div>
               <!-- 搜索结果主体 -->
-              <ul class="search-result__list">
+              <ul class="rlist">
                 <!-- 单个搜索结果卡片 -->
                 <li class="result-item" v-for="(item, index) in searchDataList">
-                  <!-- <div class="result-item-checkbox-container">
-                    <label style="
-                      cursor: pointer;
-                      color: #333;
-                      margin-bottom: .375rem;    
-                      display: block;
-                      float: none;
-                      font-size: 12px;
-                      font-weight: 700;
-                      box-sizing: border-box;">
-                      <input type="checkbox"
-                        style="
-                          position: absolute;
-                          width: 1px;
-                          height: 1px;
-                          margin-bottom: 10px;
-                          margin-right: 10px;
-                          padding: 0;
-                          box-sizing: border-box;
-                          max-height: 44px;
-                          background: inherit;
-                          font-size: 15px;
-                          line-height: 16px;
-                          color: #63666a;
-                          overflow: hidden;
-                          clip: rect(0,0,0,0);
-                          white-space: nowrap;
-                          border: 0;"
-                      />
-                    </label>
-                  </div> -->
+                  <WorksResCard :item="item"/>
                   <div class="result-item-card clearfix">
                     <div class="result-item__citation">
                       <div class="citation-heading">research-article</div>
@@ -299,7 +287,16 @@
                 </li>
               </ul>
 
-              <div class="search-result__list">xxxxxxxxxxxxx</div>
+              <div class="search-result__pagination">
+                <ElPagination 
+                  v-model:current-page="searchResPageIndex"
+                  v-model:page-size="searchResPageSize"
+                  :total="(totalSearchResNum > 10000 
+                    ? 10000 
+                    : totalSearchResNum)"
+                  layout="prev, pager, next, jumper"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -317,15 +314,17 @@
  -->
 <script>
 const sortTypeArray = ["Relevance", "Earliest", "Latest", "Cited"];
+const pageSizeArray = [5, 10, 20];
 </script>
 
 <script setup>
 import SearchInput from '../../components/SearchInput/Search.vue';
 import { Search } from '../../api/search';
 import { useSearchStore } from '../../stores/search.js';
-import { ElButton, ElCheckbox, ElCheckboxGroup, ElNotification, } from "element-plus";
-import { onMounted, reactive, ref } from 'vue';
+import { ElButton, ElCheckbox, ElCheckboxGroup, ElNotification, ElPagination } from "element-plus";
+import { onMounted, reactive, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
+import WorksResCard from './WorksResCard.vue';
 
 const router = useRouter();
 const searchStore = useSearchStore();
@@ -333,13 +332,134 @@ const searchStore = useSearchStore();
 const searchDataList = ref([]);
 // 搜索结果总数
 var totalSearchResNum = ref(0);
+// 当前需要的搜索结果是第几页，‘
+// 注意，除了“页数更改搜索”外，“过滤搜索”、“排序搜索”都会重置当前页数为第1页
+// “分组搜索” 和 页数、页尺寸无关
+// “页尺寸更改搜索” 不会重置当前页数
+const searchResPageIndex =  ref(1);
+// 搜索结果每一页的尺寸
+const searchResPageSize = ref(10);
+// 因为除了“页数更改搜索”外，“过滤搜索”、“排序搜索”都会重置当前页数为第1页
+// 触发了对于 searchResPageIndex 的监听
+// “分组搜索” 和 页数、页尺寸无关
+// 所以在这些搜索触发时，不应该触发“页数更改搜索”
+const pageIndexChangeSearchLock = ref(false);
+/**
+ * 页数坐标发生改变时，触发搜索函数
+ */
+const handlePageIndexChangeSearch = () => {
+  var data = {
+    "entity_type": searchStore.searchType,  // 理论上来说这里只能是 works
+    "params": {
+      "filter": buildWorksFilterKey(),
+      "page": searchResPageIndex.value,
+      "per_page": searchResPageSize.value,
+      "search" : searchStore.searchInputText,
+      "sort": buildWorksSortKey(searchStore.sortType),
+    }
+  };
+  console.log("页数更改触发搜索，前端发出的请求体");
+  console.log(data);
+  Search.getSearchDataList(data)
+  .then((res) => {
+    if (res.data.result === 1) {
+      searchDataList.value = res.data.list_of_data[0].results;
+      totalSearchResNum.value = res.data.list_of_data[0].meta.count;
+      console.log(searchDataList);
+      ElNotification({
+        title: "恭喜您",
+        message: `搜索成功，用时 ${res.data.list_of_data[0].meta.db_response_time_ms / 1000} s`,
+        type: "success",
+        duration: 3000
+      });
+    }
+  })
+  .catch((err) => {
+    console.log(err);
+  })
+};
+watch(
+  searchResPageIndex,
+  () => {
+    // 注意这里可能原来的页数就是1，因此即使是其他搜索重置为1，也不一定会触发watch
+    // 但是当原来页数不为1时，这里watch的上锁逻辑就是必要的，避免重复触发搜索
+    console.log("页数发生了变化");
+    // 确保不是由其他搜索触发的页数变化
+    if (pageIndexChangeSearchLock.value === false) {
+      console.log("触发 页数更改搜索")
+      handlePageIndexChangeSearch();
+    }
+  }
+);
+
+const pageSizeDom = ref([]);
+const setPageSizeDom = (DOMElement) => {
+  pageSizeDom.value.push(DOMElement);
+};
+// 更新页面尺寸 + 更改样式
+const chosePageSize = (sizeIndex) => {
+  searchResPageSize.value = pageSizeArray[sizeIndex];
+  for(let i = 0; i < pageSizeArray.length; i++) {
+    pageSizeDom.value[i].classList.remove("current");
+  }
+  pageSizeDom.value[sizeIndex].classList.add("current");
+}
+onMounted(() => {
+  // 默认选中 index = 1 的 每页10条
+  chosePageSize(1);
+})
+/**
+ * 每页的数据尺寸发生改变时，触发搜索函数
+ * @param {number} sizeIndex 新的尺寸在数组中的索引
+ */
+const handlePageSizeChangeSearch = (sizeIndex) => {
+  chosePageSize(sizeIndex);
+  // 上锁，避免触发“页数更改搜索”
+  pageIndexChangeSearchLock.value = true;
+  // 重置当前页数为第1页
+  searchResPageIndex.value = 1;
+  var data = {
+    "entity_type": searchStore.searchType,  // 理论上来说这里只能是 works
+    "params": {
+      "filter": buildWorksFilterKey(),
+      "page": searchResPageIndex.value,
+      "per_page": searchResPageSize.value,
+      "search" : searchStore.searchInputText,
+      "sort": buildWorksSortKey(searchStore.sortType),
+    }
+  };
+  console.log("页尺寸更改触发搜索，前端发出的请求体");
+  console.log(data);
+  Search.getSearchDataList(data)
+  .then((res) => {
+    if (res.data.result === 1) {
+      searchDataList.value = res.data.list_of_data[0].results;
+      totalSearchResNum.value = res.data.list_of_data[0].meta.count;
+      console.log(searchDataList);
+      ElNotification({
+        title: "恭喜您",
+        message: `搜索成功，用时 ${res.data.list_of_data[0].meta.db_response_time_ms / 1000} s`,
+        type: "success",
+        duration: 3000
+      });
+      // 解锁，可以触发“页数更改搜索”
+      pageIndexChangeSearchLock.value = false;
+    }
+  })
+  .catch((err) => {
+    console.log(err);
+    // 解锁，可以触发“页数更改搜索”
+    pageIndexChangeSearchLock.value = false; 
+  })
+};
+
 
 // #region ！！过滤区域 -----------------------------------------------------------------------
 // 过滤器下拉栏DOM
 const worksFilterDOM = ref([]);
 const setWorksFilterDOM = (DOMElement) => {
   worksFilterDOM.value.push(DOMElement);
-}
+};
 
 // 过滤器筛选数据列表。创造一个对象数组。这个数组有7个对象元素，每个对象有5个属性：
 const worksFilterList = reactive([
@@ -402,23 +522,23 @@ const worksFilterList = reactive([
  * @param {Number} index 过滤单元在整个DOM数组中的位置
  */
 const handleWorksGroupSearch = (filterDOM, index) => {
-  var data = {
-    "entity_type": searchStore.searchType,  // 理论上来说这里只能是 works
-    "params": {
-      "filter": buildWorksFilterKey(),
-      "group_by": worksFilterList[index].group,
-      "page": 1,
-      "per_page": 15,
-      "search" : searchStore.searchInputText,
-      "sort": buildWorksSortKey(searchStore.sortType),
-    }
-  };
-  console.log("分组搜索前端发出的请求体");
-  console.log(data);
   // 注意这里传入的不是 ref 包裹的DOM元素，而是在模板中自动解析以后的value，直接就是HTMLDOM
   if (filterDOM.classList.contains('js--open')) {
     filterDOM.classList.remove('js--open');   // 收起
   } else {
+    var data = {
+      "entity_type": searchStore.searchType,  // 理论上来说这里只能是 works
+      "params": {
+        "filter": buildWorksFilterKey(),
+        "group_by": worksFilterList[index].group,
+        "page": 1,
+        "per_page": searchResPageSize.value,
+        "search" : searchStore.searchInputText,
+        "sort": buildWorksSortKey(searchStore.sortType),
+      }
+    };
+    console.log("分组搜索，前端发出的请求体");
+    console.log(data);
     Search.getGroupDataList(data)
     .then((res) => {
       // console.log(res.data);
@@ -433,17 +553,16 @@ const handleWorksGroupSearch = (filterDOM, index) => {
     })
     .catch((err) => {
       console.log(err);
-    })
-    
+    })    
   }
-}
+};
 
 // 出现“确认”“取消”勾选的过滤器的按钮
 const confirmFilterSearch = ref(false);
 const handleChange = (index) => {
-  console.log(worksFilterList[index].selectedArray);
+  // console.log(worksFilterList[index].selectedArray);
   confirmFilterSearch.value = true;
-}
+};
 /**
  * 遍历所有的works筛选字段。
  * 将用户已经勾选的条目构建出 filter 字段
@@ -468,7 +587,13 @@ const buildWorksFilterKey = () => {
  * 确定要进行 “带有搜索筛选字段” 的 搜索
  */
 const handleFilterSearch = () => {
+  // 收起两个按钮
   confirmFilterSearch.value = false;
+  // 上锁，避免触发“页数更改搜索”
+  pageIndexChangeSearchLock.value = true;
+  // 重置当前页数为第1页
+  searchResPageIndex.value = 1;
+  // 收起所有的筛选单元
   for(let i = 0; i < 7; i++) {
     if (worksFilterDOM.value[i].classList.contains('js--open')) {
       worksFilterDOM.value[i].classList.remove('js--open');
@@ -479,7 +604,7 @@ const handleFilterSearch = () => {
     "params": {
       "filter": buildWorksFilterKey(),
       "page": 1,
-      "per_page": 15,
+      "per_page": searchResPageSize.value,
       "search" : searchStore.searchInputText,
       "sort": buildWorksSortKey(searchStore.sortType),
     }
@@ -491,19 +616,23 @@ const handleFilterSearch = () => {
     if (res.data.result === 1) {
       searchDataList.value = res.data.list_of_data[0].results;
       totalSearchResNum.value = res.data.list_of_data[0].meta.count;
-      console.log(searchDataList);
+      // console.log(searchDataList);
       ElNotification({
         title: "恭喜您",
         message: `搜索成功，用时 ${res.data.list_of_data[0].meta.db_response_time_ms / 1000} s`,
         type: "success",
         duration: 3000
       });
+      // 解锁，可以触发“页数更改搜索”
+      pageIndexChangeSearchLock.value = false;
     }
   })
   .catch((err) => {
     console.log(err);
+    // 解锁，可以触发“页数更改搜索”
+    pageIndexChangeSearchLock.value = false;
   })
-}
+};
 /**
  * 取消要进行 “带有搜索筛选字段” 的 搜索
  * 并清空所有已经勾选的筛选条目
@@ -514,7 +643,7 @@ const cancelFilterSearch = () => {
   for (let i = 0; i < 7; i++) {
     worksFilterList[i].selectedArray = [];    
   }
-}
+};
 // #endregion ！！过滤区域 -----------------------------------------------------------------------
 
 
@@ -526,7 +655,7 @@ const expandSortDropdown = () => {
   sortDropdownTarget.value.classList.contains('js--open') 
     ? sortDropdownTarget.value.classList.remove('js--open')
     : sortDropdownTarget.value.classList.add('js--open')
-}
+};
 /**
  * 根据用户选择的sort类型，构建出 sort 字段
  * (对象类型)以便于发送给后端
@@ -548,7 +677,7 @@ const buildWorksSortKey = (worksSortType) => {
       break;
   }
   return sort;
-}
+};
 
 // 初始化默认删去当前选中的排序类型
 const worksSortTypeArray = ref(sortTypeArray.filter(
@@ -561,7 +690,13 @@ const worksSortTypeArray = ref(sortTypeArray.filter(
 const handleWorksSortSearch = async (newSortType) => {
   // 点击以后立即收起下拉栏
   expandSortDropdown();
+  // 上锁，避免触发“页数更改搜索”
+  pageIndexChangeSearchLock.value = true;
+  // 重置当前页数为第1页
+  searchResPageIndex.value = 1;
+  // 记录排序类型，并作持久化处理
   searchStore.setSortType(newSortType);
+  // 实现下拉栏中排除当前选中的选项
   worksSortTypeArray.value = sortTypeArray.filter(
     (sortType) => sortType !== searchStore.sortType
   );
@@ -573,7 +708,7 @@ const handleWorksSortSearch = async (newSortType) => {
       "params": {
         "filter": buildWorksFilterKey(),
         "page": 1,
-        "per_page": 15,
+        "per_page": searchResPageSize.value,
         "search" : searchStore.searchInputText,
         "sort" : buildWorksSortKey(searchStore.sortType),
       }
@@ -585,20 +720,24 @@ const handleWorksSortSearch = async (newSortType) => {
       if (res.data.result === 1) {
         searchDataList.value = res.data.list_of_data[0].results;
         totalSearchResNum.value = res.data.list_of_data[0].meta.count;
-        console.log(searchDataList);
+        // console.log(searchDataList);
         ElNotification({
           title: "恭喜您",
           message: `搜索成功，用时 ${res.data.list_of_data[0].meta.db_response_time_ms / 1000} s`,
           type: "success",
           duration: 3000
         });
+        // 解锁，可以触发“页数更改搜索”
+        pageIndexChangeSearchLock.value = false;
       }
     })
     .catch((err) => {
       console.log(err);
+      // 解锁，可以触发“页数更改搜索”
+      pageIndexChangeSearchLock.value = false;
     })
   }
-}
+};
 
 /**
  * 核心搜索函数
@@ -612,18 +751,11 @@ const handleFinalSearch = (searchText, searchEntityType) => {
     "entity_type": searchEntityType,
     "params": {
       "page": 1,
-      "per_page": 15,
+      "per_page": searchResPageSize.value,
       "search" : searchText,
     }
   }
-  Search.getSearchDataList({
-    "entity_type": searchEntityType,
-    "params": {
-        "search" : searchText,
-        "page": 1,
-        "per_page": 15
-    }
-  })
+  Search.getSearchDataList(data)
   .then((res) => {
     // console.log(res);
     if (res.data.result === 1) {
@@ -647,7 +779,7 @@ const handleFinalSearch = (searchText, searchEntityType) => {
       duration: 3000
     })
   })
-}
+};
 
 // #region 卡片内部交互函数
 /**
@@ -660,7 +792,7 @@ const jumpToAuthorPage = (openAlexAuthorId) => {
     name: 'OpenAlexAuthorDetail',
     params: {tokenid: openAlexAuthorId}
   });
-}
+};
 /**
  * 跳转到领域详情页
  * @param {String} openAlexAuthorId 作者的openAlexId
@@ -672,7 +804,7 @@ const handleConceptBubbleClick = (conceptEntity) => {
     type: "warning",
     duration: 3000
   })
-}
+};
 /**
  * 跳转到PDF在线预览网页
  * @param {String[URL]} pdfURL PDF在线预览网页
@@ -680,7 +812,7 @@ const handleConceptBubbleClick = (conceptEntity) => {
 const jumpToPDFOnlinePage = (pdfURL) => {
   // console.log(pdfURL);
   window.location.href = pdfURL;
-}
+};
 /**
  * 跳转到论文源网址
  * @param {String[URL]} webURL 论文源网址
@@ -688,7 +820,7 @@ const jumpToPDFOnlinePage = (pdfURL) => {
 const jumpToWorkSourceWeb = (webURL) => {
   // console.log(webURL);
   window.location.href = webURL;
-}
+};
 
 // #endregion 卡片内部交互函数
 
@@ -715,7 +847,8 @@ a, a:hover, a:focus {
 }
 .search-detail-container{
   box-sizing: border-box;
-  background-color: rgb(228 228 231);
+  /* background-color: rgb(228 228 231); */
+  background-color: rgb(234, 234, 234);
   /* background-color: rgb(255, 255, 255); */
   font-family: Merriweather Sans,sans-serif;
   line-height: 1.4;
@@ -940,6 +1073,7 @@ a, a:hover, a:focus {
 }
 .search-result__sort .search-result__sort-right {
   float: right;
+  font-family: 'Times New Roman', Times, "Microsoft YaHei", serif;
 }
 @media (min-width: 768px) {
   .search-result__sort {
@@ -956,47 +1090,80 @@ a, a:hover, a:focus {
     padding: .625rem 0;
   }
 }
+/* #region 每页数据的数量 */
 .search-result__sort-right .per-page {
   border-right: .0625rem solid #d9d9d9;
   padding-right: .3125rem;
   display: inline-block;
-  font-size: .875rem;
+  box-sizing: border-box;
+  font-size: 16px;
+  /* border: 1px solid black; */
 }
+.search-result__sort-right .per-page .per-page-label {
+  padding: .3125rem 0;
+  display: inline-block;
+  box-sizing: border-box;
+  font-weight: 600;
+}
+.search-result__sort-right .per-page ul {
+  float: right;
+  font-weight: 400;
+}
+.search-result__sort-right .per-page ul .page-size-chose.current {
+  font-weight: 600;
+}
+.search-result__sort-right .per-page ul .page-size-chose {
+  padding: .3125rem;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+/* #endregion 每页数据的数量 */
+
+/* #region 当前排序的类型 */
 .search-result__sort-right .sort-type {
   float: right;
   position: relative;
   padding: 0 .5rem;
-  font-size: 1.875rem;
-  font-family: "Microsoft YaHei", serif;
+  /* font-size: 1.875rem; */
+  /* font-family: "Microsoft YaHei", serif; */
 }
 .search-result__sort-right .sort-type .sort-type-btn {
   display: inline-block;
   position: relative;
-  width: 170px;
-  padding: .3125rem 0 1.25rem;
+  width: 175px;
+  /* width: auto; */
+  /* padding: .3125rem 0 1.25rem; */
+  /* 这里主要是调整 Sort Type 和 Per Page 差不多高 */
+  padding: 2px 0 0;
   margin: 0;
   line-height: 1.15;
   box-sizing: border-box;
   cursor: pointer;
   background-color: transparent;
   border: none;
-  /* font-style: italic; */
-  font-size: 14px !important;
+  font-size: 14px;
   text-transform: none;
 }
 .search-result__sort-right .sort-type .sort-type-btn b {
+  font-size: 16px;
+  font-family: 'Times New Roman', Times, "Microsoft YaHei", serif;
   color: black;
   font-weight: 600;
 }
 .search-result__sort-right .sort-type .sort-type-btn span {
+  font-size: 16px;
+  font-family: 'Times New Roman', Times, "Microsoft YaHei", serif;
   color: black;
   font-weight: 300 !important;
 }
 .search-result__sort-right .sort-type.js--open .sort-type-btn i{
   transform: rotate(360deg);
 }
-/* VERY IMPORTANT
-ransform在行内元素不起作用，要给i加上display:inline-block的样式转为行内块元素。 */
+/* 
+  VERY IMPORTANT
+  transform 对于行内元素不起作用，
+  要给i加上display:inline-block的样式转为行内块元素。 
+*/
 .search-result__sort-right .sort-type .sort-type-btn i {
   display: inline-block;
   font-size: 1.625rem;
@@ -1014,9 +1181,9 @@ ransform在行内元素不起作用，要给i加上display:inline-block的样式
 .search-result__sort-right .sort-type .sort-dropdown {
   display: none;
   position: absolute;
+  right: 0;
   z-index: 9;
   text-align: left;
-  top: 55px;
   width: 95%;
   padding: 0;
   background: #fff;
@@ -1024,9 +1191,16 @@ ransform在行内元素不起作用，要给i加上display:inline-block的样式
   border-top: .1875rem solid;
   font-size: 14px;
   min-width: 150px;
-  right: 0;
   box-shadow: 0 0.125rem 0.625rem rgb(82 82 82 / 43%);
+  font-family: "Microsoft YaHei", serif;
 }
+@media (min-width: 768px) {
+  .sort-dropdown {
+    /* top: 55px; */
+    top: 40px;
+  }
+}
+
 .rlist {
   list-style: none;
   padding: 0;
@@ -1044,23 +1218,15 @@ ransform在行内元素不起作用，要给i加上display:inline-block的样式
   background-color: #d9d9d9;
 }
 
+/* #endregion 当前排序的类型 */
+
 /* #region 搜索列表和单个搜索卡片 */
-.search-result__list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-.search-result__list .result-item {
+.result-item {
   width: 100%;
   display: inline-block;
   font-size: .875rem;
 }
 
-.result-item-checkbox-container {
-  position: relative;
-  top: 1.5625rem;
-  border: 1px solid black;
-}
 .result-item-card {
   /* 30px */
   margin-left: 1.875rem;
@@ -1369,6 +1535,15 @@ img {
 /* #endregion 卡片底部右侧快捷操作 */
 
 /* #endregion 搜索列表和单个搜索卡片结束 */
+
+.search-result__pagination {
+  margin-bottom: 1.875rem;
+  margin-top: 1.25rem;
+  text-align: center;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
 
 /* #endregion 搜索结果区域结束 */
 

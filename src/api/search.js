@@ -4,6 +4,7 @@ const url = {
     getSearchDataList: "/search/get_list_of_data_view",
     getGroupDataList: "/search/get_groups_of_data_view",
     getAssociateContent: "/search/associate_content_view",
+    postSearchHistory: "/history/update_history"
 }
 // 详细参考见：https://www.axios-http.cn/docs/req_config
 export class Search{
@@ -35,5 +36,11 @@ export class Search{
           data,
         });
     }
-    
+    // 更新历史记录
+    static async postSearchHistory(data) {
+        return service(url.postSearchHistory, {
+          method: "POST",
+          data,
+        })
+    }
 }
