@@ -28,7 +28,7 @@ const props = defineProps({
     paperId: String
 })
 onMounted(() => {
-    Search.list(
+    Search.getSearchDataList(
         {
             entity_type: "works",
             params: {
