@@ -138,7 +138,7 @@
                         <!-- TODO 需要加跳转到论文详情+匹配高亮 -->
                         <span>
                           <!-- <a href="/doi/10.1145/3293353.3293383">HSD-<span onclick="highlight()" class="single_highlight_class">CNN</span>: Hierarchically self decomposing <span onclick="highlight()" class="single_highlight_class">CNN</span> architecture using class specific filter sensitivity analysis</a> -->
-                          {{item.display_name}}
+                          {{item.display_name.replace(/<\/?i>/ig, "")}}
                         </span>
                       </h5>
                       <!-- 论文的作者列表 -->
