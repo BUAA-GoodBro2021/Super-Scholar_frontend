@@ -71,14 +71,23 @@
                         </ul>
                     </div>
                     <div v-loading="loading" class="video-main" v-show="!pageOne">
+                        <div class="document-wrap">
                         <ul class="search-result__list">
                             <!-- 单个搜索结果卡片 -->
                             <li v-for="(item, index) in filterWorkList" :key="index" class="result-item">
-                                <WorksResCardVue :item="item" :class="{ active: item.active }" :notInCollection="false" />
+                                <WorksResCardVue :item="item" :class="{ active: item.active }"
+                                    :notInCollection="false" />
+                                <i class="icon-work-selected" :class="{ workiconactive: item.active }"
+                                    @click="SelectItem(item)"></i>
+                            </li>
+                            <li v-for="(item, index) in filterWorkList" :key="index" class="result-item">
+                                <WorksResCardVue :item="item" :class="{ active: item.active }"
+                                    :notInCollection="false" />
                                 <i class="icon-work-selected" :class="{ workiconactive: item.active }"
                                     @click="SelectItem(item)"></i>
                             </li>
                         </ul>
+                    </div>
                     </div>
                 </div>
             </el-card>
@@ -531,6 +540,10 @@ const toConcept = (item) => {
     justify-content: center;
 }
 
+:deep(.el-card) {
+    overflow: visible;
+}
+
 :deep(.el-card__body) {
     height: 100%;
 }
@@ -600,6 +613,7 @@ const toConcept = (item) => {
 .video-container .video-main {
     width: 100%;
     height: calc(100% - 76px);
+    /* overflow: visible; */
 }
 
 .video-container .video-main .list {
@@ -814,12 +828,17 @@ const toConcept = (item) => {
 
 
 /* #region 搜索列表和单个搜索卡片 */
+.document-wrap{
+    width: 100%;
+    height: 100%;
+    overflow-y: scroll;
+}
 .search-result__list {
     list-style: none;
     padding: 0;
     margin: 0;
     height: 100%;
-    overflow-y: scroll;
+    overflow-x: visible;
 }
 
 .search-result__list .result-item {
