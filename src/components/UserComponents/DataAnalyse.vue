@@ -8,7 +8,7 @@
                 <div class="network" id="network" v-if="chart2Show"></div>
                 <el-dialog v-model="chart2Dialog" width="50%" height="60%">
                     <template #header>
-                        <span class="dialog-title">与{{ nodedata.value[choseLine].value }}合著作品如下</span>
+                        <span class="dialog-title">与{{ nodedata[choseLine].value }}合著作品如下</span>
                     </template>
                     <div class="dialog-wrap">
                         <div v-for="(item, index) in chart2DialogData" :key="index">
