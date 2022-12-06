@@ -74,8 +74,9 @@
                         <ul class="search-result__list">
                             <!-- 单个搜索结果卡片 -->
                             <li v-for="(item, index) in filterWorkList" :key="index" class="result-item">
-                                <WorksResCardVue :item="item" :class="{active: item.active}" :notInCollection="false"/>
-                                <i class="icon-work-selected" :class="{workiconactive: item.active}" @click="SelectItem(item)"></i>
+                                <WorksResCardVue :item="item" :class="{ active: item.active }" :notInCollection="false" />
+                                <i class="icon-work-selected" :class="{ workiconactive: item.active }"
+                                    @click="SelectItem(item)"></i>
                             </li>
                         </ul>
                     </div>
@@ -776,7 +777,7 @@ const toConcept = (item) => {
     opacity: 1 !important;
 }
 
-.video-container .video-main .result-item{
+.video-container .video-main .result-item {
     position: relative
 }
 
@@ -794,7 +795,7 @@ const toConcept = (item) => {
 }
 
 :deep(.video-container .video-main .el-checkbox__inner .is-checked .el-checkbox__inner) {
-    border-color: #409eff ;
+    border-color: #409eff;
 }
 
 .video-container .video-main .resultitemactive {
@@ -837,8 +838,15 @@ const toConcept = (item) => {
     background-color: #f1f5fa;
 }
 
+/* 保留出来对勾的位置 */
 :deep(.video-container .video-main .result-item-card .card-title) {
     max-width: calc(100% - 32px);
+}
+
+@media (max-width: 992px) {
+    :deep(.video-container .video-main .result-item-card .card-title) {
+        max-width: 100% !important;
+    }
 }
 
 /* 鼠标悬浮时文献勾选图标透明度发生变化 */
