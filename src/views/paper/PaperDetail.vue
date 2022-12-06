@@ -4,7 +4,9 @@
                 <PaperListVue :total="citingTotal" :filter="{cited_by: paperId}" @IKnowTotal="recvTotalCiting"/>
             </el-tab-pane>
             <el-tab-pane :label="'引证文献 ' + citedTotal" name="citedBy" class="tab-pane">
-                <div ref="citeChart" style="width: 100%; height: 400px"></div>
+                <div style="width:100%">
+                    <div id="citeChart" style="width: 100%;height: 400px"></div>
+                </div>
                 <PaperListVue  :filter="{cites: paperId}"  @IKnowTotal="recvTotalCited"/>
             </el-tab-pane>
             <el-tab-pane label="评论" name="comments" class="tab-pane">
@@ -15,7 +17,7 @@
 <script setup>
 import PaperListVue from './PaperList.vue';
 import * as echarts from 'echarts'
-const citeChart = ref()
+import { nextTick } from 'vue';
 
 const activeName = ref('citing')
 
@@ -34,9 +36,39 @@ function recvTotalCiting(t){
 function recvTotalCited(t){
     citedTotal.value = t;
 }
-
-onMounted(() => {
-
+var citeChart
+onRenderTriggered(() => {
+    if(citeChart)
+        return;
+    nextTick(
+        ()=>{
+            citeChart = echarts.init(document.getElementById("citeChart"))
+            var xSeries = []
+            var ySeries = []
+            
+            for(var item of props.paperInfo.counts_by_year){
+                xSeries.push(item.year)
+                ySeries.push(item.cited_by_count)
+            }
+            citeChart.setOption(
+                {
+                    xAxis:{
+                        data:xSeries
+                    },
+                    yAxis:{},
+                    series:[
+                        {
+                            type:'bar',
+                            data:ySeries
+                        }
+                    ]
+                }
+            )
+            window.onresize = function(){
+                citeChart.resize()
+            }
+        }
+    )
 })
 
 
