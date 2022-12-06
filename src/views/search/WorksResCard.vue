@@ -8,13 +8,12 @@
     <div class="result-item__content">
       <!-- 论文的标题 -->
       <h5 class="card-title" @click="jumpToPaperPage(item.id.slice(21))">
-        <!-- TODO 需要加跳转到论文详情+匹配高亮 -->
-        <span v-if="item.display_name != null">
+        <!-- TODO 需要加匹配高亮 -->
+        <span v-if="item.display_name !== null">
           <!-- <a href="/doi/10.1145/3293353.3293383">HSD-<span onclick="highlight()" class="single_highlight_class">CNN</span>: Hierarchically self decomposing <span onclick="highlight()" class="single_highlight_class">CNN</span> architecture using class specific filter sensitivity analysis</a> -->
           {{ item.display_name.replace(/<\/?i>/ig, "") }}
         </span>
-        <span v-if="item.display_name == null">
-          <!-- <a href="/doi/10.1145/3293353.3293383">HSD-<span onclick="highlight()" class="single_highlight_class">CNN</span>: Hierarchically self decomposing <span onclick="highlight()" class="single_highlight_class">CNN</span> architecture using class specific filter sensitivity analysis</a> -->
+        <span v-else>
           [Title Missed]
         </span>
       </h5>
@@ -59,6 +58,7 @@
       </div>
       <!-- 论文的领域concepts气泡展示，这里只截取前11个 -->
       <div class="card-concepts clearfix" v-if="notInCollection">
+        <!-- 跳转到对应的concept主页 -->
         <div
           class="card-concepts-wrap"
           v-for="(concept, conceptIndex) in item.concepts.slice(0, 11)"
