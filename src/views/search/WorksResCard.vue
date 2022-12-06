@@ -239,10 +239,10 @@ const jumpToVenuePage = (openAlexVenueId) => {
  */
 const jumpToConceptPage = (openAlexConceptId) => {
   console.log(openAlexConceptId);
-  // router.push({
-  //   name: 'OpenAlexAuthorDetail',
-  //   params: {tokenid: openAlexAuthorId}
-  // });
+  router.push({
+    name: 'ConceptDetail',
+    params: {tokenid: openAlexConceptId}
+  });
 };
 /**
  * 跳转到PDF在线预览网页

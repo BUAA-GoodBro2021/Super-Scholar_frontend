@@ -162,7 +162,7 @@
                           class="epub-section__title" 
                           v-if="item.host_venue"
                           @click="jumpToVenuePage(item.host_venue.id 
-                            ? item.host_venue.id
+                            ? item.host_venue.id.slice(21)
                             : '')"
                         >
                           {{item.host_venue.display_name}}
@@ -841,10 +841,10 @@ const jumpToVenuePage = (openAlexVenueId) => {
  */
 const jumpToConceptPage = (openAlexConceptId) => {
   console.log(openAlexConceptId);
-  // router.push({
-  //   name: '',
-  //   params: {tokenid: openAlexAuthorId}
-  // });
+  router.push({
+    name: 'ConceptDetail',
+    params: {tokenid: openAlexConceptId}
+  });
 };
 /**
  * 跳转到PDF在线预览网页
