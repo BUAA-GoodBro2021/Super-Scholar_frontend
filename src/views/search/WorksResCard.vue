@@ -50,7 +50,7 @@
         </span>
       </div>
       <!-- 论文的内容摘要 -->
-      <div class="card-abstract">
+      <div class="card-abstract" v-if="notInCollection">
         <p>{{ item.abstract }}</p>
       </div>
       <!-- 论文的领域concepts气泡展示，这里只截取前11个 -->
@@ -116,7 +116,7 @@
               </template>
             </el-dialog>
             <!-- TODO 添加收藏夹的浮窗 -->
-            <li>
+            <li v-if="notInCollection">
               <div class="card-tool-btn">
                 <i class="iconfont icon-folderplus-fill"></i>
                 <!-- <i class="iconfont icon-folder-add-fill"></i> -->
@@ -183,6 +183,10 @@ const props = defineProps({
   item: {
     type: Object,
     required: true
+  },
+  notInCollection: {
+    type: Boolean,
+    default: true,
   }
 });
 
