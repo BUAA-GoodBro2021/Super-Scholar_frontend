@@ -1,77 +1,81 @@
 <template>
   <div class="result-item-card clearfix">
     <div class="result-item__citation">
-      <div class="citation-heading">research-venues</div>
+      <div class="citation-heading">research-concept</div>
       <!-- TODO 这里之后可以考虑改为形如 May 20, 2022 的形式 -->
       <div class="citation-date">{{ item.updated_date?.slice(0, 10) }}</div>
     </div>
-
+    <div class="concept-card-avator" v-if="item.image_url">
+      <img :src="item.image_url"/>
+    </div>
     <div class="result-item__content">
-      <!-- 会议/期刊的标题 -->
+      <!-- 机构的标题 -->
       <h5 
         class="card-title" 
-        @click="jumpToVenuePage(item.id?.slice(21))"
+        @click="jumpToConceptPage(item.id?.slice(21))"
       >
         <!-- 这里不可以分开span，不然会在逗号前出现一个距离 -->
         <span v-if="item.display_name !== null">
-          {{ item.display_name }}<span v-if="item.issn_l">,&nbsp;{{ item.issn_l }}</span>
+          {{ item.display_name }}<span v-if="item.level">,&nbsp;LEVEL: {{ item.level }}</span>
         </span>
         <span v-else>
-          [Venue Name Unknown]
+          [Concept Name Unknown]
         </span>
       </h5>
       
       <!-- 
-        会议/期刊的信息：会议/期刊venue的主页、所有的issn号、发行商
+        领域concept的信息：来源（期刊会议）host_venue、发行日期、类型、doi网址
        -->
       <div class="card-simple-info">
-        <!-- 跳转到会议/期刊的主页 -->
+        <!-- 领域concept的wiki解释网页，每一个OpenAlex概念一定有对应的维基百科概念 -->
         <span
           class="epub-section__title"
-          v-if="item.homepage_url"
+          v-if="item.wikidata"
         >
-          <a style="vertical-align: middle;" :href="item.homepage_url">
-            <b style="font-weight: 600;">Venue Homepage: </b> {{ item.homepage_url }}
+          <a style="vertical-align: middle;" :href="item.wikidata">
+            <b style="font-weight: 600;">Wiki Introduction: </b> {{ item.wikidata }}
           </a>
         </span>
-        <!-- 这个Venue使用的所有的issn号 -->
-        <span class="dot-separator" v-if="item.issn?.length">
-          <span v-for="issnItem in item.issn">{{ issnItem }},&nbsp;</span>
-        </span>
-        <!-- 发行商 -->
-        <span class="dot-separator" v-if="item.publisher">
-          <span>{{ item.publisher }}</span>
-        </span>
+        
+        <!-- <span class="dot-separator" v-if="item.doi">
+          <a style="vertical-align: middle;" :href="item.doi">{{ item.doi }}</a>
+        </span> -->
       </div>
       
-      <!-- 会议/期刊经常研究的领域concepts气泡展示，这里只截取前11个 -->
-      <div class="card-concepts clearfix">
-        <!-- 跳转到对应的concept主页 -->
+      <!-- 领域concept的简要描述 -->
+      <div class="concept-card-abstract">
+        <p>{{ item.description }}</p>
+      </div>
+
+      <!-- 机构经常研究的领域concepts气泡展示，这里只截取前11个 -->
+      <div class="card-concepts clearfix" v-if="item.ancestors?.length">
+        <!-- 跳转到对应的祖先concept主页 -->
         <div
           class="card-concepts-wrap"
-          v-for="concept in item.x_concepts?.slice(0, 11)"
-          @click="jumpToConceptPage(concept.id?.slice(21))"
+          v-for="ancestor in item.ancestors?.slice(0, 11)"
+          @click="jumpToConceptPage(ancestor.id?.slice(21))"
         >
-          <i class="iconfont icon-menu"></i>
-          <div class="card-concept-context">{{ concept.display_name }}</div>
+        <!-- 这里的icon不一样，以表示区别于其他实体的含义 -->
+          <i class="iconfont icon-tree"></i>
+          <div class="card-concept-context">{{ ancestor.display_name }}</div>
         </div>
       </div>
 
-      <!-- 会议/期刊底部简略信息和快捷操作 -->
+      <!-- 领域concept底部简略信息和快捷操作 -->
       <div class="card-footer clearfix">
-        <!-- 会议/期刊底部简略信息（已经完成） -->
+        <!-- 领域concept底部简略信息（已经完成） -->
         <div class="card-footer-left">
           <ul class="rlist--inline">
             <li class="metric-holder">
               <ul class="rlist--inline">
-                <!-- 该会议/期刊产生的论文被引用的总数量 -->
+                <!-- 该领域concept的论文被引用的总数量 -->
                 <li>
                   <span class="citation">
                     <i class="iconfont icon-quotes" style="font-size: 1.1rem"></i>
                     <span>{{ item.cited_by_count }}</span>
                   </span>
                 </li>
-                <!-- 该会议/期刊产生的论文的总数量 -->
+                <!-- 该领域concept的论文的总数量 -->
                 <li>
                   <span class="metric">
                     <i class="iconfont icon-paper" style="font-size: 1rem"></i>
@@ -109,6 +113,35 @@
             </li>
           </ul>
 
+          <!-- <ul class="rlist--inline dot-separator" style="float: right;"
+            v-if="(item.open_access?.is_oa === 1 || item.host_venue?.id || item.doi)">
+            <li v-if="(item.open_access?.is_oa === 1)">
+              <div class="card-tool-btn pdf-btn" @click="jumpToPDFOnlinePage(item.open_access.oa_url)">
+                <i class="iconfont icon-pdf1" style="font-size: 0.9rem;"></i>
+                <span class="card-btn-hint">
+                  <span class="card-btn-hint-arrow"></span>
+                  View PDF online
+                </span>
+              </div>
+            </li>
+
+            <li v-if="(item.host_venue?.id || item.doi)">
+              <div
+                class="card-tool-btn web-btn"
+                @click="jumpToWorkSourceWeb(
+                  item.host_venue.id
+                    ? item.host_venue.id
+                    : item.doi
+                )"
+              >
+                <i class="iconfont icon-signal-source" style="font-size: 1.3rem;"></i>
+                <span class="card-btn-hint">
+                  <span class="card-btn-hint-arrow"></span>
+                  Get Access to Source Web
+                </span>
+              </div>
+            </li>
+          </ul> -->
         </div>
       </div>
     </div>
@@ -196,13 +229,21 @@ const jumpToConceptPage = (openAlexConceptId) => {
   });
 };
 /**
- * 跳转到 venue 所有works 的在线预览网页（openAlex）
+ * 跳转到PDF在线预览网页
  * @param {String[URL]} pdfURL PDF在线预览网页
  */
-const jumpToAllWorksOfVenue = (worksApiURL) => {
-  window.location.href = worksApiURL;
+const jumpToPDFOnlinePage = (pdfURL) => {
+  // console.log(pdfURL);
+  window.location.href = pdfURL;
 };
-
+/**
+ * 跳转到论文源网址
+ * @param {String[URL]} webURL 论文源网址
+ */
+const jumpToWorkSourceWeb = (webURL) => {
+  // console.log(webURL);
+  window.location.href = webURL;
+};
 
 // #endregion 卡片内部交互函数
 
@@ -283,6 +324,28 @@ a:focus {
   text-transform: capitalize;
 }
 
+/* #region authors实体卡片独有的 */
+.concept-card-avator {
+  display: none;
+}
+.concept-card-avator img {
+  width: 65px;
+  height: 65px;
+  border-radius: 50%;
+}
+@media (min-width: 992px) {
+  .concept-card-avator {
+    display: inline-block;
+    /* 这里需要卡片最外层 result-item-card 开相对定位 */
+    position: absolute;
+    top: 50%;
+    left: calc(8.75rem / 2);
+    transform: translate(-50%, -50%);
+  }
+}
+/* #endregion authors实体卡片独有的 */
+
+
 
 .result-item__content {
   display: inline-block;
@@ -358,7 +421,7 @@ img {
   box-sizing: border-box;
   cursor: pointer;
 }
-.card-abstract {
+.concept-card-abstract {
   height: auto;
   margin: 0.9rem 0;
   font-size: 1rem;
@@ -368,6 +431,8 @@ img {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 4;
+  /* 在concept中特有的一行 */
+  text-transform: capitalize;
 }
 .card-concepts {
   height: auto;
@@ -472,12 +537,12 @@ img {
   vertical-align: middle;
 }
 
-.card-footer-right .rlist--inline li .card-tool-btn.all-works-btn:hover {
+.card-footer-right .rlist--inline li .card-tool-btn.pdf-btn:hover {
   /* background-color: #d44848; */
-  background-color: #deae1c;
+  background-color: #e34444;
 }
-.card-footer-right .rlist--inline li .card-tool-btn.all-works-btn {
-  background-color: #d5a209;
+.card-footer-right .rlist--inline li .card-tool-btn.pdf-btn {
+  background-color: #d40c03;
   color: white;
 }
 .card-footer-right .rlist--inline li .card-tool-btn.web-btn:hover {

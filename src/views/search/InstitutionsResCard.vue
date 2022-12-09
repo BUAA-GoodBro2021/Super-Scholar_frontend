@@ -115,35 +115,19 @@
             </li>
           </ul>
 
-          <!-- <ul class="rlist--inline dot-separator" style="float: right;"
-            v-if="(item.open_access?.is_oa === 1 || item.host_venue?.id || item.doi)">
-            <li v-if="(item.open_access?.is_oa === 1)">
-              <div class="card-tool-btn pdf-btn" @click="jumpToPDFOnlinePage(item.open_access.oa_url)">
-                <i class="iconfont icon-pdf1" style="font-size: 0.9rem;"></i>
+          <!-- 跳转到 机构在 https://ror.org 的页面 -->
+          <ul class="rlist--inline dot-separator" style="float: right;"
+            v-if="item.ror">
+            <li v-if="item.ror">
+              <div class="card-tool-btn ror-btn" @click="jumpToRORWeb(item.ror)">
+                <i class="iconfont icon-list" style="font-size: 0.9rem;"></i>
                 <span class="card-btn-hint">
                   <span class="card-btn-hint-arrow"></span>
-                  View PDF online
+                  Learn more at https://ror.org
                 </span>
               </div>
             </li>
-
-            <li v-if="(item.host_venue?.id || item.doi)">
-              <div
-                class="card-tool-btn web-btn"
-                @click="jumpToWorkSourceWeb(
-                  item.host_venue.id
-                    ? item.host_venue.id
-                    : item.doi
-                )"
-              >
-                <i class="iconfont icon-signal-source" style="font-size: 1.3rem;"></i>
-                <span class="card-btn-hint">
-                  <span class="card-btn-hint-arrow"></span>
-                  Get Access to Source Web
-                </span>
-              </div>
-            </li>
-          </ul> -->
+          </ul>
         </div>
       </div>
     </div>
@@ -231,20 +215,11 @@ const jumpToConceptPage = (openAlexConceptId) => {
   });
 };
 /**
- * 跳转到PDF在线预览网页
- * @param {String[URL]} pdfURL PDF在线预览网页
+ * 跳转到 机构在 https://ror.org 的页面
+ * @param {String[URL]} RORURL PDF在线预览网页
  */
-const jumpToPDFOnlinePage = (pdfURL) => {
-  // console.log(pdfURL);
-  window.location.href = pdfURL;
-};
-/**
- * 跳转到论文源网址
- * @param {String[URL]} webURL 论文源网址
- */
-const jumpToWorkSourceWeb = (webURL) => {
-  // console.log(webURL);
-  window.location.href = webURL;
+const jumpToRORWeb = (RORURL) => {
+  window.location.href = RORURL;
 };
 
 // #endregion 卡片内部交互函数
@@ -537,12 +512,11 @@ img {
   vertical-align: middle;
 }
 
-.card-footer-right .rlist--inline li .card-tool-btn.pdf-btn:hover {
-  /* background-color: #d44848; */
-  background-color: #e34444;
+.card-footer-right .rlist--inline li .card-tool-btn.ror-btn:hover {
+  background-color: #deae1c;
 }
-.card-footer-right .rlist--inline li .card-tool-btn.pdf-btn {
-  background-color: #d40c03;
+.card-footer-right .rlist--inline li .card-tool-btn.ror-btn {
+  background-color: #d5a209;
   color: white;
 }
 .card-footer-right .rlist--inline li .card-tool-btn.web-btn:hover {

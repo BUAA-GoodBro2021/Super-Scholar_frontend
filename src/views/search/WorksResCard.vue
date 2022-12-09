@@ -91,7 +91,7 @@
                 <li>
                   <span class="metric">
                     <i class="iconfont icon-Rise" style="font-size: 1.3rem"></i>
-                    <span>195</span>
+                    <span>{{ item["2022_cited_count"]}}</span>
                   </span>
                 </li>
               </ul>

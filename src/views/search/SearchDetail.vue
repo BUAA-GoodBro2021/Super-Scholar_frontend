@@ -15,7 +15,8 @@
       <div class="result-content clearfix">
         <div class="row clearfix">
           <!-- 左侧筛选部分 -->
-          <div class="col-lg-3 col-md-3 col-sm-4" style="border: 1px solid black;">
+          <!-- <div class="col-lg-3 col-md-3 col-sm-4" style="border: 1px solid black;"> -->
+          <div class="col-lg-3 col-md-3 col-sm-4">
             <ElButton v-if="confirmFilterSearch" @click="handleAllTypeFilterSearch">确认更改测试</ElButton>
             <ElButton v-if="confirmFilterSearch" @click="cancelFilterSearch">取消更改测试</ElButton>
             <div class="sticko__child colored-block">
@@ -73,7 +74,8 @@
             </div>
           </div>
           <!-- 右侧结果/排序部分 -->
-          <div class="col-lg-9 col-md-9 col-sm-8 " style="border: 1px solid black;">
+          <!-- <div class="col-lg-9 col-md-9 col-sm-8 " style="border: 1px solid black;"> -->
+            <div class="col-lg-9 col-md-9 col-sm-8 ">
             <div class="search-result">
               <!-- 搜索结果顶部信息 -->
               <div class="search-result__info">
@@ -183,6 +185,7 @@ import WorksResCard from './WorksResCard.vue';
 import AuthorsResCard from './AuthorsResCard.vue';
 import VenuesResCard from './VenuesResCard.vue';
 import InstitutionsResCard from './InstitutionsResCard.vue';
+import ConceptsResCard from './ConceptsResCard.vue';
 
 
 onMounted(() => {
@@ -198,7 +201,7 @@ const searchResCard = shallowRef({
   "authors": AuthorsResCard,
   "venues": VenuesResCard,
   "institutions": InstitutionsResCard,
-  "concepts": "",
+  "concepts": ConceptsResCard,
 });
 
 const searchStore = useSearchStore();
@@ -800,48 +803,50 @@ const handleAllTypeSortSearch = async (newSortType) => {
  */
 const handleFinalSearch = (searchText, searchEntityType) => {
   console.log(searchText, searchEntityType);
-  // 上锁，避免触发“页数更改搜索”
-  pageIndexChangeSearchLock.value = true;
-  // 重置当前页数为第1页
-  searchResPageIndex.value = 1;
-  // 清空所有筛选选择
-  cancelFilterSearch();
-  var data = {
-    "entity_type": searchEntityType,
-    "params": {
-      "page": 1,
-      "per_page": searchResPageSize.value,
-      "search" : searchText,
-      "sort" : buildSortKey(),
+  if (searchText) {
+    // 上锁，避免触发“页数更改搜索”
+    pageIndexChangeSearchLock.value = true;
+    // 重置当前页数为第1页
+    searchResPageIndex.value = 1;
+    // 清空所有筛选选择
+    cancelFilterSearch();
+    var data = {
+      "entity_type": searchEntityType,
+      "params": {
+        "page": 1,
+        "per_page": searchResPageSize.value,
+        "search" : searchText,
+        "sort" : buildSortKey(),
+      }
     }
-  }
-  Search.getSearchDataList(data)
-  .then((res) => {
-    if (res.data.result === 1) {
-      // console.log(res.data.list_of_data);
-      searchDataList.value = res.data.list_of_data[0].results;
-      totalSearchResNum.value = res.data.list_of_data[0].meta.count;
-      console.log(searchDataList);
+    Search.getSearchDataList(data)
+    .then((res) => {
+      if (res.data.result === 1) {
+        // console.log(res.data.list_of_data);
+        searchDataList.value = res.data.list_of_data[0].results;
+        totalSearchResNum.value = res.data.list_of_data[0].meta.count;
+        console.log(searchDataList);
+        ElNotification({
+          title: "恭喜您",
+          message: `搜索成功，用时 ${res.data.list_of_data[0].meta.db_response_time_ms / 1000} s`,
+          type: "success",
+          duration: 3000
+        });
+        // 解锁，可以触发“页数更改搜索”
+        pageIndexChangeSearchLock.value = false;
+      }
+    })
+    .catch((err) => {
       ElNotification({
-        title: "恭喜您",
-        message: `搜索成功，用时 ${res.data.list_of_data[0].meta.db_response_time_ms / 1000} s`,
-        type: "success",
+        title: "很遗憾",
+        message: err.message,
+        type: "error",
         duration: 3000
       });
       // 解锁，可以触发“页数更改搜索”
       pageIndexChangeSearchLock.value = false;
-    }
-  })
-  .catch((err) => {
-    ElNotification({
-      title: "很遗憾",
-      message: err.message,
-      type: "error",
-      duration: 3000
-    });
-    // 解锁，可以触发“页数更改搜索”
-    pageIndexChangeSearchLock.value = false;
-  })
+    })
+  }
 };
 
 </script>
