@@ -181,6 +181,7 @@ import { ElButton, ElCheckbox, ElCheckboxGroup, ElNotification, ElPagination } f
 import { onMounted, reactive, ref, shallowRef, watch } from 'vue';
 import WorksResCard from './WorksResCard.vue';
 import AuthorsResCard from './AuthorsResCard.vue';
+import VenuesResCard from './VenuesResCard.vue';
 import InstitutionsResCard from './InstitutionsResCard.vue';
 
 
@@ -195,7 +196,7 @@ onMounted(() => {
 const searchResCard = shallowRef({
   "works": WorksResCard,
   "authors": AuthorsResCard,
-  "venues": "",
+  "venues": VenuesResCard,
   "institutions": InstitutionsResCard,
   "concepts": "",
 });
