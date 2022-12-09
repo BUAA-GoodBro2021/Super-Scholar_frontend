@@ -25,7 +25,7 @@
             <div class="earth">
                <iframe 
             frameborder="0"
-            width="800" height="600"
+            width="810" height="610"
             src="https://scholar.super2021.com/earth/">
             </iframe>
             </div>
@@ -190,7 +190,7 @@ onMounted(() => {
    .earth{
          position: absolute;
          top: 1vh;
-         right: 0;
+         right: -2vw;
          z-index:-2;
       }
    @media screen and (max-width:992px) {
@@ -206,7 +206,12 @@ onMounted(() => {
    .earth{
       display: none;
    }
-   }  
+   }
+   @media screen and (min-height: 794px){
+      .earth{
+         top: 5vh;
+      }
+   }
 }
 
 .content{
