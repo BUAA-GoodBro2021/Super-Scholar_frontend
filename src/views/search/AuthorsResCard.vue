@@ -1,67 +1,66 @@
 <template>
   <div class="result-item-card clearfix">
     <div class="result-item__citation">
-      <div class="citation-heading">research-article</div>
-      <!-- TODO 这里之后可以考虑改为形如 May 20, 2022 的形式 -->
-      <div class="citation-date">{{ item.publication_date }}</div>
+      <div class="citation-heading">research-author</div>
+    </div>
+    <div class="author-card-avator">
+      <img src="https://dl.acm.org/pb-assets/icons/DOs/default-profile-1543932446943.svg"/>
     </div>
     <div class="result-item__content">
-      <!-- 论文的标题 -->
-      <h5 class="card-title" @click="jumpToPaperPage(item.id?.slice(21))">
+      <!-- 作者的名字 -->
+      <h5
+        class="card-title"
+        @click="jumpToAuthorPage(item.id
+          ? item.id.slice(21)
+          : '')"
+      >
         <!-- TODO 需要加匹配高亮 -->
         <span v-if="item.display_name !== null">
-          <!-- <a href="/doi/10.1145/3293353.3293383">HSD-<span onclick="highlight()" class="single_highlight_class">CNN</span>: Hierarchically self decomposing <span onclick="highlight()" class="single_highlight_class">CNN</span> architecture using class specific filter sensitivity analysis</a> -->
           {{ item.display_name.replace(/<\/?i>/ig, "") }}
         </span>
         <span v-else>
-          [Title Missed]
+          [Name Unknown]
         </span>
       </h5>
-      <!-- 论文的作者列表 -->
-      <ul class="card-author-list">
-        <li v-for="(author, authorIndex) in item.authorships?.slice(0, 10)">
-          <!-- 跳转到对应的作者主页 -->
-          <a @click="jumpToAuthorPage(author.author.id
-            ? author.author.id.slice(21)
-            : '')"
-          >
-            <img class="author-avator" src="https://dl.acm.org/pb-assets/icons/DOs/default-profile-1543932446943.svg" />
-            <span>{{ author.author.display_name }}</span>
-          </a>
-          <span>, </span>
-        </li>
-      </ul>
-      <!-- 论文的信息：来源（期刊会议）host_venue、发行日期、类型、doi网址 -->
-      <div class="card-simple-info" v-if="notInCollection">
-        <!-- 跳转到对应的host_venue主页 -->
+
+      <!-- 
+        作者的主要信息：所在机构、机构所在的国家、机构的类型、ocid网址
+        这里 last_known_institution 字段可能整个为空
+       -->
+      <div class="card-simple-info">
+        <!-- 跳转到对应的 机构institution 主页 -->
         <span
+          v-if="item.last_known_institution?.display_name"
           class="epub-section__title"
-          v-if="item.host_venue"
-          @click="jumpToVenuePage(item.host_venue.id
-            ? item.host_venue.id.slice(21)
+          @click="jumpToInstitutionPage(item.last_known_institution.id
+            ? item.last_known_institution.id.slice(21)
             : '')"
         >
-          {{ item.host_venue.display_name }}
+          {{ item.last_known_institution?.display_name }}
+        </span>
+        <span v-else class="epub-section__title">
+          Independent Reseacher
         </span>
         <!-- 这里由于伪元素位置的影响，必须span里面嵌套一个span -->
-        <span class="dot-separator">
-          <span>{{ item.publication_date }},&nbsp;&nbsp;</span>
-          <span>{{ item.type }}</span>
+        <span class="dot-separator" v-if="item.last_known_institution?.country_code">
+          <span>{{ item.last_known_institution?.country_code }},&nbsp;&nbsp;</span>
+          <span>{{ item.last_known_institution?.type }}</span>
         </span>
-        <span class="dot-separator" v-if="item.doi">
-          <a style="vertical-align: middle;" :href="item.doi">{{ item.doi }}</a>
+        <!-- 
+          orcid 一个字符串，是世界通用的唯一ID号，但是由于在OpenAlex中覆盖较低，
+            所以只是作为外部链接
+         -->
+        <span class="dot-separator" v-if="item.orcid">
+          <a style="vertical-align: middle;" :href="item.orcid">{{ item.orcid }}</a>
         </span>
       </div>
-      <!-- 论文的内容摘要 -->
-      <div class="card-abstract" v-if="notInCollection">
-        <p>{{ item.abstract }}</p>
-      </div>
-      <!-- 论文的领域concepts气泡展示，这里只截取前11个 -->
-      <div class="card-concepts clearfix" v-if="notInCollection">
+
+      <!-- 作者常涉及的领域concepts气泡展示，这里只截取前11个 -->
+      <div class="card-concepts clearfix">
         <!-- 跳转到对应的concept主页 -->
         <div
           class="card-concepts-wrap"
-          v-for="(concept, conceptIndex) in item.concepts?.slice(0, 11)"
+          v-for="(concept, conceptIndex) in item.x_concepts?.slice(0, 11)"
           @click="jumpToConceptPage(concept.id.slice(21))"
         >
           <i class="iconfont icon-menu"></i>
@@ -69,37 +68,37 @@
         </div>
       </div>
 
-      <!-- 论文底部简略信息和快捷操作 -->
+      <!-- 作者底部简略信息和快捷操作 -->
       <div class="card-footer clearfix">
-        <!-- 论文底部简略信息 -->
+        <!-- 作者底部简略信息 -->
         <div class="card-footer-left">
           <ul class="rlist--inline">
             <li class="metric-holder">
               <ul class="rlist--inline">
-                <!-- 引用数量 -->
+                <!-- 该作者的论文被引用的总数量 -->
                 <li>
                   <span class="citation">
                     <i class="iconfont icon-quotes" style="font-size: 1.1rem"></i>
                     <span>{{ item.cited_by_count }}</span>
                   </span>
                 </li>
-                <!-- 下载数量 -->
+                <!-- 该作者的论文的总数量 -->
                 <li>
                   <span class="metric">
-                    <i class="iconfont icon-Rise" style="font-size: 1.3rem"></i>
-                    <span>195</span>
+                    <i class="iconfont icon-paper" style="font-size: 1rem"></i>
+                    <span>{{ item.works_count }}</span>
                   </span>
                 </li>
               </ul>
             </li>
           </ul>
         </div>
-        <!-- 论文底部快捷操作 -->
+        <!-- 作者底部快捷操作（可能取消） -->
         <div class="card-footer-right">
           <ul class="rlist--inline" style="float: left;">
             <!-- TODO 导出bibtex等引用格式 -->
             <li>
-              <div class="card-tool-btn" @click="getBiBTeX(item), bibtexDialogVisible = true">
+              <div class="card-tool-btn">
                 <i class="iconfont icon-quotes" style="font-size: 1.1rem;"></i>
                 <span class="card-btn-hint">
                   <span class="card-btn-hint-arrow"></span>
@@ -107,23 +106,11 @@
                 </span>
               </div>
             </li>
-            <el-dialog v-model="bibtexDialogVisible" title="BiBTeX 引用格式" width="60%">
-              <span style="white-space: pre-wrap">{{ bibtex }}</span>
-              <template #footer>
-                <span class="dialog-footer">
-                  <el-button @click="bibtexDialogVisible = false">取消</el-button>
-                  <el-button type="primary" @click="copy(bibtex)">
-                    <span v-if='!copied'>复制到剪切板</span>
-                    <span v-else>复制成功!</span>
-                  </el-button>
-                </span>
-              </template>
-            </el-dialog>
+
             <!-- TODO 添加收藏夹的浮窗 -->
-            <li v-if="notInCollection">
+            <li>
               <div class="card-tool-btn">
                 <i class="iconfont icon-folderplus-fill"></i>
-                <!-- <i class="iconfont icon-folder-add-fill"></i> -->
                 <span class="card-btn-hint">
                   <span class="card-btn-hint-arrow"></span>
                   Add to Favor
@@ -131,16 +118,9 @@
               </div>
             </li>
           </ul>
-          <ul class="rlist--inline dot-separator" style="float: right;"
-            v-if="(item.open_access?.is_oa === 1 || item.host_venue?.id || item.doi)">
-            <!--
-              跳转到PDF在线预览的网页
-              open_access.is_oa
-              -1  表示没有PDF
-              0   表示有人已经提交PDF但是正在审核
-              1   表示有PDF且审核通过
-              -->
-            <li v-if="(item.open_access?.is_oa === 1)">
+          <!-- <ul class="rlist--inline dot-separator" style="float: right;"
+            v-if="(item.open_access.is_oa === 1 || item.host_venue.id || item.doi)">
+            <li v-if="(item.open_access.is_oa === 1)">
               <div class="card-tool-btn pdf-btn" @click="jumpToPDFOnlinePage(item.open_access.oa_url)">
                 <i class="iconfont icon-pdf1" style="font-size: 0.9rem;"></i>
                 <span class="card-btn-hint">
@@ -149,12 +129,8 @@
                 </span>
               </div>
             </li>
-            <!--
-              跳转到论文源网页的超链接
-                有论文所属机构的id（URL）时，跳转到对应URL
-                没有时，跳转到 doi
-             -->
-            <li v-if="(item.host_venue?.id || item.doi)">
+
+            <li v-if="(item.host_venue.id || item.doi)">
               <div
                 class="card-tool-btn web-btn"
                 @click="jumpToWorkSourceWeb(
@@ -170,7 +146,7 @@
                 </span>
               </div>
             </li>
-          </ul>
+          </ul> -->
         </div>
       </div>
     </div>
@@ -187,10 +163,6 @@ const props = defineProps({
   item: {
     type: Object,
     required: true
-  },
-  notInCollection: {
-    type: Boolean,
-    default: true,
   }
 });
 // #region 卡片内部交互函数
@@ -248,6 +220,18 @@ const jumpToConceptPage = (openAlexConceptId) => {
   });
 };
 /**
+ * 跳转到机构详情页
+ * 每一个item.last_known_institution.id用于跳转到机构详情页-- I4200000001
+ * @param {String} openAlexInstitutionId 论文领域的openAlexId
+ */
+ const jumpToInstitutionPage = (openAlexInstitutionId) => {
+  console.log(openAlexInstitutionId);
+  router.push({
+    name: 'InstitutionDetail',
+    params: {institutionid: openAlexInstitutionId}
+  });
+};
+/**
  * 跳转到PDF在线预览网页
  * @param {String[URL]} pdfURL PDF在线预览网页
  */
@@ -265,30 +249,6 @@ const jumpToWorkSourceWeb = (webURL) => {
 };
 
 // #endregion 卡片内部交互函数
-
-// bibtex
-const bibtex = ref("");
-const { copy, copied } = useClipboard({ bibtex })
-const bibtexDialogVisible = ref(false);
-const getBiBTeX = (paperInfo) => {
-  // 需要的字段有
-  // 文章的标题 work.display_name
-  // 文章的作者 work.authorships 对其中每条 authorship.author.display_name
-  // 文章的journal host_venue.display_name
-  // 文章的出版年份 work.publication_year
-  const { display_name, authorships, publication_year, host_venue } = paperInfo;
-  const author = authorships.map((authorship) => {
-    return authorship.author.display_name;
-  });
-  const journal = host_venue.display_name;
-  bibtex.value = `@article{${display_name},
-    author = {${author}},
-    title = {${display_name}},
-    journal = {${journal}},
-    year = {${publication_year}},
-}`;
-  return bibtex.value;
-};
 </script>
 
 <style scoped>
@@ -364,6 +324,28 @@ a:focus {
   font-weight: 400;
   text-transform: capitalize;
 }
+
+/* #region authors实体卡片独有的 */
+.author-card-avator {
+  display: none;
+}
+.author-card-avator img {
+  width: 65px;
+  height: 65px;
+}
+@media (min-width: 992px) {
+  .author-card-avator {
+    display: inline-block;
+    /* 这里需要卡片最外层 result-item-card 开相对定位 */
+    position: absolute;
+    top: 50%;
+    left: calc(8.75rem / 2);
+    transform: translate(-50%, -50%);
+  }
+}
+/* #endregion authors实体卡片独有的 */
+
+
 .result-item__content {
   display: inline-block;
 }

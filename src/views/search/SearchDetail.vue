@@ -16,20 +16,25 @@
         <div class="row clearfix">
           <!-- 左侧筛选部分 -->
           <div class="col-lg-3 col-md-3 col-sm-4" style="border: 1px solid black;">
-            <ElButton v-if="confirmFilterSearch" @click="handleFilterSearch">确认更改测试</ElButton>
+            <ElButton v-if="confirmFilterSearch" @click="handleAllTypeFilterSearch">确认更改测试</ElButton>
             <ElButton v-if="confirmFilterSearch" @click="cancelFilterSearch">取消更改测试</ElButton>
             <div class="sticko__child colored-block">
-              <!-- 单个筛选单元 -->
+              <!-- 
+                AllTypeFilterList[searchStore.searchType] 即当前搜索的实体类型对应的筛选列表
+                该div包裹的是 单个筛选单元
+                item 是 当前实体类型对应的 筛选列表 中的单个筛选单元，
+                index 是该筛选单元在 当前实体类型对应的 筛选列表 中的数组索引下标
+               -->
               <div 
                 class="colored-block"
-                v-for="(item, index) in worksFilterList" 
+                v-for="(item, index) in AllTypeFilterList[searchStore.searchType]" 
                 :key="index" 
-                :ref="setWorksFilterDOM"
+                :ref="setFilterUnitDOM"
               >
                 <!-- 筛选块标题 -->
                 <div 
                   class="colored-block-title clearfix" 
-                  @click="handleWorksGroupSearch(worksFilterDOM[index], index)"
+                  @click="handleAllTypeGroupSearch(filterUnitDOM[index], index)"
                 >
                   <div class="colored-block-title-context">{{item.title}}</div>
                   <i class="iconfont icon-arrowup colored-block-icon"></i>
@@ -39,12 +44,13 @@
                   <!-- 过滤块 -->
                   <div class="filter-block">
                     <div class="accordion-content">
+                      <!-- 这里第一个[]是属性键值，第二个[]才是数组索引 -->
                       <ElCheckboxGroup 
-                        v-model="worksFilterList[index].selectedArray" 
+                        v-model="AllTypeFilterList[searchStore.searchType][index].selectedArray" 
                         @change="handleChange(index)"
                       >
                         <ul class="rlist expand__list">
-                          <li v-for="labelItem in worksFilterList[index].objectArray">
+                          <li v-for="labelItem in AllTypeFilterList[searchStore.searchType][index].objectArray">
                             <!-- 
                               VERY IMPORTANT 
                               这里 label属性 代表选中时，添加进入 ElCheckboxGroup 的v-model绑定的数组的值
@@ -105,14 +111,14 @@
                   <div class="sort-type" ref="sortDropdownTarget">
                     <button class="sort-type-btn" @click="expandSortDropdown">
                       <b>Sort Type: </b>
-                      <span> {{searchStore.sortType}}</span>
+                      <span> {{ searchStore.sortType }}</span>
                       <i class="iconfont icon-arrowup"></i>
                     </button>
                     <div class="sort-dropdown">
                       <ul class="rlist">
                         <li 
-                          v-for="item in worksSortTypeArray"
-                          @click="handleWorksSortSearch(item)"
+                          v-for="item in remainSortTypeArray"
+                          @click="handleAllTypeSortSearch(item)"
                         >
                           {{item}}
                         </li>
@@ -124,177 +130,10 @@
               <!-- 搜索结果主体 -->
               <ul class="rlist">
                 <!-- 单个搜索结果卡片 -->
-                <li class="result-item" v-for="(item, index) in searchDataList">
-                  <!-- <WorksResCard :item="item"/> -->
-                  <div class="result-item-card clearfix">
-                    <div class="result-item__citation">
-                      <div class="citation-heading">research-article</div>
-                      <!-- <div class="citation-date">May 20</div> -->
-                      <div class="citation-date">{{item.publication_date}}</div>
-                    </div>
-                    <div class="result-item__content">
-                      <!-- 论文的标题 -->
-                      <h5 class="card-title" @click="jumpToPaperPage(item.id.slice(21))">
-                        <!-- TODO 需要加匹配高亮 -->
-                        <span v-if="item.display_name !== null">
-                          <!-- <a href="/doi/10.1145/3293353.3293383">HSD-<span onclick="highlight()" class="single_highlight_class">CNN</span>: Hierarchically self decomposing <span onclick="highlight()" class="single_highlight_class">CNN</span> architecture using class specific filter sensitivity analysis</a> -->
-                          {{ item.display_name.replace(/<\/?i>/ig, "") }}
-                        </span>
-                        <span v-else>
-                          [Title Missed]
-                        </span>
-                      </h5>
-                      <!-- 论文的作者列表 -->
-                      <ul class="card-author-list">
-                        <li v-for="(author, authorIndex) in item.authorships?.slice(0, 10)">
-                          <!-- 跳转到对应的作者主页 -->
-                          <a @click="jumpToAuthorPage(author.author.id 
-                            ? author.author.id.slice(21)
-                            : '')"
-                          >
-                            <img class="author-avator" src="https://dl.acm.org/pb-assets/icons/DOs/default-profile-1543932446943.svg" />
-                            <span>{{author.author.display_name}}</span>
-                          </a>
-                          <span>, </span>
-                        </li>
-                      </ul>
-                      <!-- 论文的信息：来源（期刊会议）host_venue、发行日期、类型、doi网址 -->
-                      <div class="card-simple-info">
-                        <!-- 跳转到对应的host_venue主页 -->
-                        <span 
-                          class="epub-section__title" 
-                          v-if="item.host_venue"
-                          @click="jumpToVenuePage(item.host_venue.id 
-                            ? item.host_venue.id.slice(21)
-                            : '')"
-                        >
-                          {{item.host_venue.display_name}}
-                        </span>
-                        <!-- 这里由于伪元素位置的影响，必须span里面嵌套一个span -->
-                        <span class="dot-separator">
-                          <span>{{item.publication_date}},&nbsp;&nbsp;</span>
-                          <span>{{item.type}}</span>
-                        </span>
-                        <span class="dot-separator" v-if="item.doi">
-                          <a style="vertical-align: middle;" :href="item.doi">{{item.doi}}</a>
-                        </span>
-                      </div>
-                      <!-- 论文的内容摘要 -->
-                      <div class="card-abstract">
-                        <p>{{item.abstract}}</p>
-                      </div>
-                      <!-- 论文的领域concepts气泡展示，这里只截取前11个 -->
-                      <div class="card-concepts clearfix">
-                        <!-- 跳转到对应的concept主页 -->
-                        <div 
-                          class="card-concepts-wrap" 
-                          v-for="(concept, conceptIndex) in item.concepts.slice(0, 11)"
-                          @click="jumpToConceptPage(concept.id.slice(21))"
-                        >
-                          <i class="iconfont icon-menu"></i>
-                          <div class="card-concept-context">{{concept.display_name}}</div>
-                        </div>
-                      </div>
-                      
-                      <!-- 论文底部简略信息和快捷操作 -->
-                      <div class="card-footer clearfix">
-                        <!-- 论文底部简略信息 -->
-                        <div class="card-footer-left">
-                          <ul class="rlist--inline">
-                            <li class="metric-holder">
-                              <ul class="rlist--inline">
-                                <!-- 引用数量 -->
-                                <li>
-                                  <span class="citation">
-                                    <i class="iconfont icon-quotes" style="font-size: 1.1rem"></i>
-                                    <span>{{item.cited_by_count}}</span>
-                                  </span>
-                                </li>
-                                <!-- 下载数量 -->
-                                <li>
-                                  <span class="metric">
-                                    <i class="iconfont icon-Rise" style="font-size: 1.3rem"></i>
-                                    <span>195</span>
-                                  </span>
-                                </li>
-                              </ul>
-                            </li>
-                          </ul>
-                        </div>
-                        <!-- 论文底部快捷操作 -->
-                        <div class="card-footer-right">
-                          <ul class="rlist--inline" style="float: left;">
-                            <!-- TODO 导出bibtex等引用格式 -->
-                            <li>
-                              <div class="card-tool-btn">
-                                <i class="iconfont icon-quotes" style="font-size: 1.1rem;"></i>
-                                <span class="card-btn-hint">
-                                  <span class="card-btn-hint-arrow"></span>
-                                  Export Citation
-                                </span>
-                              </div>
-                            </li>
-                            <!-- TODO 添加收藏夹的浮窗 -->
-                            <li>
-                              <div class="card-tool-btn">
-                                <i class="iconfont icon-folderplus-fill"></i>
-                                <!-- <i class="iconfont icon-folder-add-fill"></i> -->
-                                <span class="card-btn-hint">
-                                  <span class="card-btn-hint-arrow"></span>
-                                  Add to Favor
-                                </span>
-                              </div>
-                            </li>
-                          </ul>
-                          <ul 
-                            class="rlist--inline dot-separator" style="float: right;"
-                            v-if="(item.open_access.is_oa === 1 || item.host_venue.id || item.doi)"
-                          >
-                            <!-- 
-                              跳转到PDF在线预览的网页
-                              open_access.is_oa
-                              -1  表示没有PDF
-                              0   表示有人已经提交PDF但是正在审核
-                              1   表示有PDF且审核通过
-                             -->
-                            <li v-if="(item.open_access.is_oa === 1)">
-                              <div 
-                                class="card-tool-btn pdf-btn" 
-                                @click="jumpToPDFOnlinePage(item.open_access.oa_url)"
-                              >
-                                <i class="iconfont icon-pdf1" style="font-size: 0.9rem;"></i>
-                                <span class="card-btn-hint">
-                                  <span class="card-btn-hint-arrow"></span>
-                                  View PDF online
-                                </span>
-                              </div>
-                            </li>
-                            <!-- 
-                              跳转到论文源网页的超链接
-                                有论文所属机构的id（URL）时，跳转到对应URL
-                                没有时，跳转到 doi
-                             -->
-                            <li v-if="(item.host_venue.id || item.doi)">
-                              <div 
-                                class="card-tool-btn web-btn" 
-                                @click="jumpToWorkSourceWeb(
-                                  item.host_venue.id 
-                                  ? item.host_venue.id
-                                  : item.doi
-                                )"
-                              >
-                                <i class="iconfont icon-signal-source" style="font-size: 1.3rem;"></i>
-                                <span class="card-btn-hint">
-                                  <span class="card-btn-hint-arrow"></span>
-                                  Get Access to Source Web
-                                </span>
-                              </div>
-                            </li>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                <li class="result-item" v-for="item in searchDataList">
+                  <component :is="searchResCard[searchStore.searchType]" :item="item" />
+                  <!-- <WorksResCard v-if="searchStore.searchType === 'works'" :item="item"/> -->
+                  <!-- <AuthorsResCard v-else-if="searchStore.searchType === 'authors'" :item="item"/> -->
                 </li>
               </ul>
               <!-- 分页器，由于分页只能取到前1万条数据，这里做一个限制 -->
@@ -327,7 +166,13 @@
     即“保留 搜索实体类型、搜索文本、用户选定的每页数据尺寸、用户选定的排序方式；取消 用户设置的筛选条件”
  -->
 <script>
-const sortTypeArray = ["Relevance", "Earliest", "Latest", "Cited"];
+const allEntitySortType = {
+  "works": ["Relevance", "Earliest", "Latest", "Cited"],
+  "authors": ["Relevance", "More Works", "Less Works", "Cited"],
+  "venues": ["Relevance", "More Works", "Less Works", "Cited"],
+  "institutions": ["Relevance", "More Works", "Less Works", "Cited"],
+  "concepts": ["Relevance", "More Works", "Less Works", "Cited"],
+};
 const pageSizeArray = [5, 10, 20];
 </script>
 
@@ -336,11 +181,25 @@ import SearchInput from '../../components/SearchInput/Search.vue';
 import { Search } from '../../api/search';
 import { useSearchStore } from '../../stores/search.js';
 import { ElButton, ElCheckbox, ElCheckboxGroup, ElNotification, ElPagination } from "element-plus";
-import { onMounted, reactive, ref, watch } from 'vue';
-import { useRouter } from 'vue-router';
+import { onMounted, reactive, ref, shallowRef, watch } from 'vue';
 import WorksResCard from './WorksResCard.vue';
+import AuthorsResCard from './AuthorsResCard.vue';
 
-const router = useRouter();
+onMounted(() => {
+  // 默认选中 index = 1 的 每页10条
+  // chosePageSize(1);
+  chosePageSize(0);
+  // 触发一次搜索
+  handleFinalSearch(searchStore.searchInputText, searchStore.searchType);
+});
+const searchResCard = shallowRef({
+  "works": WorksResCard,
+  "authors": AuthorsResCard,
+  "venues": "",
+  "institutions": "",
+  "concepts": "",
+});
+
 const searchStore = useSearchStore();
 // 搜索结果数据列表
 const searchDataList = ref([]);
@@ -369,11 +228,11 @@ const handlePageIndexChangeSearch = () => {
   var data = {
     "entity_type": searchStore.searchType,  // 理论上来说这里只能是 works
     "params": {
-      "filter": buildWorksFilterKey(),
+      "filter": buildAllTypeFilterKey(),
       "page": searchResPageIndex.value,
       "per_page": searchResPageSize.value,
       "search" : searchStore.searchInputText,
-      "sort": buildWorksSortKey(searchStore.sortType),
+      "sort": buildSortKey(),
     }
   };
   console.log("页数更改触发搜索，前端发出的请求体");
@@ -410,6 +269,10 @@ watch(
   }
 );
 
+/**
+ * 切换每页的数据量的DOM
+ * 这里是为了呈现出选中时不一样的样式
+ */
 const pageSizeDom = ref([]);
 const setPageSizeDom = (DOMElement) => {
   pageSizeDom.value.push(DOMElement);
@@ -422,10 +285,8 @@ const chosePageSize = (sizeIndex) => {
   }
   pageSizeDom.value[sizeIndex].classList.add("current");
 }
-onMounted(() => {
-  // 默认选中 index = 1 的 每页10条
-  chosePageSize(1);
-})
+
+
 /**
  * 每页的数据尺寸发生改变时，触发搜索函数
  * @param {number} sizeIndex 新的尺寸在数组中的索引
@@ -437,13 +298,13 @@ const handlePageSizeChangeSearch = (sizeIndex) => {
   // 重置当前页数为第1页
   searchResPageIndex.value = 1;
   var data = {
-    "entity_type": searchStore.searchType,  // 理论上来说这里只能是 works
+    "entity_type": searchStore.searchType,
     "params": {
-      "filter": buildWorksFilterKey(),
+      "filter": buildAllTypeFilterKey(),
       "page": searchResPageIndex.value,
       "per_page": searchResPageSize.value,
       "search" : searchStore.searchInputText,
-      "sort": buildWorksSortKey(searchStore.sortType),
+      "sort": buildSortKey(),
     }
   };
   console.log("页尺寸更改触发搜索，前端发出的请求体");
@@ -473,130 +334,192 @@ const handlePageSizeChangeSearch = (sizeIndex) => {
 
 
 // #region ！！过滤区域 -----------------------------------------------------------------------
-// 过滤器下拉栏DOM
-const worksFilterDOM = ref([]);
-const setWorksFilterDOM = (DOMElement) => {
-  worksFilterDOM.value.push(DOMElement);
+/**
+ * 过滤器下拉栏DOM
+ * 这里由于 ref 是动态绑定在 AllTypeFilterList[searchStore.searchType] 上的
+ * 所以不需要分开，一个就足够了
+ */
+const filterUnitDOM = ref([]);
+const setFilterUnitDOM = (DOMElement) => {
+  filterUnitDOM.value.push(DOMElement);
 };
-
 /**
- * 论文works实体的 过滤器筛选数据列表。
- * 创造一个对象数组。这个数组有7个对象元素，每个对象有5个属性：
+ * 五大实体的 过滤器筛选数据列表。
  */
-const worksFilterList = reactive([
-  {
-    group: "publication_year",
-    title: "发表年份 Publication Year",
-    objectArray: [],
-    stringArray: [],
-    selectedArray: []
-  },
-  {
-    group: "host_venue.id",
-    title: "文献来源 Host Venue",
-    objectArray: [],
-    stringArray: [],
-    selectedArray: []
-  },
-  {
-    // 可以不带有 authorships
-    group: "authorships.author.id",
-    title: "作者 Author",
-    objectArray: [],
-    stringArray: [],
-    selectedArray: []
-  },
-  {
-    group: "authorships.institutions.id",
-    title: "机构 Institution",
-    objectArray: [],
-    stringArray: [],
-    selectedArray: []
-  },
-  {
-    group: "authorships.institutions.country_code",
-    title: "机构所属国家 Country",
-    objectArray: [],
-    stringArray: [],
-    selectedArray: []
-  },
-  {
-    group: "authorships.institutions.type",
-    title: "机构类型 Institution Type",
-    objectArray: [],
-    stringArray: [],
-    selectedArray: []
-  },
-  {
-    group: "concepts.id",
-    title: "文献领域 Concept",
-    objectArray: [],
-    stringArray: [],
-    selectedArray: []
-  },
-]);
-/**
- * 论文authors实体的 过滤器筛选数据列表。
- */
-const authorsFilterList = reactive([
-  {
-    group: "last_known_institution.id",
-    title: "作者机构名称 Author Institution",
-    objectArray: [],
-    stringArray: [],
-    selectedArray: []
-  },
-  {
-    group: "last_known_institution.country_code",
-    title: "所在国家 Institution Country",
-    objectArray: [],
-    stringArray: [],
-    selectedArray: []
-  },
-  {
-    group: "last_known_institution.id",
-    title: "作者机构类型 Institution Type",
-    objectArray: [],
-    stringArray: [],
-    selectedArray: []
-  },
-]);
+const AllTypeFilterList = reactive({
+  "works": [
+    {
+      group: "publication_year",
+      title: "发表年份 Publication Year",
+      objectArray: [],
+      stringArray: [],
+      selectedArray: []
+    },
+    {
+      group: "host_venue.id",
+      title: "文献来源 Host Venue",
+      objectArray: [],
+      stringArray: [],
+      selectedArray: []
+    },
+    {
+      // 可以不带有 authorships
+      group: "authorships.author.id",
+      title: "作者 Author",
+      objectArray: [],
+      stringArray: [],
+      selectedArray: []
+    },
+    {
+      group: "authorships.institutions.id",
+      title: "机构 Institution",
+      objectArray: [],
+      stringArray: [],
+      selectedArray: []
+    },
+    {
+      group: "authorships.institutions.country_code",
+      title: "机构所属国家 Country",
+      objectArray: [],
+      stringArray: [],
+      selectedArray: []
+    },
+    {
+      group: "authorships.institutions.type",
+      title: "机构类型 Institution Type",
+      objectArray: [],
+      stringArray: [],
+      selectedArray: []
+    },
+    {
+      group: "concepts.id",
+      title: "文献领域 Concept",
+      objectArray: [],
+      stringArray: [],
+      selectedArray: []
+    },
+  ],
+  "authors": [
+    {
+      group: "last_known_institution.id",
+      title: "机构 Institution",
+      objectArray: [],
+      stringArray: [],
+      selectedArray: []
+    },
+    {
+      group: "last_known_institution.country_code",
+      title: "机构所属国家 Country",
+      objectArray: [],
+      stringArray: [],
+      selectedArray: []
+    },
+    {
+      group: "last_known_institution.id",
+      title: "机构类型 Institution Type",
+      objectArray: [],
+      stringArray: [],
+      selectedArray: []
+    },
+    {
+      group: "x_concepts.id",
+      title: "领域 Concept",
+      objectArray: [],
+      stringArray: [],
+      selectedArray: []
+    },
+  ],
+  "venues": [
+    {
+      group: "issn",
+      title: "ISSN版本号 ISSN",
+      objectArray: [],
+      stringArray: [],
+      selectedArray: []
+    },
+    {
+      group: "x_concepts.id",
+      title: "领域 Concept",
+      objectArray: [],
+      stringArray: [],
+      selectedArray: []
+    },
+  ],
+  "institutions": [
+    {
+      group: "country_code",
+      title: "机构所属国家 Country",
+      objectArray: [],
+      stringArray: [],
+      selectedArray: []
+    },
+    {
+      group: "type",
+      title: "机构类型 Institution Type",
+      objectArray: [],
+      stringArray: [],
+      selectedArray: []
+    },
+    {
+      group: "x_concepts.id",
+      title: "领域 Concept",
+      objectArray: [],
+      stringArray: [],
+      selectedArray: []
+    },
+  ],
+  "concepts": [
+    {
+      group: "ancestors.id",
+      title: "父级概念 Ancestors Concept",
+      objectArray: [],
+      stringArray: [],
+      selectedArray: []
+    },
+    {
+      group: "level",
+      title: "概念层级 Concept Level",
+      objectArray: [],
+      stringArray: [],
+      selectedArray: []
+    },
+  ],
+});
 
 /**
  * 展开/收起过滤单元的下拉栏
  * 并触发 “分组搜索”
- * @param {HTMLElement} filterDOM 对应的过滤单元的DOM
- * @param {Number} index 过滤单元在整个DOM数组中的位置
+ * @param {HTMLElement} filterDOM 当前搜索筛选列表中的 某个过滤单元对应的DOM
+ * @param {Number} index 过滤单元DOM在整个DOM数组中的位置，也是过滤单元在 当前搜索筛选列表 中的位置
  */
-const handleWorksGroupSearch = (filterDOM, index) => {
+const handleAllTypeGroupSearch = (filterDOM, index) => {
   // 注意这里传入的不是 ref 包裹的DOM元素，而是在模板中自动解析以后的value，直接就是HTMLDOM
   if (filterDOM.classList.contains('js--open')) {
     filterDOM.classList.remove('js--open');   // 收起
   } else {
     var data = {
-      "entity_type": searchStore.searchType,  // 理论上来说这里只能是 works
+      "entity_type": searchStore.searchType,
       "params": {
-        "filter": buildWorksFilterKey(),
-        "group_by": worksFilterList[index].group,
+        "filter": buildAllTypeFilterKey(),
+        // 具体到当前搜索类型对应的筛选列表的某个筛选单元的标题
+        "group_by": AllTypeFilterList[searchStore.searchType][index].group,
         "page": 1,
         "per_page": searchResPageSize.value,
         "search" : searchStore.searchInputText,
-        "sort": buildWorksSortKey(searchStore.sortType),
+        "sort": buildSortKey(),
       }
     };
     console.log("分组搜索，前端发出的请求体");
     console.log(data);
     Search.getGroupDataList(data)
     .then((res) => {
-      // console.log(res.data);
       if (res.data.result === 1) {
         let groupArray = res.data.groups_of_data.group_by;
-        worksFilterList[index].objectArray = groupArray;
-        worksFilterList[index].stringArray = groupArray.map(item => item.key_display_name);
-        // console.log(worksFilterList[index].objectArray);
-        // console.log(worksFilterList[index].stringArray);
+        AllTypeFilterList[searchStore.searchType][index].objectArray = groupArray;
+        // 这是每个筛选单元要呈现在页面中的 选项文本
+        AllTypeFilterList[searchStore.searchType][index].stringArray = groupArray.map(item => item.key_display_name);
       }
-      filterDOM.classList.add('js--open');  // 展开
+      filterDOM.classList.add('js--open');  // 获取数据成功才执行“展开”
     })
     .catch((err) => {
       console.log(err);
@@ -607,7 +530,8 @@ const handleWorksGroupSearch = (filterDOM, index) => {
 // 出现“确认”“取消”勾选的过滤器的按钮
 const confirmFilterSearch = ref(false);
 const handleChange = (index) => {
-  // console.log(worksFilterList[index].selectedArray);
+  console.log("过滤项目在改变");
+  console.log(AllTypeFilterList[searchStore.searchType][index].selectedArray);
   confirmFilterSearch.value = true;
 };
 /**
@@ -616,24 +540,30 @@ const handleChange = (index) => {
  * (对象类型)以便于发送给后端
  * @return 一个对象
  */
-const buildWorksFilterKey = () => {
+const buildAllTypeFilterKey = () => {
   var filter = {};
-  for (let i = 0; i < 7; i++) {
-    // 利用 [] 给对象创建一个键字段
-    filter[worksFilterList[i].group] = "";
+  // 得到当前筛选单元列表
+  const currentFilterList = AllTypeFilterList[searchStore.searchType];
+  var filterListLength = currentFilterList.length;
+
+  for (let i = 0; i < filterListLength; i++) {
+    // 利用 [] 给对象创建一个键字段，
+    // 这里使用的是 静态数据中的group字段，即构造出后端需要的 filter 对象中的键值
+    const groupKey = currentFilterList[i].group;
+    filter[groupKey] = "";
     // 遍历每一个筛选单元中， 代表“选中”的 label 数组
-    for(let j = 0; j < worksFilterList[i].selectedArray.length; j++) {
-      filter[worksFilterList[i].group] += worksFilterList[i].selectedArray[j] + "|";
+    for(let j = 0; j < currentFilterList[i].selectedArray.length; j++) {
+      filter[groupKey] += currentFilterList[i].selectedArray[j] + "|";
     }
     // 去掉最后一个 '|' 字符
-    filter[worksFilterList[i].group] = filter[worksFilterList[i].group].slice(0, -1);
+    filter[groupKey] = filter[groupKey].slice(0, -1);
   }
   return filter;
 };
 /**
  * 确定要进行 “带有搜索筛选字段” 的 搜索
  */
-const handleFilterSearch = () => {
+const handleAllTypeFilterSearch = () => {
   // 收起两个按钮
   confirmFilterSearch.value = false;
   // 上锁，避免触发“页数更改搜索”
@@ -642,18 +572,18 @@ const handleFilterSearch = () => {
   searchResPageIndex.value = 1;
   // 收起所有的筛选单元
   for(let i = 0; i < 7; i++) {
-    if (worksFilterDOM.value[i].classList.contains('js--open')) {
-      worksFilterDOM.value[i].classList.remove('js--open');
+    if (filterUnitDOM.value[i].classList.contains('js--open')) {
+      filterUnitDOM.value[i].classList.remove('js--open');
     }
   }
   var data = {
-    "entity_type": searchStore.searchType,  // 理论上来说这里只能是 works
+    "entity_type": searchStore.searchType,
     "params": {
-      "filter": buildWorksFilterKey(),
+      "filter": buildAllTypeFilterKey(),
       "page": 1,
       "per_page": searchResPageSize.value,
       "search" : searchStore.searchInputText,
-      "sort": buildWorksSortKey(searchStore.sortType),
+      "sort": buildSortKey(),
     }
   };
   console.log("用户筛选搜索，前端发出的请求体");
@@ -686,9 +616,12 @@ const handleFilterSearch = () => {
  */
 const cancelFilterSearch = () => {
   confirmFilterSearch.value = false;
+  // 得到当前筛选单元列表
+  const currentFilterList = AllTypeFilterList[searchStore.searchType];
+  var filterListLength = currentFilterList.length;
   // 清空所有选择
-  for (let i = 0; i < 7; i++) {
-    worksFilterList[i].selectedArray = [];    
+  for (let i = 0; i < filterListLength; i++) {
+    currentFilterList[i].selectedArray = [];    
   }
 };
 // #endregion ！！过滤区域 -----------------------------------------------------------------------
@@ -696,7 +629,10 @@ const cancelFilterSearch = () => {
 
 // #region 右侧函数
 
-// 排序方式下拉栏DOM
+/**
+ * 排序方式下拉栏DOM
+ * 具体选项 由remainSortTypeArray 动态绑定，这里DOM只处理“展开”和“收起”
+ */
 const sortDropdownTarget = ref(null);
 const expandSortDropdown = () => {
   sortDropdownTarget.value.classList.contains('js--open') 
@@ -708,33 +644,92 @@ const expandSortDropdown = () => {
  * (对象类型)以便于发送给后端
  * @return 一个对象
  */
-const buildWorksSortKey = (worksSortType) => {
+const buildSortKey = () => {
   var sort = {};
-  switch (worksSortType) {
-    case "Relevance":
-      break;
-    case "Earliest":
-      sort["publication_date"] = "asc";
-      break;
-    case "Latest":
-      sort["publication_date"] = "desc";
-      break;
-    case "Cited":
-      sort["cited_by_count"] = "desc";
-      break;
+  if (searchStore.searchType === "works") {
+    // 这是因为有可能在sortType为 "More Works" "Less Works" 时切换到 works
+    // 此时就要 重置 排序方式
+    if (searchStore.sortType === "More Works" || searchStore.sortType === "Less Works") {
+      searchStore.sortType = "Relevance";
+    }
+    switch (searchStore.sortType) {
+      case "Relevance":
+        break;
+      case "Earliest":
+        sort["publication_date"] = "asc";
+        break;
+      case "Latest":
+        sort["publication_date"] = "desc";
+        break;
+      case "Cited":
+        sort["cited_by_count"] = "desc";
+        break;
+    }
+  } else {
+    // 这是因为有可能在sortType为 "Earliest" "Latest" 时切换到 除了 works 以外的4大实体
+    // 此时就要 重置 排序方式
+    if (searchStore.sortType === "Earliest" || searchStore.sortType === "Latest") {
+      searchStore.sortType = "Relevance";
+    }
+    switch (searchStore.sortType) {
+      case "Relevance":
+        break;
+      case "More Works":
+        sort["works_count"] = "desc";
+        break;
+      case "Less Works":
+        sort["works_count"] = "asc";
+        break;
+      case "Cited":
+        sort["cited_by_count"] = "desc";
+        break;
+    }
   }
   return sort;
 };
 
-// 初始化默认删去当前选中的排序类型
-const worksSortTypeArray = ref(sortTypeArray.filter(
+
+/**
+ * 排序类型选择数组
+ * 初始化默认删去当前搜索实体 在当前选中的 排序类型
+ */
+const remainSortTypeArray = ref(allEntitySortType[searchStore.searchType].filter(
   (sortType) => sortType !== searchStore.sortType
 ));
+/**
+ * 切换搜索实体类型时
+ * 1.更新排序方式数组备选项
+ * 2.
+ * 和左侧筛选栏不同，这里由于数据没有直接绑定 allEntitySortType[searchStore.searchType]
+ * 所以需要 watch 来完成
+ */
+watch(
+  () => searchStore.searchType,
+  (newSearchType) => {
+    if (newSearchType === "works") {
+      // 这是因为有可能在sortType为 "More Works" "Less Works" 时切换到 works
+      // 此时就要 重置 排序方式
+      if (searchStore.sortType === "More Works" || searchStore.sortType === "Less Works") {
+        searchStore.sortType = "Relevance";
+      }
+    } else {
+      // 这是因为有可能在sortType为 "Earliest" "Latest" 时切换到 除了 works 以外的4大实体
+      // 此时就要 重置 排序方式
+      if (searchStore.sortType === "Earliest" || searchStore.sortType === "Latest") {
+        searchStore.sortType = "Relevance";
+      }
+    }
+    remainSortTypeArray.value = allEntitySortType[newSearchType].filter(
+      (sortType) => sortType !== searchStore.sortType
+    );
+    handleFinalSearch(searchStore.searchInputText, searchStore.searchType);
+  }
+);
 /**
  * 切换排序方式触发的搜索函数
  * @param {String} newSortType 排序类型
  */
-const handleWorksSortSearch = async (newSortType) => {
+const handleAllTypeSortSearch = async (newSortType) => {
   // 点击以后立即收起下拉栏
   expandSortDropdown();
   // 上锁，避免触发“页数更改搜索”
@@ -744,7 +739,7 @@ const handleWorksSortSearch = async (newSortType) => {
   // 记录排序类型，并作持久化处理
   searchStore.setSortType(newSortType);
   // 实现下拉栏中排除当前选中的选项
-  worksSortTypeArray.value = sortTypeArray.filter(
+  remainSortTypeArray.value = allEntitySortType[searchStore.searchType].filter(
     (sortType) => sortType !== searchStore.sortType
   );
   console.log(searchStore.sortType, searchStore.searchInputText, searchStore.searchType);
@@ -753,11 +748,11 @@ const handleWorksSortSearch = async (newSortType) => {
     var data = {
       "entity_type": searchStore.searchType,
       "params": {
-        "filter": buildWorksFilterKey(),
+        "filter": buildAllTypeFilterKey(),
         "page": 1,
         "per_page": searchResPageSize.value,
         "search" : searchStore.searchInputText,
-        "sort" : buildWorksSortKey(searchStore.sortType),
+        "sort" : buildSortKey(),
       }
     }
     console.log("切换排序方式搜索，前端发出的请求体");
@@ -787,24 +782,30 @@ const handleWorksSortSearch = async (newSortType) => {
 };
 
 /**
- * 核心搜索函数
- * TODO 这里需要综合各个实体的 filter/sort 字段构造函数
+ * 核心搜索函数。点击搜索按钮后触发的搜索函数
+ * 这里应该是重置页数为1，取消所有筛选条件，但是保留每页数据的尺寸 + 排序方式
  * @param {String} searchText 搜索文本
  * @param {String} searchEntityType 搜索实体类
  */
 const handleFinalSearch = (searchText, searchEntityType) => {
   console.log(searchText, searchEntityType);
+  // 上锁，避免触发“页数更改搜索”
+  pageIndexChangeSearchLock.value = true;
+  // 重置当前页数为第1页
+  searchResPageIndex.value = 1;
+  // 清空所有筛选选择
+  cancelFilterSearch();
   var data = {
     "entity_type": searchEntityType,
     "params": {
       "page": 1,
       "per_page": searchResPageSize.value,
       "search" : searchText,
+      "sort" : buildSortKey(),
     }
   }
   Search.getSearchDataList(data)
   .then((res) => {
-    // console.log(res);
     if (res.data.result === 1) {
       // console.log(res.data.list_of_data);
       searchDataList.value = res.data.list_of_data[0].results;
@@ -816,6 +817,8 @@ const handleFinalSearch = (searchText, searchEntityType) => {
         type: "success",
         duration: 3000
       });
+      // 解锁，可以触发“页数更改搜索”
+      pageIndexChangeSearchLock.value = false;
     }
   })
   .catch((err) => {
@@ -824,85 +827,11 @@ const handleFinalSearch = (searchText, searchEntityType) => {
       message: err.message,
       type: "error",
       duration: 3000
-    })
+    });
+    // 解锁，可以触发“页数更改搜索”
+    pageIndexChangeSearchLock.value = false;
   })
 };
-
-// #region 卡片内部交互函数
-/**
- * 跳转到论文详情页
- * item.id用于跳转到论文详情页---W2171852244 √
- * @param {String} openAlexPaperId 论文的openAlexId
- */
-const jumpToPaperPage = (openAlexPaperId) => {
-  // console.log(openAlexPaperId);
-  router.push({
-    name: "PaperDetail",
-    params: {paperid: openAlexPaperId}
-  });
-}
-/**
- * 跳转到作者详情页
- * 每一个item.authorships[i].author.id用于跳转到作者详情页---A2164292938 √
- * @param {String} openAlexAuthorId 作者的openAlexId
- */
-const jumpToAuthorPage = (openAlexAuthorId) => {
-  // console.log(openAlexAuthorId);
-  if (openAlexAuthorId) {
-    router.push({
-      name: 'OpenAlexAuthorDetail',
-      params: {tokenid: openAlexAuthorId}
-    });
-  }
-};
-/**
- * 跳转到期刊详情页
- * item.host_venue.id用于跳转到期刊-- V1983995261 √
- * （这个可能host_venue整个为空，也可能只有这个字段为空）
- * @param {String} openAlexVenueId 作为论文来源的期刊/会议的openAlexId
- */
-const jumpToVenuePage = (openAlexVenueId) => {
-  console.log(openAlexVenueId);
-  if (openAlexVenueId) {
-    // router.push({
-    //   name: '',
-    //   params: {tokenid: openAlexAuthorId}
-    // });
-  }
-};
-/**
- * 跳转到领域详情页
- * 每一个item.concept[i].id用于跳转到领域详情页-- C2778805511 √
- * @param {String} openAlexConceptId 论文领域的openAlexId
- */
-const jumpToConceptPage = (openAlexConceptId) => {
-  console.log(openAlexConceptId);
-  router.push({
-    name: 'ConceptDetail',
-    params: {tokenid: openAlexConceptId}
-  });
-};
-/**
- * 跳转到PDF在线预览网页
- * @param {String[URL]} pdfURL PDF在线预览网页
- */
-const jumpToPDFOnlinePage = (pdfURL) => {
-  // console.log(pdfURL);
-  window.location.href = pdfURL;
-};
-/**
- * 跳转到论文源网址
- * @param {String[URL]} webURL 论文源网址
- */
-const jumpToWorkSourceWeb = (webURL) => {
-  // console.log(webURL);
-  window.location.href = webURL;
-};
-
-// #endregion 卡片内部交互函数
-
-
-
 
 // #endregion 右侧函数
 </script>
@@ -988,7 +917,7 @@ a, a:hover, a:focus {
 
 .sticko__child {
   overflow-x: hidden;
-  border: 1px solid black;
+  /* border: 1px solid black; */
 }
 
 .colored-block {
@@ -1245,7 +1174,7 @@ a, a:hover, a:focus {
 .search-result__sort-right .sort-type .sort-type-btn {
   display: inline-block;
   position: relative;
-  width: 175px;
+  width: 200px;
   /* width: auto; */
   /* padding: .3125rem 0 1.25rem; */
   /* 这里主要是调整 Sort Type 和 Per Page 差不多高 */
@@ -1351,7 +1280,10 @@ a, a:hover, a:focus {
   box-shadow: 0 0.3125rem 0.5rem rgb(0 0 0 / 10%);
   background: #fff;
   word-break: break-word;
+  position: relative;
 }
+
+/* #region works实体卡片 */
 .result-item__citation {
   vertical-align: top;
   /* 12px */
@@ -1378,6 +1310,7 @@ a, a:hover, a:focus {
   font-weight: 400;
   text-transform: capitalize;
 }
+
 .result-item__content {
   display: inline-block;
 }
@@ -1649,6 +1582,25 @@ img {
   box-sizing: border-box;
 }
 /* #endregion 卡片底部右侧快捷操作 */
+
+/* #endregion works实体卡片 */
+
+/* #region authors实体卡片 */
+.author-card-avator {
+  display: none;
+
+}
+@media (min-width: 768px) {
+  .author-card-avator {
+    display: inline-block;
+    /* 这里需要卡片最外层 result-item-card 开相对定位 */
+    position: absolute;
+    top: 50%;
+    left: calc(8.75rem / 2);
+    transform: translate(-50%, -50%);
+  }
+}
+/* #endregion authors实体卡片 */
 
 /* #endregion 搜索列表和单个搜索卡片结束 */
 
