@@ -21,6 +21,10 @@
                   <div class="title">机构</div>
                   <div class="data">{{outputInstitution.toFixed(0)}}</div>
                </div>
+               <div class="box">
+                  <div class="title">领域</div>
+                  <div class="data">{{outputConcept.toFixed(0)}}</div>
+               </div>
             </div>
             <div class="earth">
             <iframe 
@@ -108,6 +112,10 @@ const outputWork = useTransition(workCount, {
   transition: TransitionPresets.linear,
 })
 const outputVenue = useTransition(venueCount, {
+  duration: 1000,
+  transition: TransitionPresets.linear,
+})
+const outputConcept = useTransition(conceptCount, {
   duration: 1000,
   transition: TransitionPresets.linear,
 })
