@@ -22,6 +22,13 @@
                   <div class="data">{{outputInstitution.toFixed(0)}}</div>
                </div>
             </div>
+            <div class="earth">
+               <iframe 
+            frameborder="0"
+            width="800" height="600"
+            src="https://scholar.super2021.com/earth/">
+            </iframe>
+            </div>
          </div>
          <div v-if="loading">
             loading...
@@ -147,8 +154,7 @@ onMounted(() => {
 
 .main{
    height:75vh;
-   background-color: #eeeeee;
-   background-image: url("../assets/images/login_bg.svg");
+   background-color: #040d21;
 	background-size: cover;
    position: sticky;
    z-index: 0;
@@ -175,13 +181,17 @@ onMounted(() => {
          .data{
             font-size: large;
             font-weight: 900;
-            color: rgb(63, 43, 43);
+            color: rgb(207, 198, 198);
             margin-top: 1rem;
             text-align: center;
          }
       }
    }
-   
+   .earth{
+         position: absolute;
+         top: 5vh;
+         right: 5vw;
+      }
    @media screen and (max-width:992px) {
    .main{
       height: 100vh;
