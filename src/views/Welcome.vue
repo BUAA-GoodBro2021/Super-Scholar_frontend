@@ -202,6 +202,9 @@ onMounted(() => {
    .intro{
       display: none;
    }
+   .earth{
+      display: none;
+   }
    }  
 }
 
