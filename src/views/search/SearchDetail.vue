@@ -132,8 +132,6 @@
                 <!-- 单个搜索结果卡片 -->
                 <li class="result-item" v-for="item in searchDataList">
                   <component :is="searchResCard[searchStore.searchType]" :item="item" />
-                  <!-- <WorksResCard v-if="searchStore.searchType === 'works'" :item="item"/> -->
-                  <!-- <AuthorsResCard v-else-if="searchStore.searchType === 'authors'" :item="item"/> -->
                 </li>
               </ul>
               <!-- 分页器，由于分页只能取到前1万条数据，这里做一个限制 -->
@@ -183,6 +181,8 @@ import { ElButton, ElCheckbox, ElCheckboxGroup, ElNotification, ElPagination } f
 import { onMounted, reactive, ref, shallowRef, watch } from 'vue';
 import WorksResCard from './WorksResCard.vue';
 import AuthorsResCard from './AuthorsResCard.vue';
+import InstitutionsResCard from './InstitutionsResCard.vue';
+
 
 onMounted(() => {
   // 默认选中 index = 1 的 每页10条
@@ -196,7 +196,7 @@ const searchResCard = shallowRef({
   "works": WorksResCard,
   "authors": AuthorsResCard,
   "venues": "",
-  "institutions": "",
+  "institutions": InstitutionsResCard,
   "concepts": "",
 });
 

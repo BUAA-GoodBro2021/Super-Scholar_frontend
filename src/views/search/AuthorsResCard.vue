@@ -70,7 +70,7 @@
 
       <!-- 作者底部简略信息和快捷操作 -->
       <div class="card-footer clearfix">
-        <!-- 作者底部简略信息 -->
+        <!-- 作者底部简略信息（已经完成） -->
         <div class="card-footer-left">
           <ul class="rlist--inline">
             <li class="metric-holder">
@@ -93,6 +93,7 @@
             </li>
           </ul>
         </div>
+
         <!-- 作者底部快捷操作（可能取消） -->
         <div class="card-footer-right">
           <ul class="rlist--inline" style="float: left;">
