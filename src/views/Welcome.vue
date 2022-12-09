@@ -23,7 +23,7 @@
                </div>
             </div>
             <div class="earth">
-               <iframe 
+            <iframe 
             frameborder="0"
             width="810" height="610"
             src="https://scholar.super2021.com/earth/">
@@ -146,7 +146,6 @@ onMounted(() => {
    display: table;
    clear: both;
 }
-
 .client-body {
    margin-top: 64px;
    height: calc(100vh - 64px);
@@ -190,7 +189,7 @@ onMounted(() => {
    .earth{
          position: absolute;
          top: 1vh;
-         right: -2vw;
+         right:0;
          z-index:-2;
       }
    @media screen and (max-width:992px) {
