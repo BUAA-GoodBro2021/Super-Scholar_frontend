@@ -124,6 +124,7 @@ const router = createRouter({
           name: 'InstitutionDetail',
           component: ()=>import('../views/institution/InstitutionDetail.vue'),
         },
+        // 领域concept详情页
         {
           path: 'concept/:tokenid',
           name: 'ConceptDetail',

@@ -15,7 +15,7 @@
       <div class="result-content clearfix">
         <div class="row clearfix">
           <!-- 左侧筛选部分 -->
-          <div class="col-lg-3 col-md-3 col-sm-4 ">
+          <div class="col-lg-3 col-md-3 col-sm-4" style="border: 1px solid black;">
             <ElButton v-if="confirmFilterSearch" @click="handleFilterSearch">确认更改测试</ElButton>
             <ElButton v-if="confirmFilterSearch" @click="cancelFilterSearch">取消更改测试</ElButton>
             <div class="sticko__child colored-block">
@@ -146,13 +146,13 @@
                       </h5>
                       <!-- 论文的作者列表 -->
                       <ul class="card-author-list">
-                        <li v-for="(author, authorIndex) in item.authorships">
+                        <li v-for="(author, authorIndex) in item.authorships?.slice(0, 10)">
                           <!-- 跳转到对应的作者主页 -->
                           <a @click="jumpToAuthorPage(author.author.id 
                             ? author.author.id.slice(21)
                             : '')"
                           >
-                            <img class="author-avator"  src="https://dl.acm.org/pb-assets/icons/DOs/default-profile-1543932446943.svg" />
+                            <img class="author-avator" src="https://dl.acm.org/pb-assets/icons/DOs/default-profile-1543932446943.svg" />
                             <span>{{author.author.display_name}}</span>
                           </a>
                           <span>, </span>
@@ -247,8 +247,7 @@
                             </li>
                           </ul>
                           <ul 
-                            class="rlist--inline dot-separator" 
-                            style="float: right;"
+                            class="rlist--inline dot-separator" style="float: right;"
                             v-if="(item.open_access.is_oa === 1 || item.host_venue.id || item.doi)"
                           >
                             <!-- 
@@ -298,7 +297,7 @@
                   </div>
                 </li>
               </ul>
-
+              <!-- 分页器，由于分页只能取到前1万条数据，这里做一个限制 -->
               <div class="search-result__pagination">
                 <div class="pagination-container">
                   <ElPagination
@@ -347,17 +346,21 @@ const searchStore = useSearchStore();
 const searchDataList = ref([]);
 // 搜索结果总数
 var totalSearchResNum = ref(0);
-// 当前需要的搜索结果是第几页，‘
-// 注意，除了“页数更改搜索”外，“过滤搜索”、“排序搜索”都会重置当前页数为第1页
-// “分组搜索” 和 页数、页尺寸无关
-// “页尺寸更改搜索” 不会重置当前页数
+/**
+ * 当前需要的搜索结果是第几页。
+ * 注意，除了“页数更改搜索”外，“过滤搜索”、“排序搜索”、“页尺寸更改搜索”都会重置当前页数为第1页。
+ * “分组搜索” 和 页数、页尺寸无关。
+ */
 const searchResPageIndex =  ref(1);
 // 搜索结果每一页的尺寸
 const searchResPageSize = ref(10);
-// 因为除了“页数更改搜索”外，“过滤搜索”、“排序搜索”都会重置当前页数为第1页
-// 触发了对于 searchResPageIndex 的监听
-// “分组搜索” 和 页数、页尺寸无关
-// 所以在这些搜索触发时，不应该触发“页数更改搜索”
+/**
+ * “页数更改搜索”的防止误触逻辑锁
+ * 因为除了“页数更改搜索”外，“过滤搜索”、“排序搜索”、“页尺寸更改搜索”都会重置当前页数为第1页
+ * “分组搜索” 和 页数、页尺寸无关
+ * 对当前页数的重置在原来页数不为1时会触发对于 searchResPageIndex 的监听
+ * 在这些搜索触发时，不应该触发“页数更改搜索”
+ */
 const pageIndexChangeSearchLock = ref(false);
 /**
  * 页数坐标发生改变时，触发搜索函数
@@ -476,7 +479,10 @@ const setWorksFilterDOM = (DOMElement) => {
   worksFilterDOM.value.push(DOMElement);
 };
 
-// 过滤器筛选数据列表。创造一个对象数组。这个数组有7个对象元素，每个对象有5个属性：
+/**
+ * 论文works实体的 过滤器筛选数据列表。
+ * 创造一个对象数组。这个数组有7个对象元素，每个对象有5个属性：
+ */
 const worksFilterList = reactive([
   {
     group: "publication_year",
@@ -524,6 +530,32 @@ const worksFilterList = reactive([
   {
     group: "concepts.id",
     title: "文献领域 Concept",
+    objectArray: [],
+    stringArray: [],
+    selectedArray: []
+  },
+]);
+/**
+ * 论文authors实体的 过滤器筛选数据列表。
+ */
+const authorsFilterList = reactive([
+  {
+    group: "last_known_institution.id",
+    title: "作者机构名称 Author Institution",
+    objectArray: [],
+    stringArray: [],
+    selectedArray: []
+  },
+  {
+    group: "last_known_institution.country_code",
+    title: "所在国家 Institution Country",
+    objectArray: [],
+    stringArray: [],
+    selectedArray: []
+  },
+  {
+    group: "last_known_institution.id",
+    title: "作者机构类型 Institution Type",
     objectArray: [],
     stringArray: [],
     selectedArray: []
@@ -893,8 +925,8 @@ a, a:hover, a:focus {
 .search-detail-container{
   box-sizing: border-box;
   /* background-color: rgb(228 228 231); */
-  background-color: rgb(234, 234, 234);
-  /* background-color: rgb(255, 255, 255); */
+  /* background-color: rgb(234, 234, 234); */
+  background-color: rgb(255, 255, 255);
   font-family: Merriweather Sans,sans-serif;
   line-height: 1.4;
   word-wrap: break-word;
@@ -949,14 +981,14 @@ a, a:hover, a:focus {
 .col-xs-1, .col-xs-2, .col-xs-3, .col-xs-4, .col-xs-5, .col-xs-6, 
 .col-xs-7, .col-xs-8, .col-xs-9, .col-xs-10, .col-xs-11, .col-xs-12 {
   position: relative;
-  min-height: .0625rem; /* 1px */
+  min-height: 1px;
   padding-left: 15px;
   padding-right: 15px;
 }
 
 .sticko__child {
   overflow-x: hidden;
-  /* border: 1px solid black; */
+  border: 1px solid black;
 }
 
 .colored-block {
@@ -1059,7 +1091,7 @@ a, a:hover, a:focus {
 /* ::-webkit-scrollbar-thumb 滚动条里面可以拖动的那个 */
 .filter-block::-webkit-scrollbar-thumb {
   background-color: #e4e4e7 !important;
-  border-radius: 10px;
+  border-radius: 5px;
 }
 /* ::-webkit-scrollbar-track 外层轨道 */
 .filter-block::-webkit-scrollbar-track {
@@ -1078,14 +1110,16 @@ a, a:hover, a:focus {
   font-weight: 600;
   color: #454545;
 }
+/* 这里取消了左右边框 */
 .expand__list li {
   box-sizing: border-box;
   margin: 0 -.9375rem;
   background-color: #fff;
   padding: 13px 15px;
   line-height: 14px;
-  border: 1px solid rgba(0,0,0,.07);
-  border-top-color: rgba(0,0,0,.12);
+  /* border: 1px solid rgba(0,0,0,.07); */
+  border-top: 1px solid rgba(0,0,0,.12);
+  /* border-top-color: rgba(0,0,0,.12); */
   border-bottom: none;
 }
 .expand__list li .chose-label {

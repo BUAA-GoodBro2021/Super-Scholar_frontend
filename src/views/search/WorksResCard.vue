@@ -19,7 +19,7 @@
       </h5>
       <!-- 论文的作者列表 -->
       <ul class="card-author-list">
-        <li v-for="(author, authorIndex) in item.authorships">
+        <li v-for="(author, authorIndex) in item.authorships?.slice(0, 10)">
           <!-- 跳转到对应的作者主页 -->
           <a @click="jumpToAuthorPage(author.author.id
             ? author.author.id.slice(21)
