@@ -192,6 +192,7 @@ onMounted(() => {
   // 触发一次搜索
   handleFinalSearch(searchStore.searchInputText, searchStore.searchType);
 });
+// 和动态组件配合，实现在搜索实体不同时，返回不同的卡片类型
 const searchResCard = shallowRef({
   "works": WorksResCard,
   "authors": AuthorsResCard,
@@ -223,6 +224,7 @@ const searchResPageSize = ref(10);
 const pageIndexChangeSearchLock = ref(false);
 /**
  * 页数坐标发生改变时，触发搜索函数
+ * “页数更改搜索”
  */
 const handlePageIndexChangeSearch = () => {
   var data = {
@@ -269,8 +271,10 @@ watch(
   }
 );
 
+
+// #region 每页数据量尺寸相关 -----------------------------------------------------------------------
 /**
- * 切换每页的数据量的DOM
+ * 切换每页的数据量尺寸的DOM
  * 这里是为了呈现出选中时不一样的样式
  */
 const pageSizeDom = ref([]);
@@ -285,8 +289,6 @@ const chosePageSize = (sizeIndex) => {
   }
   pageSizeDom.value[sizeIndex].classList.add("current");
 }
-
-
 /**
  * 每页的数据尺寸发生改变时，触发搜索函数
  * @param {number} sizeIndex 新的尺寸在数组中的索引
@@ -331,6 +333,7 @@ const handlePageSizeChangeSearch = (sizeIndex) => {
     pageIndexChangeSearchLock.value = false; 
   })
 };
+// #endregion 每页数据量尺寸相关 --------------------------------------------------------------------
 
 
 // #region ！！过滤区域 -----------------------------------------------------------------------
@@ -627,7 +630,14 @@ const cancelFilterSearch = () => {
 // #endregion ！！过滤区域 -----------------------------------------------------------------------
 
 
-// #region 右侧函数
+// #region 数据结果排序类型相关 -----------------------------------------------------------------------
+/**
+ * 排序类型选择数组
+ * 初始化默认删去当前搜索实体 在当前选中的 排序类型
+ */
+const remainSortTypeArray = ref(allEntitySortType[searchStore.searchType].filter(
+  (sortType) => sortType !== searchStore.sortType
+));
 
 /**
  * 排序方式下拉栏DOM
@@ -688,19 +698,12 @@ const buildSortKey = () => {
   return sort;
 };
 
-
-/**
- * 排序类型选择数组
- * 初始化默认删去当前搜索实体 在当前选中的 排序类型
- */
-const remainSortTypeArray = ref(allEntitySortType[searchStore.searchType].filter(
-  (sortType) => sortType !== searchStore.sortType
-));
 /**
  * 切换搜索实体类型时
- * 1.更新排序方式数组备选项
- * 2.
- * 和左侧筛选栏不同，这里由于数据没有直接绑定 allEntitySortType[searchStore.searchType]
+ * 1.排除 因搜索实体不同、合法的排序方式不同 而产生的非法情况
+ * 2.更新排序方式数组备选项，排除当前选中的类型那一条
+ * 3.触发 “点击一次按钮搜索”
+ * 和左侧筛选栏不同，排序方式数组的数据 没有直接绑定 allEntitySortType[searchStore.searchType]
  * 所以需要 watch 来完成
  */
 watch(
@@ -719,12 +722,14 @@ watch(
         searchStore.sortType = "Relevance";
       }
     }
+    // 更新排序方式数组备选项，排除当前选中的类型那一条
     remainSortTypeArray.value = allEntitySortType[newSearchType].filter(
       (sortType) => sortType !== searchStore.sortType
     );
     handleFinalSearch(searchStore.searchInputText, searchStore.searchType);
   }
 );
+
 /**
  * 切换排序方式触发的搜索函数
  * @param {String} newSortType 排序类型
@@ -738,7 +743,8 @@ const handleAllTypeSortSearch = async (newSortType) => {
   searchResPageIndex.value = 1;
   // 记录排序类型，并作持久化处理
   searchStore.setSortType(newSortType);
-  // 实现下拉栏中排除当前选中的选项
+  
+  // 更新排序方式数组备选项，排除当前选中的类型那一条
   remainSortTypeArray.value = allEntitySortType[searchStore.searchType].filter(
     (sortType) => sortType !== searchStore.sortType
   );
@@ -780,6 +786,8 @@ const handleAllTypeSortSearch = async (newSortType) => {
     })
   }
 };
+// #endregion 数据结果排序类型相关 --------------------------------------------------------------------
+
 
 /**
  * 核心搜索函数。点击搜索按钮后触发的搜索函数
@@ -833,7 +841,6 @@ const handleFinalSearch = (searchText, searchEntityType) => {
   })
 };
 
-// #endregion 右侧函数
 </script>
 
 <style scoped>
