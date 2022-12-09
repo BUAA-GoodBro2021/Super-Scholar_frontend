@@ -17,6 +17,7 @@
           [Title Missed]
         </span>
       </h5>
+      
       <!-- 论文的作者列表 -->
       <ul class="card-author-list">
         <li v-for="(author, authorIndex) in item.authorships?.slice(0, 10)">
@@ -31,6 +32,7 @@
           <span>, </span>
         </li>
       </ul>
+      
       <!-- 论文的信息：来源（期刊会议）host_venue、发行日期、类型、doi网址 -->
       <div class="card-simple-info" v-if="notInCollection">
         <!-- 跳转到对应的host_venue主页 -->
@@ -52,17 +54,19 @@
           <a style="vertical-align: middle;" :href="item.doi">{{ item.doi }}</a>
         </span>
       </div>
+      
       <!-- 论文的内容摘要 -->
       <div class="card-abstract" v-if="notInCollection">
         <p>{{ item.abstract }}</p>
       </div>
+
       <!-- 论文的领域concepts气泡展示，这里只截取前11个 -->
       <div class="card-concepts clearfix" v-if="notInCollection">
         <!-- 跳转到对应的concept主页 -->
         <div
           class="card-concepts-wrap"
-          v-for="(concept, conceptIndex) in item.concepts?.slice(0, 11)"
-          @click="jumpToConceptPage(concept.id.slice(21))"
+          v-for="concept in item.concepts?.slice(0, 11)"
+          @click="jumpToConceptPage(concept.id?.slice(21))"
         >
           <i class="iconfont icon-menu"></i>
           <div class="card-concept-context">{{ concept.display_name }}</div>
@@ -94,6 +98,7 @@
             </li>
           </ul>
         </div>
+
         <!-- 论文底部快捷操作 -->
         <div class="card-footer-right">
           <ul class="rlist--inline" style="float: left;">
@@ -193,14 +198,16 @@ const props = defineProps({
     default: true,
   }
 });
+
 // #region 卡片内部交互函数
+
 /**
  * 跳转到论文详情页
  * item.id用于跳转到论文详情页---W2171852244 √
  * @param {String} openAlexPaperId 论文的openAlexId
  */
  const jumpToPaperPage = (openAlexPaperId) => {
-  // console.log(openAlexPaperId);
+  console.log(openAlexPaperId);
   router.push({
     name: "PaperDetail",
     params: {paperid: openAlexPaperId}
@@ -212,7 +219,7 @@ const props = defineProps({
  * @param {String} openAlexAuthorId 作者的openAlexId
  */
 const jumpToAuthorPage = (openAlexAuthorId) => {
-  // console.log(openAlexAuthorId);
+  console.log(openAlexAuthorId);
   if (openAlexAuthorId) {
     router.push({
       name: 'OpenAlexAuthorDetail',

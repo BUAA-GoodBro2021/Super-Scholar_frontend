@@ -158,12 +158,11 @@
   </div>
 </template>
 <!-- 
-  测试备注，cnn和cnn21 搜索的结果是大于15个、等于4个
-  用于测试页面布局。
-  整体的搜索应对刷新的逻辑是：
-    刷新页面以后，依然按照用户设定的 searchType searchText pageSize sortType 进行一次搜索
-    但是过滤条件对象重置为空，不向后端传递。
-    即“保留 搜索实体类型、搜索文本、用户选定的每页数据尺寸、用户选定的排序方式；取消 用户设置的筛选条件”
+整体的搜索应对刷新的逻辑是：
+  刷新页面以后，依然按照用户设定的 searchType searchText pageSize sortType 进行一次搜索
+  但是过滤条件对象重置为空，不向后端传递。pageIndex 重置为 1。即：
+  “保留 搜索实体类型、搜索文本、用户选定的每页数据尺寸、用户选定的排序方式；
+  取消 用户设置的筛选条件；重置当前页索引是 1”
  -->
 <script>
 const allEntitySortType = {
@@ -790,8 +789,11 @@ const handleAllTypeSortSearch = async (newSortType) => {
 
 
 /**
- * 核心搜索函数。点击搜索按钮后触发的搜索函数
- * 这里应该是重置页数为1，取消所有筛选条件，但是保留每页数据的尺寸 + 排序方式
+ * 核心搜索函数。点击搜索按钮/刷新后触发的搜索函数
+ * > 刷新页面以后，依然按照用户设定的 searchType searchText pageSize sortType 进行一次搜索
+ * > 但是过滤条件对象重置为空，不向后端传递。pageIndex 重置为 1。即：
+ * > “保留 搜索实体类型、搜索文本、用户选定的每页数据尺寸、用户选定的排序方式；
+ * > 取消 用户设置的筛选条件；重置当前页索引是 1”
  * @param {String} searchText 搜索文本
  * @param {String} searchEntityType 搜索实体类
  */
@@ -858,6 +860,17 @@ a, a:hover, a:focus {
   display: table;
   clear: both;
 }
+
+.rlist--inline {
+  cursor: default;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.rlist--inline>li {
+  display: inline-block;
+}
+
 .search-detail-container{
   box-sizing: border-box;
   /* background-color: rgb(228 228 231); */
@@ -1271,345 +1284,13 @@ a, a:hover, a:focus {
 
 /* #endregion 当前排序的类型 */
 
-/* #region 搜索列表和单个搜索卡片 */
 .result-item {
   width: 100%;
   display: inline-block;
   font-size: .875rem;
 }
 
-.result-item-card {
-  /* 30px */
-  margin-left: 1.875rem;
-  /* 15px */
-  margin-top: .9375rem;
-  padding: .9375rem;
-  box-shadow: 0 0.3125rem 0.5rem rgb(0 0 0 / 10%);
-  background: #fff;
-  word-break: break-word;
-  position: relative;
-}
 
-/* #region works实体卡片 */
-.result-item__citation {
-  vertical-align: top;
-  /* 12px */
-  font-size: .75rem;
-  text-transform: uppercase;
-}
-@media (min-width: 768px) {
-  .result-item__citation {
-    width: 8.75rem;
-    display: inline-block;
-    margin-bottom: 0;
-  }
-}
-.citation-heading{
-  margin-top: .25rem;
-  margin-right: .625rem;
-  font-weight: 600;
-}
-.citation-date {
-  display: inline-block;
-  color: #757575;
-  margin-bottom: .25rem;
-  font-size: .75rem;
-  font-weight: 400;
-  text-transform: capitalize;
-}
-
-.result-item__content {
-  display: inline-block;
-}
-@media (min-width: 992px) {
-  .result-item__content {
-    width: calc(100% - 8.75rem);
-    float: right;
-  }
-}
-
-.card-title {
-  color: #0077c2;
-  font-weight: 500;
-  /* font-family: Merriweather,serif; */
-  font-family: 'Times New Roman', Times, "Microsoft YaHei", serif;
-  font-size: 1.25rem;
-  margin-bottom: .625rem;
-  cursor: pointer;
-}
-
-.card-author-list {
-  list-style: none;
-  height: auto;
-  padding: 0;
-  margin: 0 0 .625rem;
-  color: #6b6b6b;
-  font-size: .875rem;
-}
-.card-author-list > li:not(:last-child) {
-  margin-right: .3125rem;
-} 
-.card-author-list > li {
-  display: inline-block;
-  line-height: 2rem;
-}
-.card-author-list a {
-  text-decoration: underline;
-  color: inherit;
-  cursor: pointer;
-  background-color: transparent;
-}
-.card-author-list img {
-  filter: grayscale(100%);
-  transition: all .2s ease-in-out;
-}
-img {
-  max-width: 100%;
-  border-style: none;
-}
-.author-avator {
-  width: 1.5rem;
-  height: 1.5rem;
-  margin-right: .3125rem;
-  box-sizing: content-box;
-  vertical-align: middle;
-  padding-right: 0;
-  border-radius: 50%;
-  object-fit: cover;
-  object-position: top;
-}
-.card-simple-info {
-  color: #6b6b6b;
-  margin: .625rem 0;
-  box-sizing: border-box;
-}
-.card-simple-info span{
-  display: inline-block;
-  vertical-align: middle;
-}
-.card-simple-info .epub-section__title{
-  font-size: 14px;
-  box-sizing: border-box;
-  cursor: pointer;
-}
-
-.card-abstract {
-  height: auto;
-  margin: 0.9rem 0;
-  font-size: 1rem;
-  font-family: 'Times New Roman', Times, "Microsoft YaHei", serif;
-  /* FIXME 下面四行一起用可以实现多行溢出文本用省略号 "..." 代替，保证不超过一行 */
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 4;
-}
-
-.card-concepts {
-  height: auto;
-  margin-bottom: .8rem;
-}
-
-.card-concepts .card-concepts-wrap{
-  float: left;
-  margin-right: 10px;
-  margin-bottom: 5px;
-  padding: 3px 5px;
-  box-sizing: border-box;
-  border: 1.6px solid black;
-  border-radius: 5px;
-  font-size: 14px;
-  cursor: pointer;
-}
-.card-concepts .card-concepts-wrap i{
-  display: inline-block;
-  margin-right: 3px;
-}
-.card-concepts .card-concepts-wrap .card-concept-context{
-  display: inline-block;
-  text-transform: capitalize;
-}
-
-
-.card-footer {
-  height: auto;
-}
-
-.rlist--inline {
-  cursor: default;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-.rlist--inline>li {
-  display: inline-block;
-}
-
-/* #region 卡片底部左侧简略信息 */
-.card-footer-left {
-  float: left;
-}
-.card-footer-left li {
-  /* 6px */
-  padding-right: .375rem;
-}
-.card-footer-left > ul > li {
-  vertical-align: text-top;
-}
-@media (min-width: 533px) {
-  .card-footer-left > ul > li {
-    border-right: .0625rem solid #d9d9d9;
-    margin-right: .4375rem;
-  }
-}
-
-.metric-holder {
-  outline: none;
-  position: relative;
-  display: inline-block;
-  font-weight: 600;
-}
-.card-footer-left .citation {
-  color: #0077c2;
-}
-.card-footer-left .metric {
-  color: #651fff;
-}
-.card-footer-left li i{
-  padding-right: .375rem;
-  vertical-align: sub;
-  transition: transform .5s;
-}
-
-/* #endregion 卡片底部左侧简略信息结束 */
-
-/* #region 卡片底部右侧快捷操作 */
-.card-footer-right {
-  float: right;
-}
-/**
-  这里因为上面规定了 .rlist--inline li 元素是 display:inline-block;
-  vertical-align 用来指定行内元素（inline）或表格单元格（table-cell）元素的垂直对齐方式。
-*/
-.card-footer-right .rlist--inline li {
-  vertical-align: middle;
-  position: relative;
-}
-
-/* #region 单个底部工具按钮+下拉栏 */
-.card-footer-right .rlist--inline li .card-tool-btn:hover {
-  background-color: #d7d7d7;
-  cursor: pointer;
-}
-.card-footer-right .rlist--inline li .card-tool-btn {
-  position: relative;
-  display: inline-block;
-  /* 32px */
-  width: 2rem;
-  height: 2rem;
-  line-height: 1.75rem;
-  padding: 0;
-  margin: 0 3px;
-  font-size: 17px;
-  border-radius: 2px;
-  color: #6b6b6b;
-  background: #f0f0f0;
-
-  display: inline-block;
-  white-space: nowrap;
-  text-align: center;
-  vertical-align: middle;
-}
-
-.card-footer-right .rlist--inline li .card-tool-btn.pdf-btn:hover {
-  /* background-color: #d44848; */
-  background-color: #e34444;
-}
-.card-footer-right .rlist--inline li .card-tool-btn.pdf-btn {
-  background-color: #d40c03;
-  color: white;
-}
-.card-footer-right .rlist--inline li .card-tool-btn.web-btn:hover {
-  background-color: #319ddf;
-}
-.card-footer-right .rlist--inline li .card-tool-btn.web-btn {
-  background-color: #0077c2;
-  color: white;
-}
-.card-footer-right .rlist--inline li .card-tool-btn i{
-  vertical-align: middle;
-  padding-right: 0;
-}
-
-.card-footer-right .rlist--inline li:hover .card-tool-btn .card-btn-hint{
-  display: inline-block;
-}
-.card-footer-right .rlist--inline li .card-tool-btn .card-btn-hint{
-  display: none;
-  position: absolute;
-  top: calc(2rem + 0.8rem);
-  left: 50%;
-  transform: translate(-50%, 0);
-  background: #6b6b6b;
-  padding: 10px 15px;
-  color: #fff;
-  border-radius: 3px;
-  font-size: 14px;
-  line-height: 20px;
-  z-index: 9020;
-  max-width: 300px;
-}
-/* 
-经典的利用 宽度高度为0，边框宽度不为0，形成三角形
-*/
-.card-footer-right .rlist--inline li:hover .card-tool-btn .card-btn-hint .card-btn-hint-arrow{
-  display: inline-block;
-}
-.card-footer-right .rlist--inline li .card-tool-btn .card-btn-hint .card-btn-hint-arrow{
-  display: none;
-  width: 0;
-  height: 0;
-  border: .625rem solid #6b6b6b;
-  transform: rotate(45deg);
-  position: absolute;
-  top: -.1875rem;
-  left: calc(50% - .625rem);
-  z-index: -1;
-}
-/* #endregion 单个底部工具按钮+下拉栏 结束 */
-
-.dot-separator::before {
-  color: #6b6b6b;
-  content: "•";
-  padding-right: 5px;
-  padding-left: 5px;
-  font-weight: 600;
-  font-size: 19px;
-  vertical-align: middle;
-  box-sizing: border-box;
-}
-/* #endregion 卡片底部右侧快捷操作 */
-
-/* #endregion works实体卡片 */
-
-/* #region authors实体卡片 */
-.author-card-avator {
-  display: none;
-
-}
-@media (min-width: 768px) {
-  .author-card-avator {
-    display: inline-block;
-    /* 这里需要卡片最外层 result-item-card 开相对定位 */
-    position: absolute;
-    top: 50%;
-    left: calc(8.75rem / 2);
-    transform: translate(-50%, -50%);
-  }
-}
-/* #endregion authors实体卡片 */
-
-/* #endregion 搜索列表和单个搜索卡片结束 */
 
 .search-result__pagination {
   margin-bottom: 1.875rem;
