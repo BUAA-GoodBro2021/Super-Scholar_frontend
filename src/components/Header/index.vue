@@ -17,13 +17,15 @@
 <script setup>
 import UserInfo from "./UserInfo.vue";
 import { useDark, useToggle, useWindowScroll, useWindowSize } from '@vueuse/core';
+import { useRoute } from "vue-router";
+const route = useRoute();
 const { x, y } = useWindowScroll();
 const { width, height } = useWindowSize();
 const isDark = useDark();
 const onDarkChange = useToggle(isDark);
-const headerColor = ref("#040d21");
+const headerColor = route.name==="Welcome"? ref("#040d21") : ref("white");
 watch(y,(y)=>{
-    if(y <= height.value *0.75){
+    if(y <= height.value *0.75&&route.name==="Welcome"){
         headerColor.value = "#040d21";
     }else{
         headerColor.value = "white";
