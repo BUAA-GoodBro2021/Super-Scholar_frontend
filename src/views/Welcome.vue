@@ -147,7 +147,7 @@ onMounted(() => {
 
 .main{
    height:75vh;
-   background-color: #eeeeee;
+   background-color: #040d21;
    background-image: url("../assets/images/login_bg.svg");
 	background-size: cover;
    position: sticky;
@@ -175,7 +175,7 @@ onMounted(() => {
          .data{
             font-size: large;
             font-weight: 900;
-            color: rgb(63, 43, 43);
+            color: rgb(207, 198, 198);
             margin-top: 1rem;
             text-align: center;
          }

@@ -8,6 +8,7 @@
                 <span>高级检索</span>
             </router-link> -->
         </div>
+        
         <div class="avatar">
             <UserInfo />
         </div>
@@ -15,9 +16,19 @@
 </template>
 <script setup>
 import UserInfo from "./UserInfo.vue";
-import { useDark, useToggle } from '@vueuse/core';
+import { useDark, useToggle, useWindowScroll, useWindowSize } from '@vueuse/core';
+const { x, y } = useWindowScroll();
+const { width, height } = useWindowSize();
 const isDark = useDark();
 const onDarkChange = useToggle(isDark);
+const headerColor = ref("#040d21");
+watch(y,(y)=>{
+    if(y <= height.value *0.75){
+        headerColor.value = "#040d21";
+    }else{
+        headerColor.value = "white";
+    }
+})
 onMounted(()=>{
     if(isDark.value){
         onDarkChange();
@@ -27,7 +38,7 @@ onMounted(()=>{
 </script>
 <style lang="scss" scoped>
 .header {
-    background-color: white;
+    background-color: v-bind(headerColor);
     text-align: center;
     width: 100%;
     position: fixed;
