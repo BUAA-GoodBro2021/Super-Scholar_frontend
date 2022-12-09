@@ -2,7 +2,7 @@
     <div class="header">
         <div class="left">
             <router-link to="/" class="link">
-                <img src="/icon.png" class="logo" />
+                <img src="/icon1.png" class="logo" />
             </router-link>
             <!-- <router-link to="/" class="link">
                 <span>高级检索</span>

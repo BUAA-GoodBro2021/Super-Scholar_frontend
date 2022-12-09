@@ -189,8 +189,9 @@ onMounted(() => {
    }
    .earth{
          position: absolute;
-         top: 5vh;
-         right: 5vw;
+         top: 1vh;
+         right: 0;
+         z-index:-2;
       }
    @media screen and (max-width:992px) {
    .main{
