@@ -4,7 +4,7 @@
     <!-- 上半部分：基本信息 -->
     <div class="top_card">
         <div class="pic">
-            <el-image style="width: 100px; height: 100px" :src="conceptInfo.image_thumbnail_url" fit="fill" />
+            <el-image style="width: 150px; height: 150px" :src="conceptInfo.image_thumbnail_url" fit="fill" />
         </div>
         <div class="word">
             <div class="title">
@@ -43,9 +43,9 @@
         />
       </div>
       <div class="right">
-          <div style="font-size: 1.4em; margin-top: 3vh; margin-left: 1vw; margin-bottom: 2vh">相关机构</div>
+          <div style="font-size: 1.4em; margin-top: 3vh; margin-left: 1vw; margin-bottom: 2vh">相关概念</div>
           <div v-for="(item, index) in conceptInfo.related_concepts" class="hbb">
-              <a :href="item.id" target="_blank" class="href_box">
+              <a :href="'https://scholar.super2021.com/client/concept/' + item.id.slice(21)" target="_blank" class="href_box">
                     <span class="related_hrefs">{{item.display_name}}</span>
                     <el-icon class="arrow"><Right /></el-icon>
               </a>
@@ -273,7 +273,7 @@ const UpdateAssociatedConcept = (page) => {
 .pic {
     position: absolute;
     left: 10vw;
-    top: 14vh;
+    top: 13vh;
     background-color: rgb(0, 0, 0);
     border-radius: 50%;
     width: 120px;

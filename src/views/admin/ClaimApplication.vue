@@ -39,7 +39,7 @@
                                     <rect width="20" height="8"
                                     style="fill:rgb(0,0,0);stroke-width:1;stroke:rgb(0,0,0)"/>
                                 </svg>
-                                {{o.real_name}} - {{ o.author_name }}
+                                {{o.username}} - {{ o.author_name }}
                             </span>
                             <div class="bottom">
                                     <span class="name">{{$t('header.claimTime')}}</span>
@@ -110,7 +110,8 @@ const requestData = reactive({
             "institution": "二次元",
             "real_name": "ajk",
             "is_pass": 0,
-            "claim_time": "2022-11-27T18:34:43.310"
+            "claim_time": "2022-11-27T18:34:43.310",
+            "username": "Siri"
         },
     totalApply: 0,
     totalPage: 0
@@ -122,17 +123,17 @@ const pages = reactive({
 const func1= () => {
     Admin.checkClaim({}).then((res)=>{
             requestData.list = res.data.form_handling_dic_list;
-            requestData.list.push(requestData.dead);
-            requestData.list.push(requestData.dead);
-            requestData.list.push(requestData.dead);
-            requestData.list.push(requestData.dead);
-            requestData.list.push(requestData.dead);
-            requestData.list.push(requestData.dead);
-            requestData.list.push(requestData.dead);
-            requestData.list.push(requestData.dead);
-            requestData.list.push(requestData.dead);
-            requestData.list.push(requestData.dead);
-            requestData.list.push(requestData.dead);
+            // requestData.list.push(requestData.dead);
+            // requestData.list.push(requestData.dead);
+            // requestData.list.push(requestData.dead);
+            // requestData.list.push(requestData.dead);
+            // requestData.list.push(requestData.dead);
+            // requestData.list.push(requestData.dead);
+            // requestData.list.push(requestData.dead);
+            // requestData.list.push(requestData.dead);
+            // requestData.list.push(requestData.dead);
+            // requestData.list.push(requestData.dead);
+            // requestData.list.push(requestData.dead);
             requestData.totalApply = Object.keys(requestData.list).length;
             requestData.totalPage = Math.floor(requestData.totalApply / 6) + 1;
             for(let i = 0; i<Object.keys(requestData.list).length; i = i + 1){
