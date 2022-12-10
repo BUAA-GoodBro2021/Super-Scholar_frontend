@@ -5,11 +5,11 @@
             <div class="author-card" v-for="(item, index) in authorList" :key="index">
                 <div class="author-card-left"></div>
                 <ul class="list-item">
-                    <li>
+                    <!-- <li>
                         <el-avatar :size="35"
                             :src="item.avatar_url ? avatar_url : authorAvatarUrl"
                             style="cursor: pointer;" @click="toAuthor(item)"></el-avatar>
-                    </li>
+                    </li> -->
                     <li class="coauthor-name-li">
                         <span class="coauthor-name" @click="toAuthor(item)" :title="item.author_name">{{ item.author_name }}</span>
                     </li>
