@@ -181,6 +181,7 @@ import { Search } from '../../api/search';
 import { useSearchStore } from '../../stores/search.js';
 import { ElButton, ElCheckbox, ElCheckboxGroup, ElNotification, ElPagination } from "element-plus";
 import { onMounted, reactive, ref, shallowRef, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import WorksResCard from './WorksResCard.vue';
 import AuthorsResCard from './AuthorsResCard.vue';
 import VenuesResCard from './VenuesResCard.vue';
@@ -205,6 +206,21 @@ const searchResCard = shallowRef({
 });
 
 const searchStore = useSearchStore();
+
+/**
+ * 和主页地球点击跳转搜索相配合，获取路由query参数。
+ * 我这里约定字段为 countrySearch
+ * /search-detail?countrySearch=facebook
+ */
+const route = useRoute();
+// console.log(route.query);
+if (route.query.countrySearch) {
+  // console.log(route.query.countrySearch);
+  searchStore.searchType = "works";
+  searchStore.searchInputText = route.query.countrySearch;
+}
+
+
 // 搜索结果数据列表
 const searchDataList = ref([]);
 // 搜索结果总数
