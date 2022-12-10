@@ -18,35 +18,38 @@
       </div>
       <div class="chat-right">
          <div class="chat-content">
+            <el-button class="del-btn" type="danger" @click="handleDelete">
+            删除所选
+            </el-button>
             <template v-if="curKey == 1">
-               <MessageCard 
-                  v-for="(item,index) in systemList"
-                  @reload="getList"
-                  :key="index"
-                  :msg="item">
-               </MessageCard>
+                  <MessageCard 
+                     v-for="(item,index) in systemList"
+                     @reload="updateCheckedList"
+                     :key="index"
+                     :msg="item">
+                  </MessageCard>
                <div v-if="systemList.length===0">
                   暂无消息捏
                </div>
             </template>
             <template v-else>
-               <MessageCard 
-                  v-for="(item,index) in userList"
-                  @reload="getList"
-                  :key="index"
-                  :msg="item">
-               </MessageCard>
+                  <MessageCard 
+                     v-for="(item,index) in userList"
+                     @reload="updateCheckedList"
+                     :key="index"
+                     :msg="item">
+                  </MessageCard>
                <div v-if="userList.length===0">
                   暂无消息捏
                </div>
             </template>
-               
          </div>
       </div>
    </div>
 </template>
 <script setup>
-import { ElNotification } from "element-plus";
+import { Delete } from "@element-plus/icons-vue";
+import { ElNotification, ElMessageBox } from "element-plus";
 import { Message } from "../../api/message";
 import MessageCard from "./MessageCard.vue";
 import {
@@ -55,12 +58,26 @@ import {
 } from '@element-plus/icons-vue'
 const curKey = ref(1);
 const handleSelect = (key, keyPath) => {
-   console.log(key, keyPath);
    curKey.value = key;
+   checkedList.value.length = 0;
+}
+const checkedList = ref([]);
+watch(checkedList,(newVal)=>{
+   console.log(newVal);
+})
+const updateCheckedList = (isDel,id)=>{
+   if(isDel){
+      checkedList.value.push(id);
+   }else{
+      let index = checkedList.value.indexOf(id);
+      checkedList.value.splice(index,1);
+   }
+   console.log(checkedList.value);
 }
 const systemList = ref([]);
 const userList = ref([]);
 const getList = ()=>{
+   checkedList.value.length = 0;
    Message.lookMsgList({}).then((res) => {
       console.log("RES", res.data);
       systemList.value.length = 0;
@@ -107,6 +124,36 @@ const getList = ()=>{
       });
    })
 }
+const handleDelete = ()=>{
+   ElMessageBox.confirm(
+        "您确定删除选中消息么?",
+        {
+            confirmButtonText: '确认',
+            cancelButtonText: '取消',
+            type: 'warning',
+        }
+    ).then(
+        ()=>{
+         if(checkedList.value.length===0){
+            ElNotification({
+               title:"请检查",
+               message: "您没有选中内容",
+               type: "error",
+               duration: 3000
+            });
+            return;
+         }
+         console.log("LIST",checkedList.value);
+         Message.delMsg({ message_id_list: checkedList.value})
+        .then((res) => {
+            console.log(res.data);
+            getList();
+        }).catch((err)=>{
+         console.log(err);
+        })}
+         ).catch((err)=>{
+         })
+}
 onMounted(() => {
    getList();
 })
@@ -136,6 +183,12 @@ onMounted(() => {
       overflow: auto;
       .chat-content{
          padding: 2rem;
+         position: relative;
+         .del-btn{
+               position: absolute;
+               right:3rem;
+               top: 5px;
+         }
       }
    }
    /* 设置滚动条的样式 */
