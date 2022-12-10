@@ -104,6 +104,8 @@ onMounted(() => {
 
 const ConvertUserInfo = (data) => {
     userInfo.value.display_name = data.username
+    userInfo.value.real_name = data.real_name ? data.real_name : ''
+    userInfo.value.open_alex_id = data.open_alex_id ? data.open_alex_id : ''
     userInfo.value.email = data.email
     userInfo.value.user_id = data.user_id
     userInfo.value.introduction = data.introduction ? data.introduction : null
@@ -161,6 +163,8 @@ const getOpenAlexAuthor = async () => {
         if (res.data.result == 1) {
             userInfo.value.counts_by_year = res.data.single_data.counts_by_year
             userInfo.value.open_alex_name = res.data.single_data.display_name
+            userInfo.value.works_count = res.data.single_data.works_count
+            userInfo.value.cited_by_count = res.data.single_data.cited_by_count
         } else {
             ElNotification({
                 title: "很遗憾",
@@ -268,6 +272,7 @@ const UpdateCoAuthor = (page) => {
 .personal-wrap {
     width: 100%;
     height: 100%;
+    padding-bottom: 0.5%;
     display: flex;
     flex-direction: column;
     justify-content: center;

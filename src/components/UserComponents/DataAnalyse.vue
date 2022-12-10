@@ -12,7 +12,11 @@
                     </template>
                     <div class="dialog-wrap">
                         <div v-for="(item, index) in chart2DialogData" :key="index">
-                            <span class="document_title">{{ (index + 1) + '. ' + item.work_name }}</span>
+                            <!-- <WorksResCard :item="item" /> -->
+                            <div class="document-title-wrap">
+                                <span class="document_title document_index">{{ (index + 1) + '. ' }}</span>&nbsp;&nbsp;
+                                <span class="document_title" @click="toArticle(item)">{{ item.work_name }}</span>
+                            </div>
                             <!-- <div class="authors_wrap">
                                 <span class="document_authors" v-for="(authoritem, authorindex) in item.authorList"
                                     :key="authorindex">{{ authoritem.display_name }}
@@ -31,6 +35,7 @@
 import * as echarts from 'echarts'
 import { watch } from 'vue';
 import { useRouter } from 'vue-router';
+import WorksResCard from '../../views/search/WorksResCard.vue'
 // import { nextTick, reactive, readonly } from "vue"
 const router = useRouter()
 
@@ -203,7 +208,7 @@ const data1PreProcess = () => {
     })
 }
 
-const colors = reactive(['#ff8400', '#03fc62', '#aa61b2', '#0a95e6', '#00fff7', '#f06467', '#f06467', '#03fc62', '#00fff7', '#f06467'])
+const colors = reactive(['#d87c7c', '#919e8b', '#d7ab82', '#6e7074', '#61a0a8', '#efa18d', '#787464', '#cc7e63', '#724e58', '#4b565b'])
 
 const data2PreProcess = () => {
     nodedata.value = []
@@ -271,7 +276,7 @@ const data2PreProcess = () => {
 const initChart1 = () => {
     chart1 = document.getElementById('count')
     chart1 = echarts.init(chart1)
-    const colors = ['#5470C6', '#91CC75', '#EE6666'];
+    const colors = ['#d7ab82', '#919e8b', '#919e8b'];
     let option = {
         color: colors,
         tooltip: {
@@ -414,6 +419,10 @@ const initChart2 = () => {
     })
 }
 
+const toArticle = (item) => {
+
+}
+
 </script>
 <style>
 .data-wrap {
@@ -472,9 +481,14 @@ const initChart2 = () => {
     width: 100%;
 }
 
+.document-title-wrap {
+    display: flex;
+}
+
 .dialog-wrap {
     padding: 0px 10px 10px 10px;
-    height: 400px;
+    min-height: 200px;
+    max-height: 400px;
     overflow-y: scroll;
     display: block;
 }
@@ -494,8 +508,16 @@ const initChart2 = () => {
     display: block;
     word-break: break-all;
     word-wrap: break-word;
-    color: #409eff;
+    color: #161717;
     cursor: pointer;
+}
+
+.document_index {
+    font-weight: 800;
+}
+
+.document_title:hover {
+    color: rgb(162, 143, 42);
 }
 
 .authors_wrap {
@@ -506,7 +528,8 @@ const initChart2 = () => {
 
 .document_authors {
     font-size: 10px;
-    color: grey;
+    /* color: grey; */
+    color: rgb(162, 143, 42);
     cursor: pointer;
 }
 </style>
