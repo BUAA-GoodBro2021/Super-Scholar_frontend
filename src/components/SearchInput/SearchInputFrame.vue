@@ -124,7 +124,6 @@ onMounted(()=>{
   }
 })
 const handleSelectSearchType = () => {
-  // console.log(selectTarget.value);
   // console.log(selectTarget.value.options);
   // console.log(selectTarget.value.options[selectTarget.value.options.selectedIndex].value);
   const options = selectTarget.value.options;

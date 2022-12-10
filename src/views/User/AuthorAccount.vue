@@ -165,9 +165,11 @@ const getOpenAlexAuthor = async () => {
         if (res.data.result == 1) {
             userInfo.value.counts_by_year = res.data.single_data.counts_by_year
             userInfo.value.open_alex_name = res.data.single_data.display_name
-            userInfo.value.last_known_institution = res.data.single_data.last_known_institution.display_name
+            userInfo.value.last_known_institution = res.data.single_data.last_known_institution
             userInfo.value.x_concepts = res.data.single_data.x_concepts
             userInfo.value.display_name = res.data.single_data.display_name
+            userInfo.value.works_count = res.data.single_data.works_count
+            userInfo.value.cited_by_count = res.data.single_data.cited_by_count
         } else {
             ElNotification({
                 title: "很遗憾",
@@ -271,6 +273,7 @@ const UpdateCoAuthor = (page) => {
     width: 100%;
     height: 100%;
     display: flex;
+    padding-bottom: 0.5%;
     flex-direction: column;
     justify-content: center;
     align-items: center;

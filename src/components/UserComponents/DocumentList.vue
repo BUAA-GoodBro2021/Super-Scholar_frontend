@@ -4,7 +4,7 @@
             <el-table :data="documentList" style="width: 100%; height: 100%;">
                 <el-table-column prop="display_name" label="文献" min-width="60%">
                     <template #default="scope">
-                        <span class="document_title" @click="toDocument(scope.row)">{{ scope.row.display_name }}</span>
+                        <span class="document_title" @click="toDocument(scope.row)" :title="scope.row.display_name">{{ scope.row.display_name }}</span>
                         <!-- <div class="authors_wrap">
                             <span class="document_authors" v-for="(item, index) in scope.row.authorships"
                                 :key="index">{{
@@ -19,30 +19,34 @@
                 <el-table-column prop="cited_by_count" label="引用" min-width="13%" align="center" />
                 <el-table-column prop="pdf" label="状态" min-width="18%">
                     <template #default="scope">
-                        <el-tag style="font-size: 10px;" v-if="scope.row.open_access.is_oa == -1" type="danger">暂无pdf
+                        <button class="document-btn no-pdf-btn" v-if="scope.row.open_access.is_oa == -1">暂无pdf</button>
+                        <button class="document-btn check-pdf-btn" v-if="scope.row.open_access.is_oa == 0">审核中</button>
+                        <button class="document-btn to-pdf-btn" v-if="scope.row.open_access.is_oa == 1" @click="ToPdf(scope.row.open_access)">已有pdf</button>
+                        <!-- <el-tag style="font-size: 10px;" v-if="scope.row.open_access.is_oa == -1" type="danger">暂无pdf
                         </el-tag>
                         <el-tag style="font-size: 10px;" v-if="scope.row.open_access.is_oa == 0" type="warning">审核中
                         </el-tag>
                         <el-tag style="font-size: 10px; cursor: pointer;" v-if="scope.row.open_access.is_oa == 1"
-                            type="success" @click="ToPdf(scope.row.open_access)">已有pdf</el-tag>
+                            type="success" @click="ToPdf(scope.row.open_access)">已有pdf</el-tag> -->
                     </template>
                 </el-table-column>
                 <el-table-column prop="pdf" label="操作" min-width="18%" v-if="personalAccount == 1">
                     <template #default="scope">
                         <el-upload ref="uploadRef" class="upload-demo" v-if="scope.row.open_access.is_oa == -1" :limit="1"
                             :auto-upload="false" action="" :show-file-list="false" :on-change="(file, filelist) => changeFile(file, filelist, scope.row)" accept=".pdf">
-                            <el-tag style="cursor: pointer;" v-if="!scope.row.uploading">上传pdf
-                            </el-tag>
+                            <!-- <el-tag style="cursor: pointer;" v-if="!scope.row.uploading">上传pdf
+                            </el-tag> -->
+                            <button class="document-btn upload-btn" v-if="!scope.row.uploading">上传pdf</button>
                             <span v-if="scope.row.uploading">
                                 <el-icon class="is-loading" >
                                     <Loading />
                                 </el-icon>
                              </span>
                         </el-upload>
-                        <el-tag v-if="scope.row.open_access.is_oa == 0" style="cursor: pointer;" @click="CancelUploadingPdf(scope.row)">
-                            取消上传</el-tag>
-                        <el-tag v-if="scope.row.open_access.is_oa == 1" style="cursor: pointer;"
-                            @click="CancelPdfConfirm(scope.row)">删除pdf</el-tag>
+                        <!-- <el-tag v-if="scope.row.open_access.is_oa == 0" style="cursor: pointer;" @click="CancelUploadingPdf(scope.row)">
+                            取消上传</el-tag> -->
+                        <button class="document-btn cancel-btn" v-if="scope.row.open_access.is_oa == 1" @click="CancelPdfConfirm(scope.row)">删除pdf</button>
+                        <button class="document-btn cancel-btn" v-if="scope.row.open_access.is_oa == 0" @click="CancelUploadingPdf(scope.row)">取消上传</button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -188,14 +192,17 @@ const PageChange = () => {
 }
 
 const ToPdf = (data) => {
-    console.log(data)
+    // console.log(data)
+    window.open(data.oa_url, "_blank")
+    // window.location.href = data.oa_url;
 }
 
 const toDocument = (item) => {
-    // router.push({
-    //     name: '',
-    //     params: {}
-    // })
+    let { href } = router.resolve({
+        name: 'PaperDetail',
+        params: { paperid: item.id.substring(21) }
+    })
+    window.open(href, "_blank")
 }
 
 </script>
@@ -240,12 +247,12 @@ const toDocument = (item) => {
     display: block;
     word-break: break-all;
     word-wrap: break-word;
-    color: #409eff;
+    color: black;
     cursor: pointer;
 }
 
 .document_title:hover{
-    color: #0169d1;
+    color: rgb(162, 143, 42);
 }
 
 .authors_wrap {
@@ -266,6 +273,55 @@ const toDocument = (item) => {
 
 :deep(.el-table .cell) {
     font-size: 15px;
+}
+
+:deep(.pagination-wrap .is-active) {
+    color: rgb(248 210 8) !important;
+}
+
+:deep(.pagination-wrap .el-pager li:hover) {
+    color: rgb(248 210 8);
+}
+
+.document-btn {
+    width: 60px;
+    height: 37px;
+    background-color: rgb(87, 146, 211);
+    font-size: 0.8rem;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.document-btn:hover {
+    background-color: rgba(87, 147, 211, 0.798);
+}
+
+.no-pdf-btn {
+    background-color: rgb(164, 41, 41);
+    cursor: default;
+}
+
+.no-pdf-btn:hover {
+    background-color: rgba(164, 41, 41, 0.83);
+}
+
+.check-pdf-btn {
+    background-color: rgb(211, 176, 87);
+    cursor: default;
+}
+
+.check-pdf-btn:hover {
+    background-color: rgba(211, 176, 87, 0.893);
+}
+
+.to-pdf-btn {
+    background-color: rgb(162, 143, 42);
+    cursor: pointer;
+}
+
+.to-pdf-btn:hover{
+    background-color: rgba(211, 176, 87, 0.893);
 }
 
 </style>

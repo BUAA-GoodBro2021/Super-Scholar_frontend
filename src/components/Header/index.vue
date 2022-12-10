@@ -2,22 +2,37 @@
     <div class="header">
         <div class="left">
             <router-link to="/" class="link">
-                <img src="/icon.png" class="logo" />
-            </router-link>
-            <router-link to="/" class="link">
-                <span>高级检索</span>
+                <img src="/icon1.png" class="logo" />
             </router-link>
         </div>
+        
         <div class="avatar">
-            <UserInfo />
+            <template v-if="showUser">
+                <UserInfo />
+            </template>
         </div>
     </div>
 </template>
 <script setup>
 import UserInfo from "./UserInfo.vue";
-import { useDark, useToggle } from '@vueuse/core';
+import { useDark, useToggle, useWindowScroll, useWindowSize } from '@vueuse/core';
+import { useRoute } from "vue-router";
+const route = useRoute();
+const { x, y } = useWindowScroll();
+const { width, height } = useWindowSize();
 const isDark = useDark();
 const onDarkChange = useToggle(isDark);
+const headerColor = route.name==="Welcome"? ref("#040d21") : ref("white");
+const showUser = route.name==="Welcome"? ref(false) : ref(true);
+watch(y,(y)=>{
+    if(y <= height.value-64 && route.name==="Welcome"){
+        headerColor.value = "#040d21";
+        showUser.value = false;
+    }else{
+        headerColor.value = "white";
+        showUser.value = true;
+    }
+})
 onMounted(()=>{
     if(isDark.value){
         onDarkChange();
@@ -27,7 +42,7 @@ onMounted(()=>{
 </script>
 <style lang="scss" scoped>
 .header {
-    background-color: white;
+    background-color: v-bind(headerColor);
     text-align: center;
     width: 100%;
     position: fixed;

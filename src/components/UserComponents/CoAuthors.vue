@@ -3,10 +3,11 @@
         <div class="coauthors-title">合著作者</div>
         <div class="author-list" v-if="claimed == 1">
             <div class="author-card" v-for="(item, index) in authorList" :key="index">
+                <div class="author-card-left"></div>
                 <ul class="list-item">
                     <li>
                         <el-avatar :size="70"
-                            :src="item.avatar_url ? avatar_url : 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png'"
+                            :src="item.avatar_url ? avatar_url : authorAvatarUrl"
                             style="cursor: pointer;" @click="toAuthor(item)"></el-avatar>
                     </li>
                     <li class="coauthor-name-li">
@@ -20,12 +21,12 @@
                         </span>
                     </li>
                 </ul>
-                <el-divider v-if="index != authorList.length - 1"></el-divider>
+                <!-- <el-divider v-if="index != authorList.length - 1"></el-divider> -->
             </div>
         </div>
         <div class="co-author-pagination" v-if="claimed == 1">
-            <el-pagination layout="prev, pager, next" :total="authorTotalSize" @current-change="PageChange()"
-                v-model:current-page="pageCurrent" hide-on-single-page :page-sizes="[1, 2, 3, 4, 5]" :pager-count="4"/>
+            <el-pagination layout="prev, pager, next" :pager-count="5" :total="authorTotalSize" @current-change="PageChange()"
+                v-model:current-page="pageCurrent" hide-on-single-page :page-sizes="[1, 2, 3, 4, 5]"/>
         </div>
         <div class="empty" v-if="claimed == 0">
             该用户尚未认证
@@ -33,6 +34,8 @@
     </div>
 </template>
 <script setup>
+
+import authorAvatarUrl from '../../assets/images/avatar.png'
 import {
     Right
 } from '@element-plus/icons-vue'
@@ -59,12 +62,12 @@ const PageChange = () => {
     emit("coAuthorPageChange", pageCurrent.value)
 }
 </script>
-<style>
+<style scoped>
 /* 整体的height和width由外层调整 */
 .coauthors-wrap {
     width: 100%;
     background-color: white;
-    border-radius: 20px;
+    border-radius: 2px;
     box-shadow: 3px 3px 3px 3px #dedede;
     height: 100%;
     padding-top: 10px;
@@ -96,20 +99,44 @@ const PageChange = () => {
 }
 
 ::-webkit-scrollbar {
-    width: 0 !important;
+  width: 6px;
 }
 
-::-webkit-scrollbar {
-    width: 0 !important;
-    height: 0;
+/* 滚动槽 */
+::-webkit-scrollbar-track {
+  border-radius: 10px;
+}
+
+/* 滚动条滑块 */
+::-webkit-scrollbar-thumb {
+  border-radius: inherit;
+  background-color: rgba(144, 147, 153, 0.3);
+  -webkit-transition: 0.3s background-color;
+  transition: 0.3s background-color;
 }
 
 
 .author-card {
     width: 100%;
     height: 100px;
-    margin-top: 5px;
+    margin: 5px 0px 5px 0px;
+    position: relative;
+    padding: 17px 0 7px 20px;
+    border-radius: 2px;
+    box-shadow: 3px 3px 2px 4px #dedede;
+}
 
+.author-card:hover {
+    background-color: #f1f5fa;
+}
+
+.author-card-left {
+    position: absolute;
+    width: 7px;
+    height: 60px;
+    left: 0;
+    top: 20px;
+    background-color: rgb(162, 143, 42);
 }
 
 
@@ -119,13 +146,14 @@ const PageChange = () => {
     width: 100%;
 }
 
-.author-card ul:hover {
+/* .author-card ul:hover {
     background-color: #f1f5fa;
     border-radius: 10px;
-}
+} */
 
 .el-divider--horizontal {
-    margin-top: 0;
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 
 .author-card li {
@@ -159,7 +187,7 @@ const PageChange = () => {
 }
 
 .author-card .coauthor-name:hover {
-    color: #409eff;
+    color: rgb(162, 143, 42);
     /* height: 20%;
     margin-top: 5; */
     /* display: block; */
@@ -181,12 +209,21 @@ const PageChange = () => {
 }
 
 .right-arrow-wrap:hover{
-    color: #409eff;
+    color: rgb(162, 143, 42);
 }
 
 .empty {
     color: grey;
     font-size: 18px;
     font-weight: 600;
+}
+
+
+:deep(.co-author-pagination .is-active) {
+    color: rgb(248 210 8) !important;
+}
+
+:deep(.co-author-pagination .el-pager li:hover) {
+    color: rgb(248 210 8);
 }
 </style>

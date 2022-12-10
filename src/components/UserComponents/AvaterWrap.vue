@@ -4,8 +4,7 @@
             <ul>
                 <li style="vertical-align: middle; ">
                     <div class="avatar_wrap">
-                        <el-avatar :size="110"
-                            :src="userInfo.avatar_url ? userInfo.avatar_url : 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png'"
+                        <el-avatar :size="110" :src="userInfo.avatar_url ? userInfo.avatar_url : authorAvatarUrl"
                             style="cursor: pointer">
                         </el-avatar>
                     </div>
@@ -15,49 +14,95 @@
                         <div class="title-profile-block">
                             <span class="name">
                                 <div style="display: flex; align-items: center;">
-                                    {{ userInfo.display_name }}
-                                    <el-tag style="margin-left: 20px; font-size: 10px;" v-if="openAlexAccount == 1"
-                                        type="success">OpenAlex作者</el-tag>
-                                    <el-tag style="margin-left: 20px; font-size: 10px;"
+                                    <div style="position: relative; margin-right: 10px">
+                                        <div class="name-display_name">
+                                            <span :title="userInfo.display_name" class="name-display_name-span">{{
+                                                    userInfo.display_name
+                                            }} </span>
+                                        </div>
+                                        <span v-if="openAlexAccount == 1 || claimed == 1" class="name-claim-flag"
+                                            :title="openAlexAccount == 1 ? 'openAlex用户' : '已认证'"><el-icon
+                                                class="claim-document-icon">
+                                                <CircleCheckFilled />
+                                            </el-icon></span>
+                                    </div>
+                                    <div class="claim-wrap" v-if="openAlexAccount == 1">
+                                        <span class="claim-wrap-name" :title="'OpenAlex作者'">OpenAlex作者</span>
+                                        <div class="claim-wrap-right"></div>
+                                    </div>
+                                    <div class="claim-wrap claim-wrap-short"
+                                        v-if="openAlexAccount == 0 && claimed == 0">
+                                        <span class="claim-wrap-name" :title="'未认证'">未认证</span>
+                                        <div class="claim-wrap-right"></div>
+                                    </div>
+                                    <div class="claim-wrap claim-wrap-short"
+                                        v-if="openAlexAccount == 0 && claimed == 2">
+                                        <span class="claim-wrap-name" :title="'认证中'">认证中</span>
+                                        <div class="claim-wrap-right"></div>
+                                    </div>
+                                    <div class="claim-wrap claim-wrap-var" v-if="openAlexAccount == 0 && claimed == 1">
+                                        <span class="claim-wrap-name" @click="toOpenAlexAccount()"
+                                            :title="userInfo.real_name">{{ userInfo.real_name
+                                            }}</span>
+                                        <div class="claim-wrap-right"></div>
+                                    </div>
+                                    <span v-if="openAlexAccount == 1 || claimed == 1"
+                                        class="claim-document-data"><el-icon class="claim-document-icon">
+                                            <List />
+                                        </el-icon>&nbsp; {{ userInfo.works_count }}</span>
+                                    <span v-if="openAlexAccount == 1 || claimed == 1" class="claim-document-data"><i
+                                            class="iconfont icon-quotes claim-document-icon"></i>&nbsp;
+                                        {{ userInfo.cited_by_count }}</span>
+
+                                    <!-- <el-tag style="margin-left: 20px; font-size: 10px;" v-if="openAlexAccount == 1"
+                                        type="success">OpenAlex作者</el-tag> -->
+                                    <!-- <el-tag style="margin-left: 20px; font-size: 10px;"
                                         v-if="openAlexAccount == 0 && claimed == 0" type="warning">未认证</el-tag>
                                     <el-tag style="margin-left: 20px; font-size: 10px;"
                                         v-if="openAlexAccount == 0 && claimed == 2" type="warning">认证中</el-tag>
                                     <el-tag style="margin-left: 20px; font-size: 10px;"
                                         v-if="openAlexAccount == 0 && claimed == 1" type="success"
-                                        @click="toOpenAlexAccount()">已认证</el-tag>
+                                        @click="toOpenAlexAccount()">已认证</el-tag> -->
                                 </div>
                             </span>
                             <div class="organization">
                                 <el-icon>
-                                    <HomeFilled />
+                                    <!-- <HomeFilled /> -->
+                                    <PriceTag />
                                 </el-icon> &nbsp;
                                 <span v-if="openAlexAccount == 1" @click="toOrganization()" class="single-organization"
-                                        :title="userInfo.last_known_institution ?
-                                        userInfo.last_known_institution : '暂无机构信息'">{{ userInfo.last_known_institution ?
-                                        userInfo.last_known_institution : '暂无机构信息'
-                                }}</span>
+                                    :title="userInfo.last_known_institution ?
+                                    userInfo.last_known_institution.display_name : '暂无机构信息'">{{
+            userInfo.last_known_institution
+                ?
+                userInfo.last_known_institution.display_name : '暂无机构信息'
+    }}</span>
                                 <span v-else>{{ userInfo.email }}</span>
                             </div>
                             <div class="areas" v-if="openAlexAccount == 1 && userInfo.x_concepts">
-                                <el-icon>
-                                    <Menu />
+                                <el-icon class="areas-icon">
+                                    <Notification />
                                 </el-icon> &nbsp;
                                 <div class="areas-content">
-                                    <span style="cursor: pointer;" v-for="(item, index) in userInfo.x_concepts.slice(0, 11)"
-                                    :key="index" @click="toArea(item)" class="single-area">{{
-                                            item.display_name
-                                    }}<span v-if="index != userInfo.x_concepts.length - 1">/&nbsp;</span></span>
+                                    <span style="cursor: pointer;"
+                                        v-for="(item, index) in userInfo.x_concepts.slice(0, 15)" :key="index"
+                                        @click="toArea(item)" class="single-area">{{
+                                                item.display_name
+                                        }}<span
+                                            v-if="index != userInfo.x_concepts.length - 1 && index != 14">&nbsp;/&nbsp;</span></span>
                                 </div>
                             </div>
                             <div class="areas" v-if="openAlexAccount == 1 && !userInfo.x_concepts">
-                                <el-icon>
-                                    <Menu />
+                                <el-icon class="areas-icon">
+                                    <!-- <Menu /> -->
+                                    <Notification />
                                 </el-icon> &nbsp;
                                 <span>{{ '暂无领域信息' }}</span>
                             </div>
                             <div class="areas" v-if="openAlexAccount == 0">
-                                <el-icon>
-                                    <Menu />
+                                <el-icon class="areas-icon">
+                                    <!-- <Menu /> -->
+                                    <Notification />
                                 </el-icon> &nbsp;
                                 <span v-if="userInfo.introduction">{{ userInfo.introduction }}</span>
                                 <span v-else>{{ "暂无自我介绍" }}</span>
@@ -66,19 +111,20 @@
                     </div>
                 </li>
                 <li class="right-btn-wrap" style="float: right; vertical-align: middle;" v-if="personAccount == 1">
-                    <el-button class="right-btn" type="primary" plain @click="changeDialogShow = true">
-                       编辑
-                    </el-button>
+                    <button class="right-btn follow-btn" @click="changeDialogShow = true">
+                        编辑
+                    </button>
                 </li>
                 <li class="right-btn-wrap" v-if="personAccount != 1 && openAlexAccount == 1 && is_follow"
                     style="float: right; vertical-align: middle;">
-                    <el-button class="right-btn" type="primary" plain @click="cancelFollow()">取消关注
-                    </el-button>
+                    <button class="right-btn cancel-follow-btn" @click="cancelFollow()">取消关注
+                    </button>
                 </li>
 
                 <li class="right-btn-wrap" v-if="personAccount != 1 && openAlexAccount == 1 && !is_follow"
                     style="float: right; vertical-align: middle;">
-                    <el-button class="right-btn" type="primary" plain @click="follow()">关注</el-button>
+                    <!-- <el-button class="right-btn" type="primary" plain @click="follow()">关注</el-button> -->
+                    <button class="right-btn follow-btn" @click="follow()">关注</button>
                 </li>
             </ul>
         </div>
@@ -133,10 +179,15 @@
     </div>
 </template>
 <script setup>
+import authorAvatarUrl from '../../assets/images/avatar.png'
 import {
     Menu,
     Edit,
     HomeFilled,
+    PriceTag,
+    Notification,
+    List,
+    CircleCheckFilled,
 } from '@element-plus/icons-vue'
 import { nextTick } from 'vue'
 import { ClaimPortal } from '../../api/claimPortal'
@@ -283,6 +334,11 @@ watch(props.userInfo, (newVal) => {
 
 const toOpenAlexAccount = () => {
     //跳转到认证的门户
+    let { href } = router.resolve({
+        name: 'OpenAlexAuthorDetail',
+        params: { tokenid: props.userInfo.open_alex_id }
+    })
+    window.open(href, "_blank")
 }
 
 const follow = async () => {
@@ -337,16 +393,21 @@ const cancelFollow = async () => {
 }
 
 const toArea = (item) => {
-//     let {href} = router.push({
-//         name: '',
-//         params: {}
-//     })
-//     window.open(href, "_blank")
+    let { href } = router.resolve({
+        name: 'ConceptDetail',
+        params: { tokenid: item.id.substring(21) }
+    })
+    window.open(href, "_blank")
 }
 
 const toOrganization = () => {
-    if(props.userInfo.last_known_institution) {
-        // todo 跳转
+    console.log(props.userInfo.last_known_institution)
+    if (props.userInfo.last_known_institution) {
+        let { href } = router.resolve({
+            name: 'InstitutionDetail',
+            params: { institutionid: props.userInfo.last_known_institution.id.substring(21) }
+        })
+        window.open(href, "_blank")
     } else {
         return
     }
@@ -362,7 +423,7 @@ watch(() => props.userInfo.is_follow, (newVal) => {
 .avatar_main_wrap {
     width: 100%;
     background-color: white;
-    border-radius: 20px;
+    border-radius: 2px;
     box-shadow: 3px 3px 3px 3px #dedede;
     height: 100%;
 
@@ -408,21 +469,143 @@ watch(() => props.userInfo.is_follow, (newVal) => {
 }
 
 .title-profile-li {
-    padding-left: 20px;
+    padding-left: 3rem;
 }
 
 .title-profile-block {
     display: block;
-    height: 50%;
+    height: 60%;
+}
+
+@media (max-height: 800px) {
+    .title-profile-block {
+        display: block;
+        height: 80%;
+    }
+}
+
+@media (max-width: 1200px) {
+    .card_body {
+        height: 80%;
+        width: 97%;
+    }
 }
 
 .name {
-    font-size: 23px;
-    height: 55%;
-    line-height: 100%;
+    font-size: 1.8rem;
+    height: 50%;
     cursor: pointer;
     text-align: left;
-    display: block;
+    display: flex;
+    align-items: center;
+}
+
+/**名字 设置 */
+.name .name-display_name {
+    position: relative;
+    /* margin-right: 10px; */
+    cursor: default;
+
+    max-width: 450px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.name .name-display_name .name-display_name-span {
+    max-width: 450px;
+}
+
+.name .name-claim-flag {
+    position: absolute;
+    top: -5px;
+    right: -18px;
+    color: rgba(162, 144, 42, 0.575);
+    font-size: 1rem;
+}
+
+@media (max-width: 900px) {
+    .name .name-display_name {
+        max-width: 150px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+
+    .name .name-display_name .name-display_name-span {
+        max-width: 150px !important;
+    }
+}
+
+/**认证框 */
+.name .claim-wrap {
+    width: 150px;
+    height: 2rem;
+    margin-left: 20px;
+    font-size: 1.2rem;
+    position: relative;
+    cursor: default;
+    border-bottom: 2px solid rgb(162, 143, 42);
+}
+
+.name .claim-wrap-short {
+    width: 73px;
+}
+
+.name .claim-wrap-var {
+    width: auto;
+    max-width: 300px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+@media (max-width: 900px) {
+    .name .claim-wrap {
+        max-width: 120px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+
+    .name .claim-wrap-var {
+        max-width: 150px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+}
+
+.name .claim-wrap .claim-wrap-name {
+    height: 2rem;
+    line-height: 2rem;
+    color: rgb(162, 143, 42);
+    padding-left: 10px;
+}
+
+.name .claim-wrap .claim-wrap-right {
+    position: absolute;
+    width: 7px;
+    height: 2rem;
+    left: 0;
+    top: 0;
+    background-color: rgb(162, 143, 42);
+}
+
+.name .claim-document-data {
+    font-size: 1rem;
+    /* color:  #0077c2;
+     */
+    color: rgb(164, 41, 41);
+    padding-left: 10px;
+    height: 1rem;
+    line-height: 1rem;
+    cursor: default;
+}
+
+.name .claim-document-icon {
+    /* color: #0077c2 */
 }
 
 .organization {
@@ -440,15 +623,17 @@ watch(() => props.userInfo.is_follow, (newVal) => {
     cursor: pointer;
 }
 
-.single-organization:hover{
-    color: #0169d1;
+.single-organization:hover {
+    /* color: #0169d1; */
+    color: rgb(162, 143, 42);
 }
 
 .areas {
     font-size: 15px;
-    color: #409eff;
+    color: rgb(162, 143, 42);
     height: 45%;
     width: 100%;
+    line-height: 20px;
     /* line-height: 50%; */
     text-align: left;
     display: flex;
@@ -459,13 +644,36 @@ watch(() => props.userInfo.is_follow, (newVal) => {
     ;
 }
 
-.areas-content{
-    overflow: scroll;
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+/* 滚动槽 */
+::-webkit-scrollbar-track {
+    border-radius: 10px;
+}
+
+/* 滚动条滑块 */
+::-webkit-scrollbar-thumb {
+    border-radius: inherit;
+    background-color: rgba(144, 147, 153, 0.3);
+    -webkit-transition: 0.3s background-color;
+    transition: 0.3s background-color;
+}
+
+
+.areas-icon {
+    height: 20px;
+    color: black
+}
+
+.areas-content {
+    overflow-y: scroll;
     text-overflow: ellipsis;
 }
 
-.single-area:hover{
-    color: #0169d1;
+.single-area:hover {
+    color: black
 }
 
 .follow {
@@ -482,7 +690,32 @@ watch(() => props.userInfo.is_follow, (newVal) => {
 
 .right-btn {
     /* margin-top: 50%; */
-    font-size: 1px;
+    font-size: 1rem;
+    color: white;
+}
+
+.right-btn:hover {
+    /* margin-top: 50%; */
+    font-size: 1rem;
+    background-color: rgba(162, 144, 42, 0.845);
+}
+
+.follow-btn {
+    width: 65px;
+    height: 40px;
+    background-color: rgb(162, 143, 42);
+    border: none;
+    cursor: pointer;
+    border-radius: 1px;
+}
+
+.cancel-follow-btn {
+    width: 80px;
+    height: 40px;
+    background-color: rgb(162, 143, 42);
+    border: none;
+    cursor: pointer;
+    border-radius: 1px;
 }
 
 /******dialog ******/

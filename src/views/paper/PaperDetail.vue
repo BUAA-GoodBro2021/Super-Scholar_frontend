@@ -1,5 +1,5 @@
 <template>
-        <el-tabs v-model="activeName" >
+        <el-tabs v-model="activeName" @tab-change="chartResize">
             <el-tab-pane :label="'参考文献 '+ citingTotal" name="citing" class="tab-pane">
                 <PaperListVue :total="citingTotal" :filter="{cited_by: paperId}" @IKnowTotal="recvTotalCiting"/>
             </el-tab-pane>
@@ -10,7 +10,7 @@
                 <PaperListVue  :filter="{cites: paperId}"  @IKnowTotal="recvTotalCited"/>
             </el-tab-pane>
             <el-tab-pane label="评论" name="comments" class="tab-pane">
-                
+                <PaperCommentVue :workName="paperInfo.display_name" :paperId="paperId" style="width:100%"></PaperCommentVue>
             </el-tab-pane>
         </el-tabs>
 </template>
@@ -18,7 +18,7 @@
 import PaperListVue from './PaperList.vue';
 import * as echarts from 'echarts'
 import { nextTick } from 'vue';
-
+import PaperCommentVue from "./PaperComment.vue";
 const activeName = ref('citing')
 
 const citingTotal = ref(0)
@@ -37,6 +37,14 @@ function recvTotalCited(t){
     citedTotal.value = t;
 }
 var citeChart
+function chartResize(){
+    nextTick(
+        ()=>{
+            citeChart.resize()
+        }
+    )
+
+}
 onRenderTriggered(() => {
     if(citeChart)
         return;
