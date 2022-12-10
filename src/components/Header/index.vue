@@ -4,13 +4,12 @@
             <router-link to="/" class="link">
                 <img src="/icon1.png" class="logo" />
             </router-link>
-            <!-- <router-link to="/" class="link">
-                <span>高级检索</span>
-            </router-link> -->
         </div>
         
         <div class="avatar">
-            <UserInfo />
+            <template v-if="showUser">
+                <UserInfo />
+            </template>
         </div>
     </div>
 </template>
@@ -24,11 +23,14 @@ const { width, height } = useWindowSize();
 const isDark = useDark();
 const onDarkChange = useToggle(isDark);
 const headerColor = route.name==="Welcome"? ref("#040d21") : ref("white");
+const showUser = ref(false);
 watch(y,(y)=>{
-    if(y <= height.value && route.name==="Welcome"){
+    if(y <= height.value-64 && route.name==="Welcome"){
         headerColor.value = "#040d21";
+        showUser.value = false;
     }else{
         headerColor.value = "white";
+        showUser.value = true;
     }
 })
 onMounted(()=>{
