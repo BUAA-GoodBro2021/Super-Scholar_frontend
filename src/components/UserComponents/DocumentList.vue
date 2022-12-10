@@ -45,8 +45,8 @@
                         </el-upload>
                         <!-- <el-tag v-if="scope.row.open_access.is_oa == 0" style="cursor: pointer;" @click="CancelUploadingPdf(scope.row)">
                             取消上传</el-tag> -->
-                        <button class="document-btn cancel-btn" v-if="scope.row.open_access.is_oa == 1">删除pdf</button>
-                        <button class="document-btn cancel-btn" v-if="scope.row.open_access.is_oa == 0">取消上传</button>
+                        <button class="document-btn cancel-btn" v-if="scope.row.open_access.is_oa == 1" @click="CancelPdfConfirm(scope.row)">删除pdf</button>
+                        <button class="document-btn cancel-btn" v-if="scope.row.open_access.is_oa == 0" @click="CancelUploadingPdf(scope.row)">取消上传</button>
                     </template>
                 </el-table-column>
             </el-table>

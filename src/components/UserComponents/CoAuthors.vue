@@ -3,6 +3,7 @@
         <div class="coauthors-title">合著作者</div>
         <div class="author-list" v-if="claimed == 1">
             <div class="author-card" v-for="(item, index) in authorList" :key="index">
+                <div class="author-card-left"></div>
                 <ul class="list-item">
                     <li>
                         <el-avatar :size="70"
@@ -20,7 +21,7 @@
                         </span>
                     </li>
                 </ul>
-                <el-divider v-if="index != authorList.length - 1"></el-divider>
+                <!-- <el-divider v-if="index != authorList.length - 1"></el-divider> -->
             </div>
         </div>
         <div class="co-author-pagination" v-if="claimed == 1">
@@ -118,8 +119,24 @@ const PageChange = () => {
 .author-card {
     width: 100%;
     height: 100px;
-    margin-top: 5px;
+    margin: 5px 0px 5px 0px;
+    position: relative;
+    padding: 17px 0 7px 20px;
+    border-radius: 2px;
+    box-shadow: 3px 3px 2px 4px #dedede;
+}
 
+.author-card:hover {
+    background-color: #f1f5fa;
+}
+
+.author-card-left {
+    position: absolute;
+    width: 7px;
+    height: 60px;
+    left: 0;
+    top: 20px;
+    background-color: rgb(162, 143, 42);
 }
 
 
@@ -129,13 +146,14 @@ const PageChange = () => {
     width: 100%;
 }
 
-.author-card ul:hover {
+/* .author-card ul:hover {
     background-color: #f1f5fa;
     border-radius: 10px;
-}
+} */
 
 .el-divider--horizontal {
-    margin-top: 0;
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 
 .author-card li {
