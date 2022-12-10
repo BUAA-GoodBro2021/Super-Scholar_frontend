@@ -25,7 +25,7 @@ const isDark = useDark();
 const onDarkChange = useToggle(isDark);
 const headerColor = route.name==="Welcome"? ref("#040d21") : ref("white");
 watch(y,(y)=>{
-    if(y <= height.value *0.75&&route.name==="Welcome"){
+    if(y <= height.value && route.name==="Welcome"){
         headerColor.value = "#040d21";
     }else{
         headerColor.value = "white";
