@@ -165,14 +165,13 @@ onMounted(() => {
 .client-body {
    margin-top: 64px;
    height: calc(100vh - 64px);
-   
 }
 
 .main {
    height: 100%;
    background-color: #040d21;
    background-size: cover;
-   position: sticky;
+   position: relative;
    z-index: 0;
    overflow: hidden;
    .slogen {
@@ -292,6 +291,7 @@ onMounted(() => {
 
       :deep(.el-tabs__content) {
          padding-right: 2vw;
+         overflow: visible;
       }
    }
 
