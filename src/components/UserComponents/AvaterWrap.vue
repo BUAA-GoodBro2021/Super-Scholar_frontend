@@ -14,8 +14,12 @@
                         <div class="title-profile-block">
                             <span class="name">
                                 <div style="display: flex; align-items: center;">
-                                    <div class="name-display_name">
-                                        {{ userInfo.display_name }}
+                                    <div style="position: relative; margin-right: 10px">
+                                        <div class="name-display_name">
+                                            <span :title="userInfo.display_name" class="name-display_name-span">{{
+                                                    userInfo.display_name
+                                            }} </span>
+                                        </div>
                                         <span v-if="openAlexAccount == 1 || claimed == 1" class="name-claim-flag"
                                             :title="openAlexAccount == 1 ? 'openAlex用户' : '已认证'"><el-icon
                                                 class="claim-document-icon">
@@ -23,22 +27,23 @@
                                             </el-icon></span>
                                     </div>
                                     <div class="claim-wrap" v-if="openAlexAccount == 1">
-                                        <span class="claim-wrap-name">OpenAlex作者</span>
+                                        <span class="claim-wrap-name" :title="'OpenAlex作者'">OpenAlex作者</span>
                                         <div class="claim-wrap-right"></div>
                                     </div>
                                     <div class="claim-wrap claim-wrap-short"
                                         v-if="openAlexAccount == 0 && claimed == 0">
-                                        <span class="claim-wrap-name">未认证</span>
+                                        <span class="claim-wrap-name" :title="'未认证'">未认证</span>
                                         <div class="claim-wrap-right"></div>
                                     </div>
                                     <div class="claim-wrap claim-wrap-short"
                                         v-if="openAlexAccount == 0 && claimed == 2">
-                                        <span class="claim-wrap-name">认证中</span>
+                                        <span class="claim-wrap-name" :title="'认证中'">认证中</span>
                                         <div class="claim-wrap-right"></div>
                                     </div>
                                     <div class="claim-wrap claim-wrap-var" v-if="openAlexAccount == 0 && claimed == 1">
-                                        <span class="claim-wrap-name" @click="toOpenAlexAccount()">{{ userInfo.real_name
-                                        }}</span>
+                                        <span class="claim-wrap-name" @click="toOpenAlexAccount()"
+                                            :title="userInfo.real_name">{{ userInfo.real_name
+                                            }}</span>
                                         <div class="claim-wrap-right"></div>
                                     </div>
                                     <span v-if="openAlexAccount == 1 || claimed == 1"
@@ -498,8 +503,17 @@ watch(() => props.userInfo.is_follow, (newVal) => {
 /**名字 设置 */
 .name .name-display_name {
     position: relative;
-    margin-right: 10px;
+    /* margin-right: 10px; */
     cursor: default;
+
+    max-width: 450px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.name .name-display_name .name-display_name-span {
+    max-width: 450px;
 }
 
 .name .name-claim-flag {
@@ -510,6 +524,19 @@ watch(() => props.userInfo.is_follow, (newVal) => {
     font-size: 1rem;
 }
 
+@media (max-width: 900px) {
+    .name .name-display_name {
+        max-width: 150px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+
+    .name .name-display_name .name-display_name-span {
+        max-width: 150px !important;
+    }
+}
+
 /**认证框 */
 .name .claim-wrap {
     width: 150px;
@@ -517,6 +544,7 @@ watch(() => props.userInfo.is_follow, (newVal) => {
     margin-left: 20px;
     font-size: 1.2rem;
     position: relative;
+    cursor: default;
     border-bottom: 2px solid rgb(162, 143, 42);
 }
 
@@ -525,7 +553,28 @@ watch(() => props.userInfo.is_follow, (newVal) => {
 }
 
 .name .claim-wrap-var {
-    width: auto
+    width: auto;
+    max-width: 300px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+@media (max-width: 900px) {
+    .name .claim-wrap {
+        max-width: 120px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+
+    .name .claim-wrap-var {
+        max-width: 150px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
 }
 
 .name .claim-wrap .claim-wrap-name {

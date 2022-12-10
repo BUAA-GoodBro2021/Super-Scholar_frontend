@@ -6,16 +6,19 @@
             </el-tab-pane>
             <el-tab-pane label="专家关系网络" name="authorNetWork">
                 <div class="network" id="network" v-if="chart2Show"></div>
-                <el-dialog v-model="chart2Dialog" width="50%" height="60%">
+                <el-dialog v-model="chart2Dialog" class="dialog-entity">
                     <template #header>
                         <span class="dialog-title">与{{ nodedata[choseLine].value }}合著作品如下</span>
                     </template>
                     <div class="dialog-wrap">
                         <div v-for="(item, index) in chart2DialogData" :key="index">
-                            <!-- <WorksResCard :item="item" /> -->
+                            <!-- <span class="document_title document_index">{{ (index + 1) + '. ' }}</span>
+                            <WorksResCard :item="item" /> -->
                             <div class="document-title-wrap">
-                                <span class="document_title document_index">{{ (index + 1) + '. ' }}</span>&nbsp;&nbsp;
-                                <span class="document_title" @click="toArticle(item)">{{ item.work_name }}</span>
+                                <!-- <span class="document_title document_index">{{ (index + 1) + '. ' }}</span>&nbsp;&nbsp;
+                                <span class="document_title" @click="toArticle(item)">{{ item.work_name }}</span> -->
+                                <span class="document_title document_index">{{ (index + 1) + '. ' }}</span>
+                                <WorksResCard :item="item" />
                             </div>
                             <!-- <div class="authors_wrap">
                                 <span class="document_authors" v-for="(authoritem, authorindex) in item.authorList"
@@ -36,6 +39,7 @@ import * as echarts from 'echarts'
 import { watch } from 'vue';
 import { useRouter } from 'vue-router';
 import WorksResCard from '../../views/search/WorksResCard.vue'
+import { Collection } from '../../api/collect'
 // import { nextTick, reactive, readonly } from "vue"
 const router = useRouter()
 
@@ -403,9 +407,13 @@ const initChart2 = () => {
     chart2.on('click', function (node) {
         console.log(node)
         if (node.dataType == 'edge') {
-            chart2DialogData.value = node.data.coArticles
             choseLine.value = node.data.target
-            chart2Dialog.value = true
+            if (node.data.haveArticle) {
+                chart2DialogData.value = node.data.coArticles
+                chart2Dialog.value = true
+            } else {
+                getArticles(node.data)
+            }
         } else if (node.dataType == 'node') {
             if (node.data.name != 0) { // 不是自身 跳转
                 let { href } = router.resolve({
@@ -416,6 +424,57 @@ const initChart2 = () => {
                 window.open(href, "_blank")
             }
         }
+    })
+}
+
+const getArticles = (data) => {
+    if (data.coArticles.length == 0) {
+        ElNotification({
+            title: "暂无合作文章",
+            message: "暂无合作文章",
+            type: "warning",
+            duration: 3000
+        })
+        return
+    }
+    let work_ids = data.coArticles[0].work_id
+    for (let i = 1; i < data.coArticles.length; i++) work_ids = work_ids + '|' + data.coArticles[i].work_id
+    let tdata = {
+        entity_type: 'works',
+        params: {
+            filter: {
+                openalex: work_ids
+            },
+            page: 1,
+            per_page: data.coArticles.length
+        }
+    }
+
+    chart2Dialog.value = true
+    Collection.GetDocumentList(tdata).then((res) => {
+        if (res.data.result == 1) {
+            chart2DialogData.value = []
+            chart2DialogData.value.push(...res.data.list_of_data[0].results)
+            data.haveArticle = true
+            data.coArticles = []
+            data.coArticles.push(...res.data.list_of_data[0].results)
+        } else {
+            chart2Dialog.value = false
+            ElNotification({
+                title: res.message,
+                message: res.message,
+                type: "error",
+                duration: 3000
+            })
+        }
+    }).catch((err) => {
+        chart2Dialog.value = false
+        ElNotification({
+            title: err.message,
+            message: err.message,
+            type: "error",
+            duration: 3000
+        })
     })
 }
 
@@ -485,12 +544,24 @@ const toArticle = (item) => {
     display: flex;
 }
 
+
+.dialog-entity {
+    width: 80vw;
+}
+
 .dialog-wrap {
     padding: 0px 10px 10px 10px;
     min-height: 200px;
     max-height: 400px;
+    width: 100%;
     overflow-y: scroll;
     display: block;
+}
+
+@media (max-width: 1200px) {
+    .dialog-entity {
+        width: 95vw;
+    }
 }
 
 .dialog-title {
@@ -500,7 +571,7 @@ const toArticle = (item) => {
 }
 
 .document_title {
-    margin-top: 5px;
+    margin-top: .9375rem;
     font-size: 15px;
     line-height: 30px;
     text-align: left;
@@ -514,6 +585,7 @@ const toArticle = (item) => {
 
 .document_index {
     font-weight: 800;
+    cursor: default;
 }
 
 .document_title:hover {
