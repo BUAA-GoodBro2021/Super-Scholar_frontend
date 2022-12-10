@@ -52,7 +52,7 @@ const pageChange = (page) => {
 .article_and_data_main_wrap {
     width: 100%;
     background-color: white;
-    border-radius: 20px;
+    border-radius: 2px;
     box-shadow: 3px 3px 3px 3px #dedede;
     height: 100%;
     padding-top: 10px;
@@ -82,6 +82,18 @@ const pageChange = (page) => {
 :deep(.demo-tabs .el-tab-pane) {
     height: 100%;
     width: 100%;
+}
+
+:deep(.demo-tabs .is-active) {
+    color: rgb(162, 143, 42);
+}
+
+:deep(.demo-tabs  .el-tabs__active-bar) {
+    background-color: rgb(162, 143, 42);
+}
+
+:deep(.demo-tabs .el-tabs__item:hover) {
+    color: rgb(162, 143, 42);
 }
 
 .empty {
