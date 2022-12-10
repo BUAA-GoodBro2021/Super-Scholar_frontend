@@ -96,6 +96,10 @@ const pageChange = (page) => {
     color: rgb(162, 143, 42);
 }
 
+:deep(.demo-tabs .el-tabs__header) {
+    margin-bottom: 5px;
+}
+
 .empty {
     margin-top: 10px;
     color: grey;

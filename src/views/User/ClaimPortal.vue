@@ -98,7 +98,7 @@
             <SuccessFilled />
         </el-icon>
         <span class="step2-message" style="margin-top: 20px;">认证成功</span>
-        <el-button @click="abandonPortalDialog = true">解除认证</el-button>
+        <el-button @click="toPersonalPage()">回到主页</el-button>
     </div>
     <el-dialog v-model="abandonPortalDialog">
         <template #title>
@@ -124,6 +124,7 @@ import {
 import { reactive } from "vue";
 const globalStore = useGlobalStore();
 const stepIndex = ref(0)
+const router = useRouter();
 
 const accountType = ref() //-1 个人账户没有认领 0 个人账户认证但是在审核中 1 个人账户已经成功认证
 onMounted(() => {
@@ -418,6 +419,12 @@ const Reclaim = async () => {
             type: "error",
             duration: 3000
         })
+    })
+}
+
+const toPersonalPage = () => {
+    router.push({
+        name: 'PersonalDetail'
     })
 }
 </script>
