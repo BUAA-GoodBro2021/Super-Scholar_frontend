@@ -53,7 +53,7 @@
         <el-collapse :model-value="['1','2']">
           <el-collapse-item title="&nbsp;&nbsp;父级概念" name="1">
             <el-scrollbar max-height="80vh">
-                <div v-for="(item, index) in conceptInfo.related_concepts" class="hbb">
+                <div v-for="(item, index) in conceptInfo.ancestors" class="hbb">
                   <a :href="'https://scholar.super2021.com/client/concept/' + item.id.slice(21)" target="_blank" class="href_box">
                         <span class="related_hrefs">{{item.display_name}}</span>
                         <el-icon class="arrow"><Right /></el-icon>
@@ -63,7 +63,7 @@
           </el-collapse-item>
           <el-collapse-item title="&nbsp;&nbsp;相关概念" name="2">
             <el-scrollbar max-height="100vh">
-                <div v-for="(item, index) in conceptInfo.ancestors" class="hbb">
+                <div v-for="(item, index) in conceptInfo.related_concepts" class="hbb">
                   <a :href="'https://scholar.super2021.com/client/concept/' + item.id.slice(21)" target="_blank" class="href_box">
                         <span class="related_hrefs">{{item.display_name}}</span>
                         <el-icon class="arrow"><Right /></el-icon>
