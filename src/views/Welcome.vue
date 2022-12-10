@@ -162,6 +162,7 @@ onMounted(() => {
 .client-body {
    margin-top: 64px;
    height: calc(100vh - 64px);
+   
 }
 
 .main {
@@ -170,7 +171,7 @@ onMounted(() => {
    background-size: cover;
    position: sticky;
    z-index: 0;
-
+   overflow: hidden;
    .slogen {
       position: absolute;
       left: 6vw;
@@ -194,18 +195,21 @@ onMounted(() => {
       position: absolute;
       left: 5vw;
       top: 42vh;
-      width: 40vw;
+      width: 45vw;
    }
 
    .intro {
       position: absolute;
       top: 58vh;
       left: 5vw;
-      width: 40%;
+      width: 45%;
       display: flex;
       justify-content: space-between;
 
       .box {
+         border: 1px solid #ffffff;
+         padding: 2px;
+         width: 110px;
          .title {
             font-size: 20px;
             margin-top: 10px;
@@ -227,8 +231,9 @@ onMounted(() => {
    .earth {
       position: absolute;
       top: 5vh;
-      right: 0;
+      right: -2vw;
       z-index: -2;
+      overflow: hidden;
    }
 
    @media screen and (max-width:992px) {
@@ -245,7 +250,10 @@ onMounted(() => {
       }
 
       .earth {
-         display: none;
+         position: absolute;
+         top:10vh;
+         left: 0;
+         overflow: hidden;
       }
    }
 
