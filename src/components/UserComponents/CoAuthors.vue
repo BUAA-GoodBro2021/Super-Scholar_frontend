@@ -5,11 +5,11 @@
             <div class="author-card" v-for="(item, index) in authorList" :key="index">
                 <div class="author-card-left"></div>
                 <ul class="list-item">
-                    <li>
-                        <el-avatar :size="70"
+                    <!-- <li>
+                        <el-avatar :size="35"
                             :src="item.avatar_url ? avatar_url : authorAvatarUrl"
                             style="cursor: pointer;" @click="toAuthor(item)"></el-avatar>
-                    </li>
+                    </li> -->
                     <li class="coauthor-name-li">
                         <span class="coauthor-name" @click="toAuthor(item)" :title="item.author_name">{{ item.author_name }}</span>
                     </li>
@@ -26,7 +26,7 @@
         </div>
         <div class="co-author-pagination" v-if="claimed == 1">
             <el-pagination layout="prev, pager, next" :pager-count="5" :total="authorTotalSize" @current-change="PageChange()"
-                v-model:current-page="pageCurrent" hide-on-single-page :page-sizes="[1, 2, 3, 4, 5]"/>
+                v-model:current-page="pageCurrent" hide-on-single-page :page-sizes="[1, 2, 3, 4, 5, 6, 7, 8]"/>
         </div>
         <div class="empty" v-if="claimed == 0">
             该用户尚未认证
@@ -118,12 +118,12 @@ const PageChange = () => {
 
 .author-card {
     width: 100%;
-    height: 100px;
+    height: 70px;
     margin: 5px 0px 5px 0px;
     position: relative;
     padding: 17px 0 7px 20px;
     border-radius: 2px;
-    box-shadow: 3px 3px 2px 4px #dedede;
+    box-shadow: 3px 3px 0px 0px #dedede;
 }
 
 .author-card:hover {
@@ -133,7 +133,7 @@ const PageChange = () => {
 .author-card-left {
     position: absolute;
     width: 7px;
-    height: 60px;
+    height: 30px;
     left: 0;
     top: 20px;
     background-color: rgb(162, 143, 42);
@@ -197,7 +197,7 @@ const PageChange = () => {
     line-height: 100%;
     float: right;
     margin-right: 10px;
-    font-size: 30px;
+    font-size: 20px;
     font-weight: 800;
 }
 

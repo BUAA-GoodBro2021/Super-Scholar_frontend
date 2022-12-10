@@ -9,16 +9,19 @@
                         </el-avatar>
                     </div>
                 </li>
-                <li style="min-width: 60%; height: 100%; max-width: 70%;" class="title-profile-li">
+                <li class="title-profile-li">
                     <div class="title_profile">
                         <div class="title-profile-block">
                             <span class="name">
-                                <div style="display: flex; align-items: center;">
-                                    <div style="position: relative; margin-right: 10px">
+                                <div style="display: flex; align-items: center; ">
+                                    <div style="position: relative; margin-right: 10px; ">
                                         <div class="name-display_name">
-                                            <span :title="userInfo.display_name" class="name-display_name-span">{{
-                                                    userInfo.display_name
-                                            }} </span>
+                                            <div style="clear: both"></div>
+                                            <span :title="userInfo.display_name" class="name-display_name-span">
+                                                {{
+                                                        userInfo.display_name
+                                                }}
+                                            </span>
                                         </div>
                                         <span v-if="openAlexAccount == 1 || claimed == 1" class="name-claim-flag"
                                             :title="openAlexAccount == 1 ? 'openAlex用户' : '已认证'"><el-icon
@@ -84,12 +87,19 @@
                                     <Notification />
                                 </el-icon> &nbsp;
                                 <div class="areas-content">
-                                    <span style="cursor: pointer;"
+                                    <div class="card-concepts clearfix">
+                                        <div class="card-concepts-wrap" v-for="( concept, conceptIndex) in userInfo.x_concepts.slice(0, 8)" :key="conceptIndex" @click="toArea(concept)">
+                                            <div class="card-concept-context">
+                                                {{ concept.display_name }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- <span style="cursor: pointer;"
                                         v-for="(item, index) in userInfo.x_concepts.slice(0, 15)" :key="index"
                                         @click="toArea(item)" class="single-area">{{
                                                 item.display_name
                                         }}<span
-                                            v-if="index != userInfo.x_concepts.length - 1 && index != 14">&nbsp;/&nbsp;</span></span>
+                                            v-if="index != userInfo.x_concepts.length - 1 && index != 14">&nbsp;/&nbsp;</span></span> -->
                                 </div>
                             </div>
                             <div class="areas" v-if="openAlexAccount == 1 && !userInfo.x_concepts">
@@ -470,6 +480,9 @@ watch(() => props.userInfo.is_follow, (newVal) => {
 
 .title-profile-li {
     padding-left: 3rem;
+    min-width: 60%;
+    height: 100%;
+    max-width: calc(100% - 200px);
 }
 
 .title-profile-block {
@@ -477,24 +490,11 @@ watch(() => props.userInfo.is_follow, (newVal) => {
     height: 60%;
 }
 
-@media (max-height: 800px) {
-    .title-profile-block {
-        display: block;
-        height: 80%;
-    }
-}
-
-@media (max-width: 1200px) {
-    .card_body {
-        height: 80%;
-        width: 97%;
-    }
-}
 
 .name {
     font-size: 1.8rem;
     height: 50%;
-    cursor: pointer;
+    /* cursor: pointer; */
     text-align: left;
     display: flex;
     align-items: center;
@@ -505,37 +505,32 @@ watch(() => props.userInfo.is_follow, (newVal) => {
     position: relative;
     /* margin-right: 10px; */
     cursor: default;
+    height: auto;
+    /* min-height: 37.6px; */
+    /* height: 100%;
+    display: flex;
+    align-items: center; */
 
     max-width: 450px;
     white-space: nowrap;
     text-overflow: ellipsis;
-    overflow: hidden;
+    /* 设置hidden会导致父元素的高度不能被子元素撑开 */
+    /* overflow: hidden; */
 }
 
 .name .name-display_name .name-display_name-span {
+    height: auto;
     max-width: 450px;
 }
 
 .name .name-claim-flag {
     position: absolute;
-    top: -5px;
+    top: -6px;
     right: -18px;
     color: rgba(162, 144, 42, 0.575);
     font-size: 1rem;
 }
 
-@media (max-width: 900px) {
-    .name .name-display_name {
-        max-width: 150px;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: hidden;
-    }
-
-    .name .name-display_name .name-display_name-span {
-        max-width: 150px !important;
-    }
-}
 
 /**认证框 */
 .name .claim-wrap {
@@ -559,22 +554,6 @@ watch(() => props.userInfo.is_follow, (newVal) => {
     text-overflow: ellipsis;
     overflow: hidden;
     cursor: pointer;
-}
-
-@media (max-width: 900px) {
-    .name .claim-wrap {
-        max-width: 120px;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: hidden;
-    }
-
-    .name .claim-wrap-var {
-        max-width: 150px;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: hidden;
-    }
 }
 
 .name .claim-wrap .claim-wrap-name {
@@ -631,7 +610,8 @@ watch(() => props.userInfo.is_follow, (newVal) => {
 .areas {
     font-size: 15px;
     color: rgb(162, 143, 42);
-    height: 45%;
+    /* height: 63%; */
+    height: 73%;
     width: 100%;
     line-height: 20px;
     /* line-height: 50%; */
@@ -642,6 +622,35 @@ watch(() => props.userInfo.is_follow, (newVal) => {
     word-break: break-all;
     word-wrap: break-word;
     ;
+}
+
+.card-concepts {
+  height: auto;
+}
+.card-concepts .card-concepts-wrap {
+  float: left;
+  margin-right: 10px;
+  margin-bottom: 5px;
+  padding: 3px 11px;
+  box-sizing: border-box;
+  border: 1.6px solid rgb(162, 143, 42);
+  border-radius: 14px;
+  font-size: 14px;
+  cursor: pointer;
+}
+.card-concepts .card-concepts-wrap i {
+  display: inline-block;
+  margin-right: 3px;
+}
+.card-concepts .card-concepts-wrap .card-concept-context {
+  display: inline-block;
+  text-transform: capitalize;
+}
+.clearfix::before,
+.clearfix::after {
+  content: "";
+  display: table;
+  clear: both;
 }
 
 ::-webkit-scrollbar {
@@ -675,6 +684,71 @@ watch(() => props.userInfo.is_follow, (newVal) => {
 .single-area:hover {
     color: black
 }
+
+/* 在小屏幕时的高度布局 */
+@media (max-height: 800px) {
+    .title-profile-block {
+        display: block;
+        height: 100%;
+    }
+
+    .name {
+        height: 39%;
+    }
+
+    .organization {
+        height: 19%;
+    }
+    .areas {
+        height: 54%;
+    }
+    
+}
+
+@media (max-width: 900px) {
+    .name .claim-wrap {
+        max-width: 100px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+
+    .name .claim-wrap-var {
+        max-width: 100px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+
+    .name .claim-wrap-name {
+        max-width: 100px;
+    }
+}
+
+@media (max-width: 900px) {
+    .name .name-display_name {
+        max-width: 130px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+
+    .name .name-display_name .name-display_name-span {
+        max-width: 130px !important;
+    }
+}
+
+@media (max-width: 1200px ) {
+    .card_body {
+        height: 80%;
+        width: 97%;
+    }
+
+    .areas {
+        height: 50%;
+    }
+}
+
 
 .follow {
     font-size: 18px;

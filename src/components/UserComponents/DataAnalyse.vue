@@ -290,7 +290,7 @@ const initChart1 = () => {
             }
         },
         grid: {
-            right: '20%',
+            right: '22%',
             left: '15%'
         },
         toolbox: {
@@ -509,7 +509,7 @@ const toArticle = (item) => {
 
 
 .tabs {
-    width: 90%;
+    width: 95%;
     height: 90%;
     /* margin-top: 10px; */
     margin-bottom: 5%;
@@ -550,7 +550,7 @@ const toArticle = (item) => {
 }
 
 .dialog-wrap {
-    padding: 0px 10px 10px 10px;
+    padding: 0px 70px 10px 10px;
     min-height: 200px;
     max-height: 400px;
     width: 100%;
