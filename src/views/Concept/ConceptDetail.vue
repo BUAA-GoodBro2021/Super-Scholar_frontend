@@ -43,13 +43,35 @@
         />
       </div>
       <div class="right">
-          <div style="font-size: 1.4em; margin-top: 3vh; margin-left: 1vw; margin-bottom: 2vh">相关概念</div>
+          <!-- <div style="font-size: 1.4em; margin-top: 3vh; margin-left: 1vw; margin-bottom: 2vh">相关概念</div>
           <div v-for="(item, index) in conceptInfo.related_concepts" class="hbb">
               <a :href="'https://scholar.super2021.com/client/concept/' + item.id.slice(21)" target="_blank" class="href_box">
                     <span class="related_hrefs">{{item.display_name}}</span>
                     <el-icon class="arrow"><Right /></el-icon>
               </a>
-          </div>
+          </div> -->
+        <el-collapse :model-value="['1','2']">
+          <el-collapse-item title="&nbsp;&nbsp;父级概念" name="1">
+            <el-scrollbar max-height="80vh">
+                <div v-for="(item, index) in conceptInfo.related_concepts" class="hbb">
+                  <a :href="'https://scholar.super2021.com/client/concept/' + item.id.slice(21)" target="_blank" class="href_box">
+                        <span class="related_hrefs">{{item.display_name}}</span>
+                        <el-icon class="arrow"><Right /></el-icon>
+                  </a>
+                </div>
+            </el-scrollbar>
+          </el-collapse-item>
+          <el-collapse-item title="&nbsp;&nbsp;相关概念" name="2">
+            <el-scrollbar max-height="100vh">
+                <div v-for="(item, index) in conceptInfo.ancestors" class="hbb">
+                  <a :href="'https://scholar.super2021.com/client/concept/' + item.id.slice(21)" target="_blank" class="href_box">
+                        <span class="related_hrefs">{{item.display_name}}</span>
+                        <el-icon class="arrow"><Right /></el-icon>
+                  </a>
+                </div>
+            </el-scrollbar>
+          </el-collapse-item>
+        </el-collapse>
       </div>
     </div>
   </div>
@@ -65,6 +87,7 @@ const conceptInfo = ref();
 const conceptPaperList = ref([]);
 const associatedConceptList = ref([]);
 const isLoading = ref(true);
+const router = useRouter();
 
 const pageTotalSize = ref(10);
 const countPerPage = 10;
@@ -143,6 +166,11 @@ const UpdateAssociatedConcept = (page) => {
     );
   }
 };
+
+function jumpTo(id){
+  router.push('/client/concept/'+id)
+  // location.reload()
+}
 </script>
 
 <style scoped>
@@ -295,12 +323,12 @@ const UpdateAssociatedConcept = (page) => {
 
 .href_box {
     display: block;
-    font-size: 1.3em;
+    font-size: 1.1em;
     color: rgb(117, 117, 117);
     background-color: transparent;
     text-decoration: none;
     width: 90%;
-    height: 5vh;
+    height: 3vh;
     padding-top: 2vh;
     padding-left: 1vw;
     transition: .2s;
