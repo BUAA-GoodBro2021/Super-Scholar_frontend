@@ -1,6 +1,6 @@
 <template>
     <div class="collection-body">
-        <div class="video-container">
+        <div class="video-container"  v-show="pageOne">
             <el-card shadow="hover" style="width: 100%; height: 100%;">
                 <div class="content-wrap">
                     <!-- 按钮与面包屑 -->
@@ -70,60 +70,115 @@
                             </li>
                         </ul>
                     </div>
-                    <div v-loading="loading" class="video-main" v-show="!pageOne">
-                        <div class="document-wrap">
-                        <ul class="search-result__list">
-                            <!-- 单个搜索结果卡片 -->
-                            <li v-for="(item, index) in filterWorkList" :key="index" class="result-item">
-                                <WorksResCardVue :item="item" :class="{ active: item.active }"
-                                    :notInCollection="false" />
-                                <i class="icon-work-selected" :class="{ workiconactive: item.active }"
-                                    @click="SelectItem(item)"></i>
-                            </li>
-                            <li v-for="(item, index) in filterWorkList" :key="index" class="result-item">
-                                <WorksResCardVue :item="item" :class="{ active: item.active }"
-                                    :notInCollection="false" />
-                                <i class="icon-work-selected" :class="{ workiconactive: item.active }"
-                                    @click="SelectItem(item)"></i>
-                            </li>
-                        </ul>
+                </div>
+            </el-card>
+        </div>
+        <div class="video-container" v-show="!pageOne">
+            <el-card shadow="hover" style="width: 100%;">
+                <div class="content-wrap-document">
+                    <!-- 按钮与面包屑 -->
+                    <div class="video-header clearfix video-header-sticky">
+                        <div class="header-top">
+                            <!-- 新建文件夹 需要处理进入到收藏夹内部时候 -->
+                            <el-button type="primary" @click="addConfirm()" v-if="pageOne">
+                                {{ '新建收藏夹' }}
+                            </el-button>
+                            <el-button type="primary" @click="backToRoot(true)" v-if="!pageOne">
+                                {{ '返回上一级' }}
+                            </el-button>
+                            <!-- 重命名 -->
+                            <el-button v-show="pageOne && hasSelect" style="margin-left:10px" type="primary"
+                                @click="ChangeNameConfirm()" :disabled="(selects.length != 1)">
+                                <el-icon>
+                                    <Edit />
+                                </el-icon>
+                                {{ '重命名' }}
+                            </el-button>
+
+                            <!-- 删除 -->
+                            <el-button v-show="hasSelect" style="margin-left:10px" @click="(deleteDialog = true)"
+                                type="danger">
+                                <el-icon>
+                                    <Delete />
+                                </el-icon>
+                                {{ '删除' }}
+                            </el-button>
+                            <div class="fr">
+                                <el-input v-model="keyWord" :placeholder="'名称'" style="width:150px;margin-left:10px;"
+                                    clearable @clear="resetItems()"></el-input>
+                                <!-- 查询 -->
+                                <el-button type="primary" style="margin-left:2px" @click="searchItems()">
+                                    <el-icon>
+                                        <Search />
+                                    </el-icon>{{ '查询' }}
+                                </el-button>
+                            </div>
+                        </div>
+
+                        <div class="breadcrumb">
+                            <!-- 面包屑 这里只起到展示作用 不可点击 -->
+                            <el-breadcrumb :separator-icon="ArrowRight">
+                                <el-breadcrumb-item v-for="(item, index) in breadcrumbList" :key="index">
+                                    <span :class="(index === breadcrumbList.length - 1) ? 'breadcrumb-link-active' : ''"
+                                        class="breadcrumb-link" @click="backToRoot(index == 0)">{{ item }}</span>
+                                </el-breadcrumb-item>
+                            </el-breadcrumb>
+                        </div>
                     </div>
+                    <div v-loading="loading" class="video-main video-main-documentlist" v-show="!pageOne">
+                        <div class="document-wrap">
+                            <ul class="search-result__list">
+                                <!-- 单个搜索结果卡片 -->
+                                <li v-for="(item, index) in filterWorkList" :key="index" class="result-item">
+                                    <WorksResCardVue :item="item" :class="{ active: item.active }"
+                                        :notInCollection="false" />
+                                    <i class="icon-work-selected" :class="{ workiconactive: item.active }"
+                                        @click="SelectItem(item)"></i>
+                                </li>
+                                <li v-for="(item, index) in filterWorkList" :key="index" class="result-item">
+                                    <WorksResCardVue :item="item" :class="{ active: item.active }"
+                                        :notInCollection="false" />
+                                    <i class="icon-work-selected" :class="{ workiconactive: item.active }"
+                                        @click="SelectItem(item)"></i>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </el-card>
-            <!-- 重命名弹出框 -->
-            <el-dialog v-model="changeDialog">
-                <template #header center>
-                    <span class="dialog-title">重命名</span>
-                </template>
-                <el-input v-model="changeName" max="10" show-word-limit></el-input>
-                <div style="display: flex; justify-content: center; margin-top: 20px; ">
-                    <el-button @click="handleChangeName()" type="primary">确定</el-button>
-                    <el-button @click="changeDialog = false">取消</el-button>
-                </div>
-            </el-dialog>
-            <!-- 新增弹出框 -->
-            <el-dialog v-model="addDialog">
-                <template #header center>
-                    <span class="dialog-title">新建收藏夹</span>
-                </template>
-                <el-input v-model="changeName" max="10" show-word-limit></el-input>
-                <div style="display: flex; justify-content: center; margin-top: 20px;">
-                    <el-button @click="addFolder()" type="primary">确定</el-button>
-                    <el-button @click="addDialog = false">取消</el-button>
-                </div>
-            </el-dialog>
-            <!-- 删除弹出框 -->
-            <el-dialog v-model="deleteDialog">
-                <template #header center>
-                    <span class="dialog-title">确定删除？</span>
-                </template>
-                <div style="display: flex; justify-content: center; ">
-                    <el-button @click="deleteFile()" type="danger">确定</el-button>
-                    <el-button @click="deleteDialog = false">取消</el-button>
-                </div>
-            </el-dialog>
         </div>
+        <!-- 重命名弹出框 -->
+        <el-dialog v-model="changeDialog">
+            <template #header center>
+                <span class="dialog-title">重命名</span>
+            </template>
+            <el-input v-model="changeName" max="10" show-word-limit></el-input>
+            <div style="display: flex; justify-content: center; margin-top: 20px; ">
+                <el-button @click="handleChangeName()" type="primary">确定</el-button>
+                <el-button @click="changeDialog = false">取消</el-button>
+            </div>
+        </el-dialog>
+        <!-- 新增弹出框 -->
+        <el-dialog v-model="addDialog">
+            <template #header center>
+                <span class="dialog-title">新建收藏夹</span>
+            </template>
+            <el-input v-model="changeName" max="10" show-word-limit></el-input>
+            <div style="display: flex; justify-content: center; margin-top: 20px;">
+                <el-button @click="addFolder()" type="primary">确定</el-button>
+                <el-button @click="addDialog = false">取消</el-button>
+            </div>
+        </el-dialog>
+        <!-- 删除弹出框 -->
+        <el-dialog v-model="deleteDialog">
+            <template #header center>
+                <span class="dialog-title">确定删除？</span>
+            </template>
+            <div style="display: flex; justify-content: center; ">
+                <el-button @click="deleteFile()" type="danger">确定</el-button>
+                <el-button @click="deleteDialog = false">取消</el-button>
+            </div>
+        </el-dialog>
     </div>
 </template>
 <script setup>
@@ -564,11 +619,25 @@ const toConcept = (item) => {
     min-width: 630px;
     width: 80%;
     margin: 10px;
+    /* position: fixed; */
+}
+
+.video-container-document {
+    width: 80%;
+    margin: 10px;
 }
 
 .video-container .video-header {
     padding: 0 0 5px 0;
     border-bottom: 1px solid #dbdbdb;
+}
+
+/*对文献列表的操作栏实行粘性定位 可以方便用户使用的同时解决overflow-x和overflow-y属性不一致导致的子元素溢出不显示问题 */
+.video-container .video-header-sticky {
+    position: sticky;
+    top: 64px;
+    background-color: white;
+    z-index: 10;
 }
 
 .video-container .video-header .breadcrumb {
@@ -828,17 +897,19 @@ const toConcept = (item) => {
 
 
 /* #region 搜索列表和单个搜索卡片 */
-.document-wrap{
+.document-wrap {
     width: 100%;
     height: 100%;
-    overflow-y: scroll;
+    overflow-x: visible;
 }
+
 .search-result__list {
     list-style: none;
     padding: 0;
     margin: 0;
     height: 100%;
     overflow-x: visible;
+    /* overflow-y: scroll; */
 }
 
 .search-result__list .result-item {
