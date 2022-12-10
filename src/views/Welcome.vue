@@ -4,8 +4,11 @@
       <div class="client-body">
          <div class="main">
             <div class="slogen">
-               <div class="slogen-title">专业的学术成果分享平台</div>
-               <div class="slogen-dis">论文搜索 · 作者查询 · 文献管理 · 学术讨论</div>
+               <div class="slogen-title">Make Academia Visible</div>
+               <div class="slogen-dis">
+                  上亿级数据，毫秒级响应<br/>
+                  从引用图表到专家关系网络，构建专业可视化的学术成果分享平台
+               </div>
             </div>
             <SearchVue class="search" />
             <div class="intro">
@@ -175,10 +178,9 @@ onMounted(() => {
    .slogen {
       position: absolute;
       left: 6vw;
-      top: calc(30vh - 50px);
-
+      top: calc(30vh - 140px);
       &-title {
-         font-size: 50px;
+         font-size: 40px;
          font-weight: 900;
          color: white;
       }
@@ -188,13 +190,14 @@ onMounted(() => {
          font-size: 20px;
          font-weight: 200;
          color: #aab1b9;
+         line-height: 30px;
       }
    }
 
    .search {
       position: absolute;
       left: 5vw;
-      top: 42vh;
+      top: 40vh;
       width: 45vw;
    }
 
@@ -207,8 +210,6 @@ onMounted(() => {
       justify-content: space-between;
 
       .box {
-         border: 1px solid #ffffff;
-         padding: 2px;
          width: 110px;
          .title {
             font-size: 20px;
@@ -250,16 +251,16 @@ onMounted(() => {
       }
 
       .earth {
-         position: absolute;
-         top:10vh;
-         left: 0;
+         left:50%;
+         margin-left: -400px;
          overflow: hidden;
       }
    }
 
    @media screen and (min-height: 794px) {
       .earth {
-         top: 10vh;
+         display: block;
+         top: 15vh;
       }
    }
 }
