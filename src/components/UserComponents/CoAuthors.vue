@@ -66,7 +66,10 @@ const PageChange = () => {
 /* 整体的height和width由外层调整 */
 .coauthors-wrap {
     width: 100%;
-    background-color: white;
+    /* background-color: white; */
+    /* background: linear-gradient(70deg, #8f99af,rgb(218 204 135)); */
+    /**配色 浅 */
+    /* background: linear-gradient(70deg, #c4ccdc, rgb(218 204 135)); */
     border-radius: 2px;
     box-shadow: 3px 3px 3px 3px #dedede;
     height: 100%;
@@ -123,11 +126,15 @@ const PageChange = () => {
     position: relative;
     padding: 17px 0 7px 20px;
     border-radius: 2px;
-    box-shadow: 3px 3px 0px 0px #dedede;
+    /* background: linear-gradient(70deg, #445a7f,rgb(102 99 84)); */
+    /**配色 深 */
+    /* box-shadow: 3px 3px 0px 0px #726a6a; */
+    /**配色 浅 */
+    box-shadow: 3px 3px 0px 0px #cfcfcf;
 }
 
 .author-card:hover {
-    background-color: #f1f5fa;
+    background-color: #b7b7a8;
 }
 
 .author-card-left {
@@ -225,5 +232,17 @@ const PageChange = () => {
 
 :deep(.co-author-pagination .el-pager li:hover) {
     color: rgb(248 210 8);
+}
+
+:deep(.co-author-pagination .el-pagination button) {
+    background: none;
+}
+
+:deep(.co-author-pagination .el-pager li) {
+    background: none;
+}
+
+:deep(.co-author-pagination .el-pagination button:hover) {
+    color:rgb(248 210 8);
 }
 </style>

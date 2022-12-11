@@ -432,7 +432,11 @@ watch(() => props.userInfo.is_follow, (newVal) => {
 /* 整体的height和width由外层调整 */
 .avatar_main_wrap {
     width: 100%;
-    background-color: white;
+    /* background-color: white; */
+    /*配色 深 */
+    /* background: linear-gradient(70deg, #445a7f,rgb(102 99 84)); */
+    /*配色 浅 */
+    background: linear-gradient(70deg, #f4f8ff, rgb(184 179 154));
     border-radius: 2px;
     box-shadow: 3px 3px 3px 3px #dedede;
     height: 100%;
@@ -573,13 +577,13 @@ watch(() => props.userInfo.is_follow, (newVal) => {
 }
 
 .name .claim-document-data {
-    font-size: 1rem;
+    font-size: 1.2rem;
     /* color:  #0077c2;
      */
-    color: rgb(164, 41, 41);
+    color: rgb(107 6 6);
     padding-left: 10px;
-    height: 1rem;
-    line-height: 1rem;
+    height: 1.2rem;
+    line-height: 1.2rem;
     cursor: default;
 }
 
