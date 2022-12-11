@@ -1,5 +1,7 @@
 <template>
     <div class="article_and_data_main_wrap">
+        <div class="left-bottom"></div>
+        <div class="left-bottom"></div>
         <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
             <el-tab-pane label="发表文献" name="documents" class="tab-pane">
                 <DocumentListVue :documentList="documentList" v-if="claimed == 1" :pageTotalSize="pageTotalSize"
@@ -51,7 +53,11 @@ const pageChange = (page) => {
 <style scoped>
 .article_and_data_main_wrap {
     width: 100%;
-    background-color: white;
+    /*深色 */
+    /* background: linear-gradient(70deg, #8f99af,rgb(218 204 135)); */
+    /*浅色 */
+    /* background: linear-gradient(70deg, #ebedf1,rgb(220, 219, 213)); */
+    /* background-color: white; */
     border-radius: 2px;
     box-shadow: 3px 3px 3px 3px #dedede;
     height: 100%;
@@ -60,6 +66,27 @@ const pageChange = (page) => {
     display: flex;
     justify-content: center;
     align-items: center;
+
+    position: relative;
+}
+
+.left-bottom {
+    position: absolute;
+    height: 80px;
+    width: 80px;
+    border: 10px solid transparent;
+
+    /**深色 */
+    border-left-color: #445a7f;
+    border-bottom-color: #445a7f;
+
+    /**浅色 */
+    border-left-color: rgb(184 179 154);
+    border-bottom-color: rgb(184 179 154);
+    background-color: transparent;
+
+    bottom: 0;
+    left: 0;
 }
 
 .demo-tabs {

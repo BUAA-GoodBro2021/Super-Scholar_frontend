@@ -1,44 +1,67 @@
 <template>
     <div class="collection-body">
-        <div class="video-container"  v-show="pageOne">
+        <div class="video-container" v-show="pageOne">            
             <el-card shadow="hover" style="width: 100%; height: 100%;">
                 <div class="content-wrap">
                     <!-- 按钮与面包屑 -->
                     <div class="video-header clearfix">
                         <div class="header-top">
                             <!-- 新建文件夹 需要处理进入到收藏夹内部时候 -->
-                            <el-button type="primary" @click="addConfirm()" v-if="pageOne">
+                            <button class="right-btn addBtn" @click="addConfirm()" v-if="pageOne">
                                 {{ '新建收藏夹' }}
-                            </el-button>
-                            <el-button type="primary" @click="backToRoot(true)" v-if="!pageOne">
+                            </button>
+                            <button class="right-btn returnBtn" @click="backToRoot(true)" v-if="!pageOne">
                                 {{ '返回上一级' }}
-                            </el-button>
+                            </button>
+                            <button class="right-btn renameBtn" v-show="pageOne && hasSelect"
+                                @click="ChangeNameConfirm()" :disabled="(selects.length != 1)">
+                                <el-icon>
+                                    <Edit />
+                                </el-icon> {{ '重命名' }}
+                            </button>
+                            <button class="right-btn deleteBtn" v-show="hasSelect" @click="(deleteDialog = true)">
+                                <el-icon>
+                                    <Delete />
+                                </el-icon>
+                                {{ '删除' }}
+                            </button>
+                            <!-- <el-button type="primary" @click="addConfirm()" v-if="pageOne">
+                                {{ '新建收藏夹' }}
+                            </el-button> -->
+                            <!-- <el-button type="primary" @click="backToRoot(true)" v-if="!pageOne">
+                                {{ '返回上一级' }}
+                            </el-button> -->
                             <!-- 重命名 -->
-                            <el-button v-show="pageOne && hasSelect" style="margin-left:10px" type="primary"
+                            <!-- <el-button v-show="pageOne && hasSelect" style="margin-left:10px" type="primary"
                                 @click="ChangeNameConfirm()" :disabled="(selects.length != 1)">
                                 <el-icon>
                                     <Edit />
                                 </el-icon>
                                 {{ '重命名' }}
-                            </el-button>
+                            </el-button> -->
 
                             <!-- 删除 -->
-                            <el-button v-show="hasSelect" style="margin-left:10px" @click="(deleteDialog = true)"
+                            <!-- <el-button v-show="hasSelect" style="margin-left:10px" @click="(deleteDialog = true)"
                                 type="danger">
                                 <el-icon>
                                     <Delete />
                                 </el-icon>
                                 {{ '删除' }}
-                            </el-button>
+                            </el-button> -->
                             <div class="fr">
                                 <el-input v-model="keyWord" :placeholder="'名称'" style="width:150px;margin-left:10px;"
                                     clearable @clear="resetItems()"></el-input>
                                 <!-- 查询 -->
-                                <el-button type="primary" style="margin-left:2px" @click="searchItems()">
+                                <button class="right-btn search-btn" @click="searchItems()">
                                     <el-icon>
                                         <Search />
                                     </el-icon>{{ '查询' }}
-                                </el-button>
+                                </button>
+                                <!-- <el-button type="primary" style="margin-left:2px" @click="searchItems()">
+                                    <el-icon>
+                                        <Search />
+                                    </el-icon>{{ '查询' }}
+                                </el-button> -->
                             </div>
                         </div>
 
@@ -80,38 +103,61 @@
                     <div class="video-header clearfix video-header-sticky">
                         <div class="header-top">
                             <!-- 新建文件夹 需要处理进入到收藏夹内部时候 -->
-                            <el-button type="primary" @click="addConfirm()" v-if="pageOne">
+                            <button class="right-btn addBtn" @click="addConfirm()" v-if="pageOne">
                                 {{ '新建收藏夹' }}
-                            </el-button>
-                            <el-button type="primary" @click="backToRoot(true)" v-if="!pageOne">
+                            </button>
+                            <button class="right-btn returnBtn" @click="backToRoot(true)" v-if="!pageOne">
                                 {{ '返回上一级' }}
-                            </el-button>
+                            </button>
+                            <button class="right-btn renameBtn" v-show="pageOne && hasSelect"
+                                @click="ChangeNameConfirm()" :disabled="(selects.length != 1)">
+                                <el-icon>
+                                    <Edit />
+                                </el-icon> {{ '重命名' }}
+                            </button>
+                            <button class="right-btn deleteBtn" v-show="hasSelect" @click="(deleteDialog = true)">
+                                <el-icon>
+                                    <Delete />
+                                </el-icon>
+                                {{ '删除' }}
+                            </button>
+                            <!-- <el-button type="primary" @click="addConfirm()" v-if="pageOne">
+                                {{ '新建收藏夹' }}
+                            </el-button> -->
+                            <!-- <el-button type="primary" @click="backToRoot(true)" v-if="!pageOne">
+                                {{ '返回上一级' }}
+                            </el-button> -->
                             <!-- 重命名 -->
-                            <el-button v-show="pageOne && hasSelect" style="margin-left:10px" type="primary"
+                            <!-- <el-button v-show="pageOne && hasSelect" style="margin-left:10px" type="primary"
                                 @click="ChangeNameConfirm()" :disabled="(selects.length != 1)">
                                 <el-icon>
                                     <Edit />
                                 </el-icon>
                                 {{ '重命名' }}
-                            </el-button>
+                            </el-button> -->
 
                             <!-- 删除 -->
-                            <el-button v-show="hasSelect" style="margin-left:10px" @click="(deleteDialog = true)"
+                            <!-- <el-button v-show="hasSelect" style="margin-left:10px" @click="(deleteDialog = true)"
                                 type="danger">
                                 <el-icon>
                                     <Delete />
                                 </el-icon>
                                 {{ '删除' }}
-                            </el-button>
+                            </el-button> -->
                             <div class="fr">
                                 <el-input v-model="keyWord" :placeholder="'名称'" style="width:150px;margin-left:10px;"
                                     clearable @clear="resetItems()"></el-input>
                                 <!-- 查询 -->
-                                <el-button type="primary" style="margin-left:2px" @click="searchItems()">
+                                <button class="right-btn search-btn" @click="searchItems()">
                                     <el-icon>
                                         <Search />
                                     </el-icon>{{ '查询' }}
-                                </el-button>
+                                </button>
+                                <!-- <el-button type="primary" style="margin-left:2px" @click="searchItems()">
+                                    <el-icon>
+                                        <Search />
+                                    </el-icon>{{ '查询' }}
+                                </el-button> -->
                             </div>
                         </div>
 
@@ -135,12 +181,6 @@
                                     <i class="icon-work-selected" :class="{ workiconactive: item.active }"
                                         @click="SelectItem(item)"></i>
                                 </li>
-                                <li v-for="(item, index) in filterWorkList" :key="index" class="result-item">
-                                    <WorksResCardVue :item="item" :class="{ active: item.active }"
-                                        :notInCollection="false" />
-                                    <i class="icon-work-selected" :class="{ workiconactive: item.active }"
-                                        @click="SelectItem(item)"></i>
-                                </li>
                             </ul>
                         </div>
                     </div>
@@ -154,8 +194,12 @@
             </template>
             <el-input v-model="changeName" max="10" show-word-limit></el-input>
             <div style="display: flex; justify-content: center; margin-top: 20px; ">
-                <el-button @click="handleChangeName()" type="primary">确定</el-button>
-                <el-button @click="changeDialog = false">取消</el-button>
+                <button class="right-btn search-btn" @click="handleChangeName()">
+                    {{ '确定' }}
+                </button>
+                <button class="right-btn search-btn" @click="changeDialog = false">
+                    {{ '取消' }}
+                </button>
             </div>
         </el-dialog>
         <!-- 新增弹出框 -->
@@ -165,8 +209,12 @@
             </template>
             <el-input v-model="changeName" max="10" show-word-limit></el-input>
             <div style="display: flex; justify-content: center; margin-top: 20px;">
-                <el-button @click="addFolder()" type="primary">确定</el-button>
-                <el-button @click="addDialog = false">取消</el-button>
+                <button class="right-btn search-btn" @click="addFolder()">
+                    {{ '确定' }}
+                </button>
+                <button class="right-btn search-btn" @click="addDialog = false">
+                    {{ '取消' }}
+                </button>
             </div>
         </el-dialog>
         <!-- 删除弹出框 -->
@@ -175,8 +223,12 @@
                 <span class="dialog-title">确定删除？</span>
             </template>
             <div style="display: flex; justify-content: center; ">
-                <el-button @click="deleteFile()" type="danger">确定</el-button>
-                <el-button @click="deleteDialog = false">取消</el-button>
+                <button class="right-btn deleteBtn" @click="deleteFile()">
+                    {{ '删除' }}
+                </button>
+                <button class="right-btn" @click="deleteDialog = false">
+                    {{ '取消' }}
+                </button>
             </div>
         </el-dialog>
     </div>
@@ -186,6 +238,8 @@ import { ArrowRight, Plus, Edit, Delete, Search } from '@element-plus/icons-vue'
 import { sliderEmits } from 'element-plus';
 import { Collection } from '../../api/collect'
 import WorksResCardVue from '../search/WorksResCard.vue';
+import folderImage from '../../assets/images/folder.png'
+const showOne = ref(true)
 const pageOne = ref(true) // 第几页
 const hasSelect = ref(false) // 是否有选中的元素
 const selects = ref([]) //选中的元素
@@ -716,6 +770,7 @@ const toConcept = (item) => {
 .video-container .video-main .list-item .inner {
     height: 90px;
     width: 90px;
+    padding-top: 10px;
     margin: 7.5px 15px;
 }
 
@@ -723,8 +778,9 @@ const toConcept = (item) => {
 .video-container .video-main .list-item .inner .icon-folder {
     display: inline-block;
     width: 90px;
-    height: 90px;
-    background-image: url('../../assets/icons/folder2.svg');
+    height: 80px;
+    /* background-image: var(folderImage);*/
+    background-image: url('../../assets/images/data-storage.png');
     background-size: 100% 100%;
 }
 
@@ -744,7 +800,7 @@ const toConcept = (item) => {
 }
 
 .video-container .video-main .list-item .file-name:hover {
-    color: #409eff;
+    color: rgb(162, 143, 42);
 }
 
 .video-container .video-main .hover-cover {
@@ -797,7 +853,7 @@ const toConcept = (item) => {
 }
 
 .video-container .video-main .active {
-    border: 2px solid #409eff;
+    border: 2px solid rgb(162, 143, 42);
     border-radius: 8px;
 }
 
@@ -839,7 +895,7 @@ const toConcept = (item) => {
 
 /* todo */
 .video-container .video-main .active {
-    border: 1px solid #409eff;
+    border: 1px solid rgb(162, 143, 42);
     border-radius: 8px;
 }
 
@@ -878,7 +934,7 @@ const toConcept = (item) => {
 }
 
 :deep(.video-container .video-main .el-checkbox__inner .is-checked .el-checkbox__inner) {
-    border-color: #409eff;
+    border-color: rgb(162, 143, 42);
 }
 
 .video-container .video-main .resultitemactive {
@@ -954,4 +1010,60 @@ const toConcept = (item) => {
 /* #endregion 搜索列表和单个搜索卡片结束 */
 
 /* #endregion 搜索结果区域结束 */
+
+.right-btn {
+    width: 74px;
+    height: 32px;
+    background-color: rgb(162, 143, 42);
+    border: none;
+    cursor: pointer;
+    border-radius: 1px;
+    font-size: 0.8rem;
+    color: white;
+    line-height: 32px;
+}
+
+.right-btn:hover {
+    background-color: rgba(162, 144, 42, 0.75);
+}
+
+.search-btn {
+    margin-left: 4px;
+}
+
+.addBtn {
+    width: 100px;
+}
+
+.returnBtn {
+    width: 100px;
+}
+
+.renameBtn {
+    width: 84px;
+    margin-left: 4px;
+}
+
+.renameBtn[disabled] {
+    background-color: rgb(148, 147, 147);
+    cursor: not-allowed;
+}
+
+.deleteBtn {
+    margin-left: 4px;
+    margin-right: 4px;
+    background-color: rgb(164, 41, 41);
+}
+
+.deleteBtn:hover {
+    background-color: rgba(164, 41, 41, 0.658);
+}
+
+:deep(.is-focus) {
+    box-shadow: 0 0 0 1px rgb(162, 143, 42) inset;
+}
+
+:deep(.fr .el-input__wrapper) {
+    border-radius: 1px;
+}
 </style>

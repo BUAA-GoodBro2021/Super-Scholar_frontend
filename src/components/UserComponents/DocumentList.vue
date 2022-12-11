@@ -4,7 +4,7 @@
             <el-table :data="documentList" style="width: 100%; height: 100%;">
                 <el-table-column prop="display_name" label="文献" min-width="60%">
                     <template #default="scope">
-                        <span class="document_title" @click="toDocument(scope.row)" :title="scope.row.display_name">{{ scope.row.display_name }}</span>
+                        <span class="document_title" @click="toDocument(scope.row)" :title="scope.row.display_name.replace(/<\/?i>/ig, '')">{{ scope.row.display_name.replace(/<\/?i>/ig, "") }}</span>
                         <!-- <div class="authors_wrap">
                             <span class="document_authors" v-for="(item, index) in scope.row.authorships"
                                 :key="index">{{
@@ -56,7 +56,7 @@
                 v-model:current-page="pageCurrent" hide-on-single-page :page-sizes="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]" />
         </div>
         <el-dialog v-model="cancelPdfDialog">
-            <template #title>
+            <template #header>
                 <span class="dialog-title">确定删除该文章的PDF吗？</span>
             </template>
             <div style="display: flex; justify-content: center; ">
@@ -271,8 +271,32 @@ const toDocument = (item) => {
     color: #409eff;
 }
 
+:deep(.el-table) {
+    border: none;
+}
+
 :deep(.el-table .cell) {
     font-size: 15px;
+}
+
+:deep(.el-table, .el-table__expanded-cell) {
+    background-color: transparent;
+}
+
+:deep(.el-table tr) {
+    background-color: transparent;
+}
+
+:deep(.el-table tr:hover>td.el-table__cell) {
+    background-color: #b7b7a8;
+}
+
+:deep(.el-table th) {
+    background-color: transparent;
+}
+
+:deep(.el-table td) {
+    background-color: transparent;
 }
 
 :deep(.pagination-wrap .is-active) {
@@ -281,6 +305,19 @@ const toDocument = (item) => {
 
 :deep(.pagination-wrap .el-pager li:hover) {
     color: rgb(248 210 8);
+}
+
+
+:deep(.pagination-wrap .el-pagination button) {
+    background: none;
+}
+
+:deep(.pagination-wrap .el-pager li) {
+    background: none;
+}
+
+:deep(.pagination-wrap .el-pagination button:hover) {
+    color:rgb(248 210 8);
 }
 
 .document-btn {

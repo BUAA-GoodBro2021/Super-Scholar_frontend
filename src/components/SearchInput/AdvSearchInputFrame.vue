@@ -1,6 +1,6 @@
 <!-- 
   @author Cloud-Iris
-  搜索框的骨架，可以根据插槽完成自定义搜索框
+  高级搜索框的骨架，可以根据插槽完成自定义搜索框
  -->
 <template>
   <div 
@@ -8,24 +8,6 @@
     class="group search-container"
   >
     <div>
-      <!-- 
-        搜索模式切换
-       -->
-      <select 
-        ref="selectTarget"
-        @change="handleSelectSearchType"
-        class="group search-type-select"
-      >
-        <option value="works">论文</option>
-        <option value="authors">作者</option>
-        <option value="venues">期刊会议</option>
-        <option value="institutions">机构</option>
-        <option value="concepts">领域</option>
-      </select>
-      <!-- TODO: 可以来个左侧分割线，但不太必要 -->
-      <!-- <div
-        class="group search-divider-left"
-      ></div> -->
       <!-- 
         输入框（回车/点击按钮触发搜索）
         取消了 maxlength="20"，改用padding掩盖
@@ -50,22 +32,6 @@
       >
         <use xlink:href="#icon-clear" />
       </svg>
-      <!-- 分割线 -->
-      <div
-        class="group search-divider"
-      ></div>
-      <!-- 
-        搜索按钮，点击按钮触发搜索。
-        图标垂直居中，右偏移为 20px 
-       -->
-      <button
-        class="search-btn"
-        @click="onSearchHandler"
-      >
-        <svg aria-hidden="true" class="search-btn-icon">
-          <use xlink:href="#icon-search" fill="#707070" />
-        </svg>
-      </button>
     </div>
     <!-- 
       搜索框下拉栏
@@ -76,9 +42,10 @@
      -->
     <transition name="slide">
       <div
-        v-if="$slots.dropdown"
-        v-show="isFouced"
+        v-if="$slots.dropdown && $slots.dropdown().length > 0"
+        v-show="isFouced && $slots.dropdown && $slots.dropdown().length > 0"
         class="search-dropdown search-scrollbar"
+        :class="{'search-dropdown-none' : !$slots.dropdown || $slots.dropdown().length === 0}"
       >
       <!-- scrollbar- 开头的是滚动条样式，要装插件 tailwind-scrollbar 详见tailwind.config.cjs -->
         <slot name="dropdown"/>
@@ -107,40 +74,7 @@ const EMIT_BLUR = 'blur'
 <script setup>
 import { onMounted, ref, watch } from 'vue';
 import { useVModel, onClickOutside } from '@vueuse/core';
-import { useSearchStore } from '../../stores/search.js';
 
-const selectTarget = ref(null);
-const searchStore = useSearchStore();
-/**
- * 根据pinia中记录的 搜索实体类型，改变<select>的默认选择
- */
-onMounted(()=>{
-  var options = selectTarget.value.options;
-  for (let i = 0; i < options.length; i++) {
-    if (options[i].value === searchStore.searchType) {
-      options[i].selected = true;
-      options.selectedIndex = i;
-    }
-  }
-})
-const handleSelectSearchType = () => {
-  // console.log(selectTarget.value.options);
-  // console.log(selectTarget.value.options[selectTarget.value.options.selectedIndex].value);
-  const options = selectTarget.value.options;
-  // console.log(options[options.selectedIndex].value);
-  searchStore.setSearchType(
-    options[options.selectedIndex].value
-  );
-}
-
-/**
- * 1.输入内容双向绑定、控制下拉区域的展示、事件处理
- * 2.hover样式 (搜索按钮在 hover 时显示)
- * 3.一键删除输入内容
- * 4.历史搜索
- * 5.输入匹配（即在后端数据库的支持下，在输入一半时显示提示，和百度差不多）
- * 6.个性推荐（推荐卡片）
- */
 const props = defineProps({
   modelValue: {
     type: String,
@@ -228,37 +162,25 @@ onClickOutside(searchContainerTarget, () => {
 <style scoped>
 .search-container {
   position: relative;
-  padding: 5px;
-  border-radius: 30px;
-  border-color: rgb(255 255 255);
+  padding: 0;
+  /* border-radius: 30px; */
+  /* border-color: rgb(255 255 255); */
+  /* border: 1px solid black; */
   transition-duration: 500ms;
 }
-.search-container:hover {
-  /* background-color: rgb(254 226 226 / 0.4); */
-  background-color: rgba(226, 241, 254, 0.4);
-}
+/* .search-container:hover {
+  background-color: rgba(226, 241, 254, 0.6);
+} */
 .dark .search-container {
   border-color: rgb(228 228 231);
 }
 
-.search-type-select {
-  position: absolute; 
-  top: 50%; 
-  left: 14px; 
-  transform: translate(0, -50%);
-  width: 5rem;
-  height: 60%; 
-  outline: none;
+
+select {
   border: none;
-  border-radius: 16px 0 0 16px;
-  font-size: 14px;
-  line-height: 18px;
-  background-color: rgb(244 244 245);
-  transition-duration: 500ms;
+  outline: none;
 }
-.group:hover .search-type-select {
-  background-color: white;
-}
+
 
 /* caret-color : 改变输入框光标颜色，同时又不改变输入框里面的内容的颜色
   https://blog.csdn.net/u014490083/article/details/82469126  */
@@ -269,12 +191,11 @@ input {
 /* border-style: solid; 解决input框默认3D效果使得左上边框和右下边框颜色不一样
   https://blog.csdn.net/gegegegege12/article/details/120684454 */
 .search-input {
-  display: block;
+  /* display: block; */
   width: 100%;
-  height: 44px;
-  /* padding-left: 40px; */
-  padding-left: 100px;
-  padding-right: 100px;
+  height: 40px;
+  padding-left: 15px;
+  padding-right: 40px;
   
   font-size: 14px;
   line-height: 18px;
@@ -285,8 +206,10 @@ input {
   outline: 0;
   border-width: 1px;
   border-style: solid;
-  border-color: rgb(244 244 245);
-  border-radius: 30px;
+  /* border-color: rgb(244 244 245); */
+  /* 将边框颜色改为常驻 */
+  border-color: rgb(228 228 231);
+  /* border-radius: 30px; */
   box-sizing: border-box;
 
   background-color: rgb(244 244 245);
@@ -295,13 +218,12 @@ input {
   transition-duration: 500ms;
 }
 .search-input:focus {
-  /* border-color: rgb(252 165 165); */
   border-color: rgb(68, 177, 250);
-  /* border-color: rgb(37, 146, 241); */
+  /* border-color: black; */
+  /* background-color: white; */
 }
 .group:hover .search-input {
   background-color: white;
-  border-color: rgb(228 228 231);
 }
 .dark .search-input {
   background-color: rgb(39 39 42);
@@ -318,7 +240,7 @@ input {
   height: 15px;
   position: absolute;
   top: 50%;
-  right: 90px;
+  right: 20px;
   transform: translate(0, -50%);
   transition-duration: 500ms;
   cursor: pointer;
@@ -411,6 +333,11 @@ input {
   --tw-ring-offset-shadow: 0 0 #0000;
   --tw-ring-shadow: 0 0 #0000;
   /* --tw-shadow: 0 0 #0000; */
+}
+.search-dropdown.search-dropdown-none {
+  padding: 0;
+  border: 0;
+  box-shadow: none;
 }
 
 .search-dropdown:hover {

@@ -66,7 +66,7 @@ const reInitChart = () => {
 const initChart = () => {
   chart = document.getElementById("count");
   chart = echarts.init(chart);
-  const colors = ["#5470C6", "#91CC75", "#EE6666"];
+  const colors = ["#d7ab82", "#919e8b", "#919e8b"];
   let option = {
     color: colors,
     tooltip: {

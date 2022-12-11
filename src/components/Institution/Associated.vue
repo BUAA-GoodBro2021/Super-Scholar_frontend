@@ -1,41 +1,30 @@
 <template>
   <div class="assiciated-wrap">
     <div class="assiciated-title">相关机构</div>
-    <div class="institution-list">
+    <div class="institution-list" v-if="institutionList.length > 0">
       <div
         class="institution-card"
         v-for="(item, index) in institutionList"
         :key="index"
       >
-        <ul class="list-item">
-          <!-- <li>
-            <el-avatar
-              :size="70"
-              :src="item.image_url"
-              style="cursor: pointer"
-              @click="toInstitution(item)"
-            ></el-avatar>
-          </li> -->
+        <div class="associate-left"></div>
+        <ul class="list-item" @click="toInstitution(item)">
           <li class="associated-name-li">
-            <span
-              class="associated-name"
-              @click="toInstitution(item)"
-              :title="item.display_name"
-            >
+            <span class="associated-name" :title="item.display_name">
               {{ item.display_name }}
             </span>
           </li>
           <li class="right-arrow-li">
             <span class="right-arrow-wrap">
-              <el-icon style="cursor: pointer" @click="toInstitution(item)">
+              <el-icon>
                 <Right />
               </el-icon>
             </span>
           </li>
         </ul>
-        <el-divider v-if="index != institutionList.length - 1"></el-divider>
       </div>
     </div>
+    <div v-else class="empty">没有相关机构</div>
     <div class="associated-pagination">
       <el-pagination
         layout="prev, pager, next"
@@ -43,7 +32,6 @@
         @current-change="changePage()"
         v-model:current-page="pageCurrent"
         hide-on-single-page
-        :page-sizes="[1, 2, 3, 4, 5]"
         :page-size="5"
       />
     </div>
@@ -77,26 +65,28 @@ const toInstitution = (item) => {
 .assiciated-wrap {
   width: 100%;
   background-color: white;
-  border-radius: 20px;
   box-shadow: 3px 3px 3px 3px #dedede;
+  padding-top: 10px;
 
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: sticky;
+  top: 70px;
 }
 
 .assiciated-title {
   font-size: 18px;
   font-weight: 800;
   text-align: left;
-  margin-top: 30px;
-  margin-bottom: 30px;
   width: 90%;
+  height: 40px;
+  line-height: 40px;
 }
 
 .institution-list {
   width: 90%;
-  height: 92%;
+  height: calc(100% - 76px);
   overflow-y: auto;
 }
 
@@ -120,8 +110,15 @@ const toInstitution = (item) => {
 
 .institution-card {
   width: 100%;
-  height: 100px;
-  margin-top: 5px;
+  height: 70px;
+  margin: 20px 0px;
+  position: relative;
+  padding: 17px 0 7px 20px;
+  box-shadow: 3px 3px 0px 0px #dedede;
+}
+
+.institution-card:hover {
+  background-color: #f1f5fa;
 }
 
 .institution-card ul {
@@ -135,10 +132,6 @@ const toInstitution = (item) => {
   border-radius: 10px;
 }
 
-.el-divider--horizontal {
-  margin-top: 0;
-}
-
 .institution-card li {
   list-style: none;
   margin-right: 20px;
@@ -148,31 +141,35 @@ const toInstitution = (item) => {
 }
 
 .institution-card .associated-name-li {
-  width: calc(100% - 160px);
-  /* overflow: hidden; */
-  /* text-overflow: ellipsis; */
-  /* white-space: nowrap; */
+  width: 78%;
 }
 
 .institution-card .associated-name {
-  font-size: 15px;
+  font-size: 18px;
   font-weight: 800;
+  font-family: "Times New Roman", Times, "Microsoft YaHei", serif;
   text-align: left;
   display: flex;
   align-items: center;
   height: 80%;
   width: 100%;
-  cursor: pointer;
-  /* height: 20%;
-    margin-top: 5; */
-  /* display: block; */
 }
 
-.institution-card .associated-name:hover {
-  color: #409eff;
-  /* height: 20%;
-    margin-top: 5; */
-  /* display: block; */
+.associate-left {
+  position: absolute;
+  width: 7px;
+  height: 30px;
+  left: 0;
+  top: 20px;
+  background-color: rgb(162, 143, 42);
+}
+
+.list-item {
+  cursor: pointer;
+}
+
+.list-item:hover {
+  color: rgb(162, 143, 42);
 }
 
 .right-arrow-li {
@@ -190,7 +187,14 @@ const toInstitution = (item) => {
   align-items: center;
 }
 
-.right-arrow-wrap:hover {
-  color: #409eff;
+.canClick {
+  cursor: pointer;
+}
+
+.empty {
+    margin-top: 10px;
+    color: grey;
+    font-size: 18px;
+    font-weight: 600;
 }
 </style>

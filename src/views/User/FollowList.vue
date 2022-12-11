@@ -24,14 +24,15 @@
                             <el-table-column prop="display_name" label="姓名" min-width="20%">
                                 <template #default="scope">
                                     <span class="user-name hover-item" @click="toAuthor(scope.row)">{{
-                                           scope.row.display_name
+                                            scope.row.display_name
                                     }}</span>
                                 </template>
                             </el-table-column>
                             <el-table-column prop="last_known_institution" label="机构" min-width="25%" align="center">
                                 <template #default="scope">
                                     <span class="organizaton hover-item" @click="toOrganization(scope.row)">{{
-                                             scope.row.last_known_institution ?  scope.row.last_known_institution.display_name : '暂无机构信息'
+                                            scope.row.last_known_institution ? scope.row.last_known_institution.display_name
+                                                : '暂无机构信息'
                                     }}</span>
                                 </template>
                             </el-table-column>
@@ -39,8 +40,7 @@
                             <el-table-column prop="cited_by_count" label="引用量" min-width="18%" align="center" />
                             <el-table-column prop="pdf" label="操作" min-width="18%">
                                 <template #default="scope">
-                                    <el-tag  style="cursor: pointer;"
-                                        @click="CancelConfrim(scope.row)">取消关注</el-tag>
+                                    <el-tag style="cursor: pointer;" @click="CancelConfrim(scope.row)">取消关注</el-tag>
                                 </template>
                             </el-table-column>
                         </el-table>
@@ -106,9 +106,9 @@ const getAuthorList = async () => {
 }
 
 const getAuthorEntityList = async () => {
-    if(userids.value.length == 0) return
+    if (userids.value.length == 0) return
     let userId = userids.value[0]
-    for(let i = 1; i < userids.value.length ; i++) userId = userId + '|' + userids.value[i]
+    for (let i = 1; i < userids.value.length; i++) userId = userId + '|' + userids.value[i]
     let data = {
         entity_type: 'authors',
         params: {
@@ -192,15 +192,15 @@ const deleteUser = () => {
 }
 
 const removeItem = () => {
-    for(let i = filterusers.value.length - 1; i >= 0; i--) {
-        if(filterusers.value[i].id.substring(21) == userNow.value.id.substring(21)) {
+    for (let i = filterusers.value.length - 1; i >= 0; i--) {
+        if (filterusers.value[i].id.substring(21) == userNow.value.id.substring(21)) {
             filterusers.value.splice(i, 1)
         }
     }
 
-    for(let i = users.value.length - 1; i >= 0; i--) {
-        if(users.value[i].id.substring(21) == userNow.value.id.substring(21))
-        users.value.splice(i, 1)
+    for (let i = users.value.length - 1; i >= 0; i--) {
+        if (users.value[i].id.substring(21) == userNow.value.id.substring(21))
+            users.value.splice(i, 1)
     }
 
     userNow.value = null
@@ -213,15 +213,20 @@ const removeItem = () => {
 // 跳转
 
 const toAuthor = (item) => {
-    let {href} = router.resolve({
+    let { href } = router.resolve({
         name: 'OpenAlexAuthorDetail',
-        params: {tokenid: item.id.substring(21)}
+        params: { tokenid: item.id.substring(21) }
     })
     window.open(href, "_blank")
 }
 
 const toOrganization = (item) => {
-
+    if(!item.last_known_institution) return
+    let { href } = router.resolve({
+        name: 'InstitutionDetail',
+        params: { institutionid: item.last_known_institution.id.substring(21) }
+    })
+    window.open(href, "_blank")
 }
 
 

@@ -88,7 +88,7 @@
                                 </el-icon> &nbsp;
                                 <div class="areas-content">
                                     <div class="card-concepts clearfix">
-                                        <div class="card-concepts-wrap" v-for="( concept, conceptIndex) in userInfo.x_concepts.slice(0, 8)" :key="conceptIndex" @click="toArea(concept)">
+                                        <div class="card-concepts-wrap" v-for="( concept, conceptIndex) in userInfo.x_concepts.slice(0, 11)" :key="conceptIndex" @click="toArea(concept)">
                                             <div class="card-concept-context">
                                                 {{ concept.display_name }}
                                             </div>
@@ -176,7 +176,7 @@
                     </div>
                 </div>
                 <el-dialog append-to-body v-model="abandonPortalDialog">
-                    <template #title>
+                    <template #header>
                         <span class="dialog-title">确定解除门户关系吗？</span>
                     </template>
                     <div style="display: flex; justify-content: center; ">
@@ -432,7 +432,11 @@ watch(() => props.userInfo.is_follow, (newVal) => {
 /* 整体的height和width由外层调整 */
 .avatar_main_wrap {
     width: 100%;
-    background-color: white;
+    /* background-color: white; */
+    /*配色 深 */
+    /* background: linear-gradient(70deg, #445a7f,rgb(102 99 84)); */
+    /*配色 浅 */
+    /* background: linear-gradient(70deg, #f4f8ff, rgb(184 179 154)); */
     border-radius: 2px;
     box-shadow: 3px 3px 3px 3px #dedede;
     height: 100%;
@@ -573,13 +577,13 @@ watch(() => props.userInfo.is_follow, (newVal) => {
 }
 
 .name .claim-document-data {
-    font-size: 1rem;
+    font-size: 1.2rem;
     /* color:  #0077c2;
      */
-    color: rgb(164, 41, 41);
+    color: rgb(107 6 6);
     padding-left: 10px;
-    height: 1rem;
-    line-height: 1rem;
+    height: 1.2rem;
+    line-height: 1.2rem;
     cursor: default;
 }
 
@@ -631,10 +635,10 @@ watch(() => props.userInfo.is_follow, (newVal) => {
   float: left;
   margin-right: 10px;
   margin-bottom: 5px;
-  padding: 3px 11px;
+  padding: 3px 4px;
   box-sizing: border-box;
   border: 1.6px solid rgb(162, 143, 42);
-  border-radius: 14px;
+  border-radius: 4px;
   font-size: 14px;
   cursor: pointer;
 }

@@ -10,9 +10,8 @@
               :src="
                 institutionInfo.image_url
                   ? institutionInfo.image_url
-                  : 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png'
+                  : institutionImage
               "
-              style="cursor: pointer"
             >
             </el-avatar>
           </div>
@@ -25,32 +24,42 @@
             <div class="title-profile-block">
               <!-- 机构名称 -->
               <span class="name">
-                <div style="display: flex; align-items: center">
+                <div class="institution-display-name">
                   {{ institutionInfo.display_name }}
                 </div>
-              </span>
-              <span class="name">
-                <div style="display: flex; align-items: center">
-                  {{ institutionInfo.international.display_name.zh }}
+                <div
+                  class="institution-display-name"
+                  v-if="institutionInfo.international.display_name.zh"
+                >
+                  （{{ institutionInfo.international.display_name.zh }}）
                 </div>
               </span>
               <!-- 机构主页地址 -->
-              <div class="organization">
+              <div
+                v-if="institutionInfo.homepage_url"
+                class="organization canClick"
+              >
                 <el-icon>
-                  <HomeFilled />
+                  <Notification />
                 </el-icon>
                 &nbsp;
-                <span v-if="openAlexAccount == 1">{{
-                  institutionInfo.homepage_url
-                    ? institutionInfo.homepage_url
-                    : "暂无机构主页地址"
-                }}</span>
-                <span v-else>
+                <span @click="gotoHomePage">
                   主页地址：{{ institutionInfo.homepage_url }}
                 </span>
               </div>
-              <div class="organization">
-                所在地：{{ institutionInfo.country_code }}
+              <div v-if="institutionInfo.geo" class="organization">
+                <el-icon>
+                  <PriceTag />
+                </el-icon>
+                &nbsp;
+                <span>
+                  所在地：
+                  {{
+                    institutionInfo.geo.city +
+                    ", " +
+                    institutionInfo.geo.country
+                  }}
+                </span>
               </div>
               <div class="organization">
                 总论文数：{{ institutionInfo.works_count }}
@@ -59,17 +68,18 @@
                 论文总引用数：{{ institutionInfo.cited_by_count }}
               </div>
               <!-- 机构相关领域 -->
-              <div class="card-concepts clearfix">
-                <div
-                  class="card-concepts-wrap"
-                  v-for="(
-                    concept, conceptIndex
-                  ) in institutionInfo.x_concepts.slice(0, 11)"
-                  @click="handleConceptBubbleClick(concept)"
-                >
-                  <i class="iconfont icon-menu"></i>
-                  <div class="card-concept-context">
-                    {{ concept.display_name }}
+              <div class="concept">
+                <div class="card-concepts clearfix">
+                  <div
+                    class="card-concepts-wrap canClick"
+                    v-for="(
+                      concept, conceptIndex
+                    ) in institutionInfo.x_concepts.slice(0, 11)"
+                    @click="gotoConcept(concept)"
+                  >
+                    <div class="card-concept-context">
+                      {{ concept.display_name }}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -82,9 +92,26 @@
 </template>
 
 <script setup>
+import { useRouter } from "vue-router";
+import institutionImage from "../../assets/images/institution.png";
+const router = useRouter();
 const props = defineProps({
   institutionInfo: Object,
 });
+
+const gotoHomePage = () => {
+  window.open(props.institutionInfo.homepage_url);
+};
+
+const gotoConcept = (concept) => {
+  let { href } = router.resolve({
+    name: "ConceptDetail",
+    params: {
+      tokenid: concept.id.substring(21),
+    },
+  });
+  window.open(href, "_blank");
+};
 </script>
 
 <style scoped>
@@ -99,12 +126,13 @@ const props = defineProps({
 .name_card {
   width: 100%;
   background-color: white;
-  border-radius: 20px;
   box-shadow: 3px 3px 3px 3px #dedede;
   height: 100%;
+  font-family: "Times New Roman", Times, "Microsoft YaHei", serif;
 
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
 }
 
@@ -130,15 +158,18 @@ const props = defineProps({
   font-size: 30px;
   height: 40%;
   line-height: 100%;
-  cursor: pointer;
   text-align: left;
+}
+
+.institution-display-name {
+  margin: 1% 0%;
+  font-weight: bold;
 }
 
 .title_profile {
   font-size: 23px;
   height: 55%;
   line-height: 100%;
-  cursor: pointer;
   text-align: left;
   display: block;
 }
@@ -147,19 +178,40 @@ const props = defineProps({
   display: block;
   height: 60%;
 }
+
 .title-profile-li {
-  padding: 20px;
+  padding-left: 3rem;
+  min-width: 60%;
 }
 
 .organization {
   font-size: 15px;
   height: 30%;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
   line-height: 100%;
   text-align: left;
-  /* cursor: pointer; */
   display: flex;
   align-items: center;
+}
+
+.canClick {
+  cursor: pointer;
+}
+
+.canClick:hover {
+  color: rgb(162, 143, 42);
+}
+
+.concept {
+  font-size: 15px;
+  color: rgb(162, 143, 42);
+  height: 73%;
+  width: 100%;
+  line-height: 20px;
+  text-align: left;
+  display: flex;
+  word-break: break-all;
+  word-wrap: break-word;
 }
 
 .card-concepts {
@@ -172,11 +224,15 @@ const props = defineProps({
   margin-bottom: 5px;
   padding: 3px 5px;
   box-sizing: border-box;
-  border: 1.6px solid black;
+  border: 1.6px solid rgb(162, 143, 42);
   border-radius: 5px;
-  font-size: 14px;
-  cursor: pointer;
+  font-size: 15px;
 }
+
+.card-concepts .card-concepts-wrap:hover {
+  background-color: #f1f5fa;
+}
+
 .card-concepts .card-concepts-wrap i {
   display: inline-block;
   margin-right: 3px;
@@ -185,6 +241,7 @@ const props = defineProps({
   display: inline-block;
   text-transform: capitalize;
 }
+
 .clearfix::before,
 .clearfix::after {
   content: "";
