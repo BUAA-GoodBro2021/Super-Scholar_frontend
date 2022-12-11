@@ -4,7 +4,7 @@
             <el-table :data="documentList" style="width: 100%; height: 100%;">
                 <el-table-column prop="display_name" label="文献" min-width="60%">
                     <template #default="scope">
-                        <span class="document_title" @click="toDocument(scope.row)" :title="scope.row.display_name">{{ scope.row.display_name }}</span>
+                        <span class="document_title" @click="toDocument(scope.row)" :title="scope.row.display_name.replace(/<\/?i>/ig, '')">{{ scope.row.display_name.replace(/<\/?i>/ig, "") }}</span>
                         <!-- <div class="authors_wrap">
                             <span class="document_authors" v-for="(item, index) in scope.row.authorships"
                                 :key="index">{{
@@ -56,7 +56,7 @@
                 v-model:current-page="pageCurrent" hide-on-single-page :page-sizes="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]" />
         </div>
         <el-dialog v-model="cancelPdfDialog">
-            <template #title>
+            <template #header>
                 <span class="dialog-title">确定删除该文章的PDF吗？</span>
             </template>
             <div style="display: flex; justify-content: center; ">

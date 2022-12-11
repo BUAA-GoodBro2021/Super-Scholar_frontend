@@ -88,7 +88,7 @@
                                 </el-icon> &nbsp;
                                 <div class="areas-content">
                                     <div class="card-concepts clearfix">
-                                        <div class="card-concepts-wrap" v-for="( concept, conceptIndex) in userInfo.x_concepts.slice(0, 8)" :key="conceptIndex" @click="toArea(concept)">
+                                        <div class="card-concepts-wrap" v-for="( concept, conceptIndex) in userInfo.x_concepts.slice(0, 11)" :key="conceptIndex" @click="toArea(concept)">
                                             <div class="card-concept-context">
                                                 {{ concept.display_name }}
                                             </div>
@@ -176,7 +176,7 @@
                     </div>
                 </div>
                 <el-dialog append-to-body v-model="abandonPortalDialog">
-                    <template #title>
+                    <template #header>
                         <span class="dialog-title">确定解除门户关系吗？</span>
                     </template>
                     <div style="display: flex; justify-content: center; ">
