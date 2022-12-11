@@ -3,7 +3,6 @@
         <div class="left">
             <router-link to="/" class="link">
                 <img src="/icon1.png" class="logo" />
-                {{y}}
             </router-link>
         </div>
         <div class="avatar">
