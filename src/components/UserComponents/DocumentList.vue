@@ -56,7 +56,7 @@
                 v-model:current-page="pageCurrent" hide-on-single-page :page-sizes="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]" />
         </div>
         <el-dialog v-model="cancelPdfDialog">
-            <template #title>
+            <template #header>
                 <span class="dialog-title">确定删除该文章的PDF吗？</span>
             </template>
             <div style="display: flex; justify-content: center; ">

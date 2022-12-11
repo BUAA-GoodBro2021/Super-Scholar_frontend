@@ -98,10 +98,13 @@
             <SuccessFilled />
         </el-icon>
         <span class="step2-message" style="margin-top: 20px;">认证成功</span>
-        <el-button @click="toPersonalPage()">回到主页</el-button>
+        <div class="step-2-btn-wrap">
+            <el-button @click="toPersonalPage()">回到主页</el-button>
+            <el-button @click="abandonPortalDialog = true">解除认领</el-button>
+        </div>
     </div>
     <el-dialog v-model="abandonPortalDialog">
-        <template #title>
+        <template #header>
             <span class="dialog-title">确定解除门户关系吗？</span>
         </template>
         <div style="display: flex; justify-content: center; ">
@@ -134,10 +137,10 @@ onMounted(() => {
 
 const formRef = ref()
 const form = reactive({
-    name: 'Harbour',
-    email: '2358272468@qq.com',
-    telephone: '15112345678',
-    organization: '北京航空航天大学软件学院',
+    name: '',
+    email: '',
+    telephone: '',
+    organization: '',
     content: '',
 })
 const rules = reactive({
@@ -164,32 +167,12 @@ const pageCurrent = ref(1)
 const pageTotalSize = ref(2)
 const abandonPortalDialog = ref(false)
 let authorList = ref([
-    {
-        id: '20373638',
-        display_name: 'Harbour',
-        last_known_institution: {
-            display_name: 'Natrue',
-        },
-        showArticle: false,
-        loading: false,
-        work_list: []
-    },
-    {
-        id: '20373638',
-        display_name: 'Harbour',
-        last_known_institution: {
-            display_name: 'Natrue',
-        },
-        showArticle: false,
-        loading: false,
-        work_list: []
-    },
 ])
 
 const getUserType = () => {
     User.GetUserDetail().then((res) => {
         if (res.data.result == 1) {
-            accountType.value = res.data.user.is_professional 
+            accountType.value = res.data.user.is_professional
         } else {
             ElNotification({
                 title: "很遗憾",

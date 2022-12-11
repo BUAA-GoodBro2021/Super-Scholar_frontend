@@ -552,7 +552,7 @@ const toArticle = (item) => {
 .dialog-wrap {
     padding: 0px 70px 10px 10px;
     min-height: 200px;
-    max-height: 400px;
+    max-height: 50vh;
     width: 100%;
     overflow-y: scroll;
     display: block;
