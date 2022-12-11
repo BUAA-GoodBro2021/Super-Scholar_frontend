@@ -99,7 +99,7 @@
         </el-icon>
         <span class="step2-message" style="margin-top: 20px;">认证成功</span>
         <div class="step-2-btn-wrap">
-            <el-button @click="toPersonalPage()">回到主页</el-button>
+            <el-button @click="toPersonalPage()">回到个人主页</el-button>
             <el-button @click="abandonPortalDialog = true">解除认领</el-button>
         </div>
     </div>

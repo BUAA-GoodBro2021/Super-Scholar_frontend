@@ -250,7 +250,7 @@ const UpdateCoAuthor = (page) => {
     width: 70%;
     /* min-width: 1280px; */
     margin: 0.5% 0 0.5% 0;
-    height: 40%;
+    height: 27%;
 }
 
 .article_data_wrap {

@@ -631,10 +631,10 @@ watch(() => props.userInfo.is_follow, (newVal) => {
   float: left;
   margin-right: 10px;
   margin-bottom: 5px;
-  padding: 3px 11px;
+  padding: 3px 4px;
   box-sizing: border-box;
   border: 1.6px solid rgb(162, 143, 42);
-  border-radius: 14px;
+  border-radius: 4px;
   font-size: 14px;
   cursor: pointer;
 }
