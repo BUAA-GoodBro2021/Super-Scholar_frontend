@@ -7,7 +7,7 @@ const router = createRouter({
     {
       path: '/',
       name: 'Welcome',
-      component: ()=>import('../views/Welcome.vue'),
+      component: ()=>import('../views/welcome/Welcome.vue'),
     },
     {
       path: '/account',
