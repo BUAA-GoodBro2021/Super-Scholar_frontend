@@ -33,9 +33,8 @@
               <i class="iconfont icon-sub1"></i>
             </div>
           </div>
-          <!-- 
-            可以被删除的筛选行数组
-           -->
+
+          <!-- 可以被删除的筛选行单元的数组 -->
           <div 
             class="adv-search-line clearfix" 
             v-for="(filterLine, index) in advanceFilterResult[searchStore.searchType]" 
@@ -77,6 +76,20 @@
               <i class="iconfont icon-sub1"></i>
             </div>
           </div>
+
+          <!-- 如果是论文，支持根据 publication_year 的起始终止进行筛选 -->
+          <div class="adv-search-line clearfix">
+            <ElDatePicker 
+              v-model="publicationDateRange"
+              type="daterange"
+              unlink-panels
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              value-format="YYYY-MM-DD"
+              :shortcuts="shortcuts"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -92,12 +105,49 @@ const NOT_LABLE_VALUE = 3;
 
 <script setup>
 import { reactive, ref, watch } from 'vue';
-import { ElNotification, ElOption, ElSelect } from 'element-plus';
+import { ElDatePicker, ElNotification, ElOption, ElSelect } from 'element-plus';
 import AdvSearchInput from '../../components/SearchInput/AdvSearch.vue';
 import { useSearchStore } from '../../stores/search';
 
 const searchStore = useSearchStore();
 const placeholderRelation = ref("AND");
+
+const publicationDateRange = ref('');
+const shortcuts = [
+  {
+    text: 'Last week',
+    value: () => {
+      const end = new Date()
+      const start = new Date()
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+      return [start, end]
+    },
+  },
+  {
+    text: 'Last month',
+    value: () => {
+      const end = new Date()
+      const start = new Date()
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+      return [start, end]
+    },
+  },
+  {
+    text: 'Last 3 months',
+    value: () => {
+      const end = new Date()
+      const start = new Date()
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+      return [start, end]
+    },
+  },
+]
+watch(
+  publicationDateRange,
+  (newVal) => {
+    console.log(newVal);
+  }
+)
 
 const advanceEntityTypeFilter = reactive([
   {
@@ -410,7 +460,6 @@ a, a:hover, a:focus {
 }
 
 .search-area-handler .adv-search-card .adv-select {
-  /* border: 1px solid black; */
   box-sizing: border-box;
   border-radius: 0 !important;
   width: 8rem;
