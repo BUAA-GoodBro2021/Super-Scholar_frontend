@@ -62,7 +62,7 @@
                         <div class="author-article-list" v-if="item.showArticle && !item.loading">
                             <div v-for="(article, articleIndex) in item.work_list" :key="articleIndex"
                                 class="author-article-name">
-                                <span class="">{{ (articleIndex + 1) + ". " + article.display_name }}</span>
+                                <span class="">{{ (articleIndex + 1) + ". " + article.display_name.replace(/<\/?i>/ig, "") }}</span>
                                 <!-- <el-divider v-if="articleIndex != item.work_list.length - 1"></el-divider> -->
                             </div>
                         </div>
