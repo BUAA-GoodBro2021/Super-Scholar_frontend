@@ -6,7 +6,7 @@
 			</div>
 			<div class="login-form">
 				<div class="login-logo">
-					<img class="login-icon" src="/icon.png" alt="" />
+					<img class="login-icon" src="/icon1.png" alt="" />
 				</div>
 				<router-view v-slot="{route,Component}">
 					<transition name="fade" mode="out-in">
@@ -36,7 +36,7 @@
 	min-width: 550px;
 	height: 100%;
 	min-height: 500px;
-	background-color: #eeeeee;
+	background-color: #040d21;
 	background-image: url("../../assets/images/login_bg.svg");
 	background-position: 50%;
 	background-size: 100% 100%;
@@ -67,7 +67,7 @@
 		width: 96%;
 		height: 94%;
 		padding: 0 50px;
-		background-color: hsl(0deg 0% 100% / 80%);
+		// background-color: hsl(0deg 0% 100% / 80%);
 		border-radius: 10px;
 		.login-left {
 			width: 800px;
@@ -109,11 +109,13 @@
 			.login-btn {
 				display: flex;
 				justify-content: space-between;
+				background-color: transparent !important;
 				width: 100%;
 				margin-top: 40px;
 				white-space: nowrap;
 				.el-button {
 					width: 185px;
+					background-color: transparent;
 				}
 			}
 			.register-btn{
@@ -124,8 +126,12 @@
 				white-space: nowrap;
 				.el-button {
 					width: 350px;
+					background-color: transparent;
 				}
 			}
 		}
+	}
+	.el-input__wrapper{
+		background-color: transparent !important;
 	}
 </style>
