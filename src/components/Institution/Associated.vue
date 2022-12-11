@@ -1,7 +1,7 @@
 <template>
   <div class="assiciated-wrap">
     <div class="assiciated-title">相关机构</div>
-    <div class="institution-list">
+    <div class="institution-list" v-if="institutionList.length > 0">
       <div
         class="institution-card"
         v-for="(item, index) in institutionList"
@@ -24,6 +24,7 @@
         </ul>
       </div>
     </div>
+    <div v-else class="empty">没有相关机构</div>
     <div class="associated-pagination">
       <el-pagination
         layout="prev, pager, next"
@@ -31,7 +32,7 @@
         @current-change="changePage()"
         v-model:current-page="pageCurrent"
         hide-on-single-page
-        :page-size="15"
+        :page-size="5"
       />
     </div>
   </div>
@@ -70,6 +71,8 @@ const toInstitution = (item) => {
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: sticky;
+  top: 70px;
 }
 
 .assiciated-title {
@@ -108,7 +111,7 @@ const toInstitution = (item) => {
 .institution-card {
   width: 100%;
   height: 70px;
-  margin: 15px 0px 15px 0px;
+  margin: 20px 0px;
   position: relative;
   padding: 17px 0 7px 20px;
   box-shadow: 3px 3px 0px 0px #dedede;
@@ -138,22 +141,18 @@ const toInstitution = (item) => {
 }
 
 .institution-card .associated-name-li {
-  width: calc(100% - 75px);
+  width: 78%;
 }
 
 .institution-card .associated-name {
   font-size: 18px;
   font-weight: 800;
-  font-family: 'Times New Roman', Times, "Microsoft YaHei", serif;
+  font-family: "Times New Roman", Times, "Microsoft YaHei", serif;
   text-align: left;
   display: flex;
   align-items: center;
   height: 80%;
   width: 100%;
-}
-
-.institution-card .associated-name:hover {
-  color: rgb(162, 143, 42);
 }
 
 .associate-left {
@@ -167,6 +166,10 @@ const toInstitution = (item) => {
 
 .list-item {
   cursor: pointer;
+}
+
+.list-item:hover {
+  color: rgb(162, 143, 42);
 }
 
 .right-arrow-li {
@@ -184,12 +187,14 @@ const toInstitution = (item) => {
   align-items: center;
 }
 
-.right-arrow-wrap:hover {
-  color: rgb(162, 143, 42);
-}
-
 .canClick {
   cursor: pointer;
-  background-color: red;
+}
+
+.empty {
+    margin-top: 10px;
+    color: grey;
+    font-size: 18px;
+    font-weight: 600;
 }
 </style>

@@ -1,5 +1,7 @@
 <template>
-  <div v-if="isLoading">Loading...</div>
+  <el-icon v-if="isLoading" class="is-loading">
+    <Loading />
+  </el-icon>
   <div v-else class="common_layout">
     <!-- 上半部分：基本信息 -->
     <div class="top_card">
@@ -44,7 +46,7 @@ const associatedInstituionList = ref([]);
 const isLoading = ref(true);
 
 const pageTotalSize = ref(10);
-const countPerPage = 10;
+const countPerPage = 5;
 
 onMounted(() => {
   Institution.GetInstitutionDetail({
@@ -109,8 +111,8 @@ const associatedInstitutionPageChange = (page) => {
 const UpdateAssociatedInstitution = (page) => {
   associatedInstituionList.value = [];
   for (
-    let i = 15 * (page - 1);
-    i < 15 * page && i < institutionInfo.value.associated_institutions.length;
+    let i = 5 * (page - 1);
+    i < 5 * page && i < institutionInfo.value.associated_institutions.length;
     i++
   ) {
     associatedInstituionList.value.push(
@@ -143,12 +145,17 @@ const UpdateAssociatedInstitution = (page) => {
   display: flex;
 }
 
-.article_data_wrap .left {
+.article_data_wrap:deep(.el-tabs__content) {
+  padding-right: 2vw;
+  overflow: visible;
+}
+
+.left {
   width: 68%;
   margin-right: 2%;
 }
 
-.article_data_wrap .right {
+.right {
   width: 30%;
 }
 
