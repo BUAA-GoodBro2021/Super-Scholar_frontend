@@ -1,6 +1,9 @@
 <template>
    <el-dropdown>
-            <span v-if="globalStore.isAuth">
+            <span v-if="showName" style="margin-top:1rem;font-size: large;">
+                {{globalStore.userInfo.username}}
+            </span>
+            <span v-else-if="globalStore.isAuth">
                 <el-avatar :size="45" :src="circleUrl"></el-avatar>
             </span>
             <span v-else>
@@ -32,13 +35,27 @@
 </template>
 <script setup>
 import { Check, More, Notification, Star, SwitchButton, User } from '@element-plus/icons-vue'
-import { useRouter } from 'vue-router';
+import { useWindowScroll, useWindowSize } from '@vueuse/core';
+import { useRoute } from "vue-router";
 import  Message  from './Message.vue';
 import { useGlobalStore } from '../../stores/global.js';
-
+import {watch} from 'vue';
+const route = useRoute();
+const { x, y } = useWindowScroll();
+const { width, height } = useWindowSize();
 const globalStore = useGlobalStore();
 const router = useRouter();
 const circleUrl = globalStore.userInfo.avatar_url;
+const showName = ref(false);
+watch(y,(y)=>{
+    if(y <= height.value-64 && route.name==="Welcome"){
+        showName.value = true;
+    }else{
+        showName.value = false;
+    }
+},{
+immediate: true,
+})
 const logout = ()=>{
     globalStore.logout();
     router.push({name:"Login"});
