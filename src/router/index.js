@@ -130,6 +130,11 @@ const router = createRouter({
           name: 'ConceptDetail',
           component: ()=>import('../views/Concept/ConceptDetail.vue'),
         },
+        {
+          path: 'journal/:journalid',
+          name: 'JournalDetail',
+          component: ()=>import('../views/journal/Journal.vue'),
+        },
       ],
     },
 

@@ -1,0 +1,220 @@
+<template>
+    <div class="name_card">
+      <div class="card_body">
+        <ul>
+          <li style="vertical-align: middle">
+            <div class="avatar_wrap">
+              
+            </div>
+          </li>
+          <li
+            style="min-width: 60%; height: 100%; max-width: 80%"
+            class="title-profile-li"
+          >
+            <div class="title_profile">
+              <div class="title-profile-block">
+                <!-- 机构名称 -->
+                <span class="name">
+                  <div class="institution-display-name">
+                    {{ journalInfo.display_name }}
+                  </div>
+                </span>
+                <!-- 机构主页地址 -->
+                <div
+                  v-if="journalInfo.homepage_url"
+                  class="organization canClick"
+                >
+                  <el-icon>
+                    <Notification />
+                  </el-icon>
+                  &nbsp;
+                  <span @click="gotoHomePage">
+                    主页地址：{{ journalInfo.homepage_url }}
+                  </span>
+                </div>
+                <div class="organization">
+                  总论文数：{{ journalInfo.works_count }}
+                </div>
+                <div class="organization">
+                  期刊总被引数：{{ journalInfo.cited_by_count }}
+                </div>
+                <div v-if="journalInfo.apc_usd" class="organization">
+                    期刊版面费：{{ journalInfo.apc_usd }}(美元)
+                </div>
+                <!-- 机构相关领域 -->
+                <div class="concept">
+                  <div class="card-concepts clearfix">
+                        <div
+                        class="card-concepts-wrap canClick"
+                        v-for="(concept, conceptIndex) in journalInfo.x_concepts.slice(0, 11)"
+                        @click="gotoConcept(concept)"
+                    >
+                        <div class="card-concept-context">
+                        {{ concept.display_name }}
+                        </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </template>
+  
+  <script setup>
+  import { useRouter } from "vue-router";
+  const router = useRouter();
+  const props = defineProps({
+    journalInfo: Object,
+  });
+  
+  const gotoHomePage = () => {
+    window.open(props.institutionInfo.homepage_url);
+  };
+  
+  const gotoConcept = (concept) => {
+    let { href } = router.resolve({
+      name: "ConceptDetail",
+      params: {
+        tokenid: concept.id.substring(21),
+      },
+    });
+    window.open(href, "_blank");
+  };
+  </script>
+  
+  <style scoped>
+  .avatar_wrap {
+    height: 400;
+    width: 300;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .name_card {
+    width: 100%;
+    background-color: white;
+    box-shadow: 3px 3px 3px 3px #dedede;
+    height: 100%;
+    font-family: "Times New Roman", Times, "Microsoft YaHei", serif;
+  
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .card_body {
+    height: 100%;
+    width: 90%;
+  }
+  
+  .card_body ul {
+    margin: 0;
+    height: 100%;
+  }
+  
+  .card_body li {
+    list-style: none;
+    margin-right: 20px;
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+  }
+  
+  .name {
+    font-size: 30px;
+    height: 40%;
+    line-height: 100%;
+    text-align: left;
+  }
+  
+  .institution-display-name {
+    margin: 1% 0%;
+  }
+  
+  .title_profile {
+    font-size: 23px;
+    height: 55%;
+    line-height: 100%;
+    text-align: left;
+    display: block;
+  }
+  
+  .title-profile-block {
+    display: block;
+    height: 60%;
+  }
+  
+  .title-profile-li {
+    padding-left: 3rem;
+    min-width: 60%;
+  }
+  
+  .organization {
+    font-size: 15px;
+    height: 30%;
+    margin-bottom: 10px;
+    line-height: 100%;
+    text-align: left;
+    display: flex;
+    align-items: center;
+  }
+  
+  .canClick {
+    cursor: pointer;
+  }
+  
+  .canClick:hover {
+    color: rgb(162, 143, 42);
+  }
+  
+  .concept {
+    font-size: 15px;
+    color: rgb(162, 143, 42);
+    /* height: 63%; */
+    height: 73%;
+    width: 100%;
+    line-height: 20px;
+    /* line-height: 50%; */
+    text-align: left;
+    display: flex;
+    /* align-items: center; */
+    /* display: block; */
+    word-break: break-all;
+    word-wrap: break-word;
+  }
+  
+  .card-concepts {
+    height: auto;
+    margin-bottom: 0.8rem;
+  }
+  .card-concepts .card-concepts-wrap {
+    float: left;
+    margin-right: 10px;
+    margin-bottom: 5px;
+    padding: 3px 5px;
+    box-sizing: border-box;
+    border: 1.6px solid rgb(162, 143, 42);
+    border-radius: 14px;
+    font-size: 14px;
+  }
+  .card-concepts .card-concepts-wrap i {
+    display: inline-block;
+    margin-right: 3px;
+  }
+  .card-concepts .card-concepts-wrap .card-concept-context {
+    display: inline-block;
+    text-transform: capitalize;
+  }
+  .clearfix::before,
+  .clearfix::after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+  </style>
+  
