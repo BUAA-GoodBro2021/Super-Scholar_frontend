@@ -31,6 +31,7 @@
 import { Institution } from "../../api/institution";
 import TopCard from "../../components/Institution/TopCard.vue";
 import PaperAndData from "../../components/Institution/PaperAndData.vue";
+import Associated from "../../components/Institution/Associated.vue";
 
 const route = useRoute();
 const institutionid = route.params.institutionid;
@@ -124,6 +125,7 @@ const UpdateAssociatedInstitution = (page) => {
   justify-content: center;
   align-items: center;
   background-color: rgba(230, 230, 230, 0.234);
+  padding-bottom: 1%;
 }
 
 .top_card {
@@ -141,18 +143,15 @@ const UpdateAssociatedInstitution = (page) => {
 .article_data_wrap .left {
   width: 68%;
   margin-right: 2%;
-  /* box-shadow: 3px 6px 10px 5px #888888; */
 }
 
 .article_data_wrap .right {
   width: 30%;
-  /* box-shadow: 3px 6px 10px 5px #888888; */
 }
 
 @media (max-width: 1500px) {
   .top_card {
     width: 90%;
-    /* border: 2px solid red; */
   }
 
   .article_data_wrap {
@@ -163,7 +162,6 @@ const UpdateAssociatedInstitution = (page) => {
 @media (max-width: 1200px) {
   .top_card {
     width: 98%;
-    /* border: 2px solid red; */
   }
 
   .article_data_wrap {
@@ -174,12 +172,10 @@ const UpdateAssociatedInstitution = (page) => {
   .article_data_wrap .left {
     width: 100%;
     margin: 10px 0 10px 0;
-    /* box-shadow: 3px 6px 10px 5px #888888; */
   }
 
   .article_data_wrap .right {
     width: 100%;
-    /* box-shadow: 3px 6px 10px 5px #888888; */
   }
 }
 </style>
