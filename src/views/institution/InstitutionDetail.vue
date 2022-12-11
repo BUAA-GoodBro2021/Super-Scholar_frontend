@@ -23,6 +23,9 @@
           @associated-institution-page-change="associatedInstitutionPageChange"
         />
       </div>
+      <!-- <div style="white-space: pre">
+        {{ institutionInfo }}
+      </div> -->
     </div>
   </div>
 </template>
@@ -106,8 +109,8 @@ const associatedInstitutionPageChange = (page) => {
 const UpdateAssociatedInstitution = (page) => {
   associatedInstituionList.value = [];
   for (
-    let i = 5 * (page - 1);
-    i < 5 * page && i < institutionInfo.value.associated_institutions.length;
+    let i = 15 * (page - 1);
+    i < 15 * page && i < institutionInfo.value.associated_institutions.length;
     i++
   ) {
     associatedInstituionList.value.push(
