@@ -25,7 +25,7 @@
                   <MessageCard 
                      v-for="(item,index) in systemList"
                      @reload="updateCheckedList"
-                     :key="index"
+                     :key="item.id"
                      :msg="item">
                   </MessageCard>
                <div v-if="systemList.length===0">
@@ -36,7 +36,7 @@
                   <MessageCard 
                      v-for="(item,index) in userList"
                      @reload="updateCheckedList"
-                     :key="index"
+                     :key="item.id"
                      :msg="item">
                   </MessageCard>
                <div v-if="userList.length===0">
