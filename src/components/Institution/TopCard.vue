@@ -36,26 +36,31 @@
                 </div>
               </span>
               <!-- 机构主页地址 -->
-              <div class="organization canClick">
+              <div
+                v-if="institutionInfo.homepage_url"
+                class="organization canClick"
+              >
                 <el-icon>
                   <Notification />
                 </el-icon>
                 &nbsp;
-                <span v-if="openAlexAccount == 1">{{
-                  institutionInfo.homepage_url
-                    ? institutionInfo.homepage_url
-                    : "暂无机构主页地址"
-                }}</span>
-                <span v-else @click="gotoHomePage">
+                <span @click="gotoHomePage">
                   主页地址：{{ institutionInfo.homepage_url }}
                 </span>
               </div>
-              <div class="organization">
+              <div v-if="institutionInfo.geo" class="organization">
                 <el-icon>
                   <PriceTag />
                 </el-icon>
                 &nbsp;
-                <span> 所在地：{{ institutionInfo.country_code }} </span>
+                <span>
+                  所在地：
+                  {{
+                    institutionInfo.geo.city +
+                    ", " +
+                    institutionInfo.geo.country
+                  }}
+                </span>
               </div>
               <div class="organization">
                 总论文数：{{ institutionInfo.works_count }}
@@ -123,7 +128,7 @@ const gotoConcept = (concept) => {
   background-color: white;
   box-shadow: 3px 3px 3px 3px #dedede;
   height: 100%;
-  font-family: 'Times New Roman', Times, "Microsoft YaHei", serif;
+  font-family: "Times New Roman", Times, "Microsoft YaHei", serif;
 
   display: flex;
   flex-direction: column;

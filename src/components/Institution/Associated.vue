@@ -31,8 +31,7 @@
         @current-change="changePage()"
         v-model:current-page="pageCurrent"
         hide-on-single-page
-        :page-sizes="[1, 2, 3, 4, 5]"
-        :page-size="5"
+        :page-size="15"
       />
     </div>
   </div>
@@ -139,7 +138,7 @@ const toInstitution = (item) => {
 }
 
 .institution-card .associated-name-li {
-  width: calc(100% - 160px);
+  width: calc(100% - 75px);
 }
 
 .institution-card .associated-name {
