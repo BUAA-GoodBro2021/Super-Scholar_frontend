@@ -13,7 +13,8 @@
                             <button class="right-btn returnBtn" @click="backToRoot(true)" v-if="!pageOne">
                                 {{ '返回上一级' }}
                             </button>
-                            <button class="right-btn renameBtn" v-show="pageOne && hasSelect"  @click="ChangeNameConfirm()" :disabled="(selects.length != 1)">
+                            <button class="right-btn renameBtn" v-show="pageOne && hasSelect"
+                                @click="ChangeNameConfirm()" :disabled="(selects.length != 1)">
                                 <el-icon>
                                     <Edit />
                                 </el-icon> {{ '重命名' }}
@@ -108,7 +109,8 @@
                             <button class="right-btn returnBtn" @click="backToRoot(true)" v-if="!pageOne">
                                 {{ '返回上一级' }}
                             </button>
-                            <button class="right-btn renameBtn" v-show="pageOne && hasSelect"  @click="ChangeNameConfirm()" :disabled="(selects.length != 1)">
+                            <button class="right-btn renameBtn" v-show="pageOne && hasSelect"
+                                @click="ChangeNameConfirm()" :disabled="(selects.length != 1)">
                                 <el-icon>
                                     <Edit />
                                 </el-icon> {{ '重命名' }}
@@ -192,8 +194,12 @@
             </template>
             <el-input v-model="changeName" max="10" show-word-limit></el-input>
             <div style="display: flex; justify-content: center; margin-top: 20px; ">
-                <el-button @click="handleChangeName()" type="primary">确定</el-button>
-                <el-button @click="changeDialog = false">取消</el-button>
+                <button class="right-btn search-btn"  @click="handleChangeName()">
+                    {{ '确定' }}
+                </button>
+                <button class="right-btn search-btn" @click="changeDialog = false">
+                    {{ '取消' }}
+                </button>
             </div>
         </el-dialog>
         <!-- 新增弹出框 -->
@@ -203,8 +209,12 @@
             </template>
             <el-input v-model="changeName" max="10" show-word-limit></el-input>
             <div style="display: flex; justify-content: center; margin-top: 20px;">
-                <el-button @click="addFolder()" type="primary">确定</el-button>
-                <el-button @click="addDialog = false">取消</el-button>
+                <button class="right-btn search-btn"  @click="addFolder()">
+                    {{ '确定' }}
+                </button>
+                <button class="right-btn search-btn"  @click="addDialog = false">
+                    {{ '取消' }}
+                </button>
             </div>
         </el-dialog>
         <!-- 删除弹出框 -->
@@ -213,8 +223,12 @@
                 <span class="dialog-title">确定删除？</span>
             </template>
             <div style="display: flex; justify-content: center; ">
-                <el-button @click="deleteFile()" type="danger">确定</el-button>
-                <el-button @click="deleteDialog = false">取消</el-button>
+                <button class="right-btn deleteBtn" @click="deleteFile()">
+                    {{ '删除' }}
+                </button>
+                <button class="right-btn" @click="deleteDialog = false">
+                    {{ '取消' }}
+                </button>
             </div>
         </el-dialog>
     </div>
@@ -785,7 +799,7 @@ const toConcept = (item) => {
 }
 
 .video-container .video-main .list-item .file-name:hover {
-    color:  rgb(162, 143, 42);
+    color: rgb(162, 143, 42);
 }
 
 .video-container .video-main .hover-cover {
@@ -838,7 +852,7 @@ const toConcept = (item) => {
 }
 
 .video-container .video-main .active {
-    border: 2px solid  rgb(162, 143, 42);
+    border: 2px solid rgb(162, 143, 42);
     border-radius: 8px;
 }
 
@@ -880,7 +894,7 @@ const toConcept = (item) => {
 
 /* todo */
 .video-container .video-main .active {
-    border: 1px solid  rgb(162, 143, 42);
+    border: 1px solid rgb(162, 143, 42);
     border-radius: 8px;
 }
 
@@ -919,7 +933,7 @@ const toConcept = (item) => {
 }
 
 :deep(.video-container .video-main .el-checkbox__inner .is-checked .el-checkbox__inner) {
-    border-color:  rgb(162, 143, 42);
+    border-color: rgb(162, 143, 42);
 }
 
 .video-container .video-main .resultitemactive {
@@ -1015,6 +1029,7 @@ const toConcept = (item) => {
 .search-btn {
     margin-left: 4px;
 }
+
 .addBtn {
     width: 100px;
 }
@@ -1035,6 +1050,7 @@ const toConcept = (item) => {
 
 .deleteBtn {
     margin-left: 4px;
+    margin-right: 4px;
     background-color: rgb(164, 41, 41);
 }
 
@@ -1042,8 +1058,8 @@ const toConcept = (item) => {
     background-color: rgba(164, 41, 41, 0.658);
 }
 
-:deep(.fr .is-focus) {
-    box-shadow: 0 0 0 1px  rgb(162, 143, 42) inset;
+:deep(.is-focus) {
+    box-shadow: 0 0 0 1px rgb(162, 143, 42) inset;
 }
 
 :deep(.fr .el-input__wrapper) {
