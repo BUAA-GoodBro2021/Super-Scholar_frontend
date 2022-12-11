@@ -436,7 +436,7 @@ watch(() => props.userInfo.is_follow, (newVal) => {
     /*配色 深 */
     /* background: linear-gradient(70deg, #445a7f,rgb(102 99 84)); */
     /*配色 浅 */
-    background: linear-gradient(70deg, #f4f8ff, rgb(184 179 154));
+    /* background: linear-gradient(70deg, #f4f8ff, rgb(184 179 154)); */
     border-radius: 2px;
     box-shadow: 3px 3px 3px 3px #dedede;
     height: 100%;
