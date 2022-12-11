@@ -1,6 +1,6 @@
 <template>
     <div class="collection-body">
-        <div class="video-container" v-show="pageOne">
+        <div class="video-container" v-show="pageOne">            
             <el-card shadow="hover" style="width: 100%; height: 100%;">
                 <div class="content-wrap">
                     <!-- 按钮与面包屑 -->
@@ -194,7 +194,7 @@
             </template>
             <el-input v-model="changeName" max="10" show-word-limit></el-input>
             <div style="display: flex; justify-content: center; margin-top: 20px; ">
-                <button class="right-btn search-btn"  @click="handleChangeName()">
+                <button class="right-btn search-btn" @click="handleChangeName()">
                     {{ '确定' }}
                 </button>
                 <button class="right-btn search-btn" @click="changeDialog = false">
@@ -209,10 +209,10 @@
             </template>
             <el-input v-model="changeName" max="10" show-word-limit></el-input>
             <div style="display: flex; justify-content: center; margin-top: 20px;">
-                <button class="right-btn search-btn"  @click="addFolder()">
+                <button class="right-btn search-btn" @click="addFolder()">
                     {{ '确定' }}
                 </button>
-                <button class="right-btn search-btn"  @click="addDialog = false">
+                <button class="right-btn search-btn" @click="addDialog = false">
                     {{ '取消' }}
                 </button>
             </div>
@@ -239,6 +239,7 @@ import { sliderEmits } from 'element-plus';
 import { Collection } from '../../api/collect'
 import WorksResCardVue from '../search/WorksResCard.vue';
 import folderImage from '../../assets/images/folder.png'
+const showOne = ref(true)
 const pageOne = ref(true) // 第几页
 const hasSelect = ref(false) // 是否有选中的元素
 const selects = ref([]) //选中的元素
