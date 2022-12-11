@@ -70,6 +70,8 @@ const PageChange = () => {
     /* background: linear-gradient(70deg, #8f99af,rgb(218 204 135)); */
     /**配色 浅 */
     /* background: linear-gradient(70deg, #c4ccdc, rgb(218 204 135)); */
+    /*超浅 */
+    /* background: linear-gradient(70deg, #ebedf1,rgb(220, 219, 213)); */
     border-radius: 2px;
     box-shadow: 3px 3px 3px 3px #dedede;
     height: 100%;

@@ -370,7 +370,7 @@ const initChart2 = () => {
     chart2 = document.getElementById('network')
     chart2 = echarts.init(chart2)
     let option = {
-        backgroundColor: 'white',
+        backgroundColor: '',
         tooltip: {
             // formatter: '合著数量{c}',
         },
