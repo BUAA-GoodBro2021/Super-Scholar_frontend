@@ -24,6 +24,9 @@
             排序 
             
         </div>
+        <div class="hint" v-if="total > 10000">
+            *由于结果数量超过10,000，出于实用性考虑，列表只会展示相关度排序的前10,000条
+        </div>
         <ul>
             <!-- 单个搜索结果卡片 -->
             <li class="result-item" v-for="(item, index) in paperList">
@@ -38,7 +41,7 @@
               :page-size="5"
               @current-change="pageChange"
               hide-on-single-page
-              :total="total" 
+              :total="total <= 10000 ? total : 10000" 
               :current-page="page"
             />
           </div>
@@ -168,6 +171,7 @@ window.onresize = function(){
     justify-content: center;
     width: 100%;
     height: 36px;
+    background-color: #fff;
   }
   
   .search-result__list {
@@ -207,4 +211,9 @@ window.onresize = function(){
       width: 100%;
     }
   }
+
+.hint {
+  margin: 20px;
+  font-style: italic;
+}
 </style>
