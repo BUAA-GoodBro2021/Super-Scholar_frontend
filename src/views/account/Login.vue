@@ -1,21 +1,24 @@
 <template>
 	<div class="login-container">
-	<img src="/person.png" class="earth-img"/>
-	<div class="login-form">
-		<div class="login-logo">
-			<img class="login-icon" src="/icon1.png" alt="" />
+		<img src="/person.png" class="earth-img"/>
+		<div class="login-form">
+			<div class="login-logo">
+				<img class="login-icon" src="/icon1.png" alt="" />
+			</div>
+			<router-view v-slot="{route,Component}">
+				<transition name="fade" mode="out-in">
+					<keep-alive>
+						<component :is="Component"></component>
+					</keep-alive>
+				</transition>
+			</router-view>
 		</div>
-		<router-view v-slot="{route,Component}">
-			<transition name="fade" mode="out-in">
-				<keep-alive>
-					<component :is="Component"></component>
-				</keep-alive>
-			</transition>
-		</router-view>
 	</div>
-	</div>
+	<ParticleBackground/>
 </template>
 <script setup>
+import ParticleBackground from '../../components/Background/ParticleBackground.vue';
+
 </script>
 <style lang="scss">
 .fade-enter-active,
@@ -28,8 +31,8 @@
   opacity: 0;
 }
 .login-container {
-	background-color: #040d21;
-	background-image: url("../../assets/images/login_bg.svg");
+	// background-color: #040d21;
+	// background-image: url("../../assets/images/login_bg.svg");
 	background-position: 50%;
 	background-size: 100% 100%;
 	background-size: cover;

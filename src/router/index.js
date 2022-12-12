@@ -141,6 +141,12 @@ const router = createRouter({
           name: 'ConceptDetail',
           component: ()=>import('../views/Concept/ConceptDetail.vue'),
         },
+        // 期刊venues详情页
+        {
+          path: 'journal/:journalid',
+          name: 'JournalDetail',
+          component: ()=>import('../views/journal/Journal.vue'),
+        },
       ],
     },
 

@@ -35,17 +35,13 @@
     </div>
     <!-- 
       搜索框下拉栏
-      在开发者指定了 命名插槽name=dropdown以后 才会存在（$slot.dropdown不为空）
-      在存在的基础上，当输入框获取到焦点的时候才会展示下拉栏
-      也就是说，二者缺一不可。
-      这里的 $slot.dropdown 指的就是 我们下面的命名插槽 <slot name="dropdown"/>
+      因为高级检索不需要搜索历史，这里改为搜索文本不为空的时候才出现
      -->
     <transition name="slide">
       <div
         v-if="$slots.dropdown && $slots.dropdown().length > 0"
-        v-show="isFouced && $slots.dropdown && $slots.dropdown().length > 0"
+        v-show="isFouced && inputSearchValue"
         class="search-dropdown search-scrollbar"
-        :class="{'search-dropdown-none' : !$slots.dropdown || $slots.dropdown().length === 0}"
       >
       <!-- scrollbar- 开头的是滚动条样式，要装插件 tailwind-scrollbar 详见tailwind.config.cjs -->
         <slot name="dropdown"/>
@@ -333,11 +329,6 @@ input {
   --tw-ring-offset-shadow: 0 0 #0000;
   --tw-ring-shadow: 0 0 #0000;
   /* --tw-shadow: 0 0 #0000; */
-}
-.search-dropdown.search-dropdown-none {
-  padding: 0;
-  border: 0;
-  box-shadow: none;
 }
 
 .search-dropdown:hover {
