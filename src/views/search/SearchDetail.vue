@@ -437,7 +437,7 @@ const AllTypeFilterList = reactive({
       selectedArray: []
     },
     {
-      group: "last_known_institution.id",
+      group: "last_known_institution.type",
       title: "机构类型 Institution Type",
       objectArray: [],
       stringArray: [],
@@ -907,6 +907,7 @@ a, a:hover, a:focus {
 /* #region 搜索区域 */
 .search-area{
   background-color: rgb(147 197 253);
+  /* background-color: white; */
   width: 100%;
   padding: 10px 20px;
 }

@@ -271,8 +271,32 @@ const toDocument = (item) => {
     color: #409eff;
 }
 
+:deep(.el-table) {
+    border: none;
+}
+
 :deep(.el-table .cell) {
     font-size: 15px;
+}
+
+:deep(.el-table, .el-table__expanded-cell) {
+    background-color: transparent;
+}
+
+:deep(.el-table tr) {
+    background-color: transparent;
+}
+
+:deep(.el-table tr:hover>td.el-table__cell) {
+    background-color: #b7b7a8;
+}
+
+:deep(.el-table th) {
+    background-color: transparent;
+}
+
+:deep(.el-table td) {
+    background-color: transparent;
 }
 
 :deep(.pagination-wrap .is-active) {
@@ -281,6 +305,19 @@ const toDocument = (item) => {
 
 :deep(.pagination-wrap .el-pager li:hover) {
     color: rgb(248 210 8);
+}
+
+
+:deep(.pagination-wrap .el-pagination button) {
+    background: none;
+}
+
+:deep(.pagination-wrap .el-pager li) {
+    background: none;
+}
+
+:deep(.pagination-wrap .el-pagination button:hover) {
+    color:rgb(248 210 8);
 }
 
 .document-btn {

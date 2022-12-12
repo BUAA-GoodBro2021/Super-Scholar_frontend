@@ -10,9 +10,8 @@
               :src="
                 institutionInfo.image_url
                   ? institutionInfo.image_url
-                  : 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png'
+                  : institutionImage
               "
-              style="cursor: pointer"
             >
             </el-avatar>
           </div>
@@ -94,6 +93,7 @@
 
 <script setup>
 import { useRouter } from "vue-router";
+import institutionImage from "../../assets/images/institution.png";
 const router = useRouter();
 const props = defineProps({
   institutionInfo: Object,
@@ -163,6 +163,7 @@ const gotoConcept = (concept) => {
 
 .institution-display-name {
   margin: 1% 0%;
+  font-weight: bold;
 }
 
 .title_profile {
@@ -204,15 +205,11 @@ const gotoConcept = (concept) => {
 .concept {
   font-size: 15px;
   color: rgb(162, 143, 42);
-  /* height: 63%; */
   height: 73%;
   width: 100%;
   line-height: 20px;
-  /* line-height: 50%; */
   text-align: left;
   display: flex;
-  /* align-items: center; */
-  /* display: block; */
   word-break: break-all;
   word-wrap: break-word;
 }
@@ -228,9 +225,14 @@ const gotoConcept = (concept) => {
   padding: 3px 5px;
   box-sizing: border-box;
   border: 1.6px solid rgb(162, 143, 42);
-  border-radius: 14px;
-  font-size: 14px;
+  border-radius: 5px;
+  font-size: 15px;
 }
+
+.card-concepts .card-concepts-wrap:hover {
+  background-color: #f1f5fa;
+}
+
 .card-concepts .card-concepts-wrap i {
   display: inline-block;
   margin-right: 3px;
@@ -239,6 +241,7 @@ const gotoConcept = (concept) => {
   display: inline-block;
   text-transform: capitalize;
 }
+
 .clearfix::before,
 .clearfix::after {
   content: "";

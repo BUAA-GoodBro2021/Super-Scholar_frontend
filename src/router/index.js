@@ -7,7 +7,7 @@ const router = createRouter({
     {
       path: '/',
       name: 'Welcome',
-      component: ()=>import('../views/Welcome.vue'),
+      component: ()=>import('../views/welcome/Welcome.vue'),
     },
     {
       path: '/account',
@@ -112,6 +112,12 @@ const router = createRouter({
           path: '/search-detail',
           name: 'SearchDetail',
           component: ()=>import('../views/search/SearchDetail.vue'),
+        },
+        // 高级搜索详情页面，后续可能会调整其位置
+        {
+          path: '/advance-search-detail',
+          name: 'AdvanceSearchDetail',
+          component: ()=>import('../views/search/AdvSearchDetail.vue'),
         },
         {
           path: '/message-list',
