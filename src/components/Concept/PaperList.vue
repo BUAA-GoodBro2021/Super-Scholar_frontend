@@ -1,6 +1,9 @@
 <template>
   <div class="paper-list-wrap">
     <ul class="search-result__list">
+      <div class="hint" v-if="pageTotalSize > 10000">
+        *由于结果数量超过10,000，出于实用性考虑，列表只会展示相关度排序的前10,000条
+      </div>
       <!-- 单个搜索结果卡片 -->
       <li class="result-item" v-for="(item, index) in paperList">
         <WorksResCard :item="item" />
@@ -9,7 +12,7 @@
     <div class="pagination-wrap">
       <el-pagination
         layout="prev, pager, next"
-        :total="pageTotalSize"
+        :total="pageTotalSize <= 10000 ? pageTotalSize : 10000"
         @current-change="changePage"
         v-model:current-page="pageCurrent"
         hide-on-single-page
@@ -57,5 +60,10 @@ const changePage = () => {
   width: 100%;
   display: inline-block;
   font-size: 0.875rem;
+}
+
+.hint {
+  margin: 20px;
+  font-style: italic;
 }
 </style>

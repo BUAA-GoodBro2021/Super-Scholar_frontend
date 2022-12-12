@@ -29,7 +29,19 @@
                 </div>
                 <div
                   class="institution-display-name"
-                  v-if="institutionInfo.international.display_name.zh"
+                  v-if="institutionInfo.international.display_name.zh-cn"
+                >
+                  （{{ institutionInfo.international.display_name.zh-cn }}）
+                </div>
+                <div
+                  class="institution-display-name"
+                  v-else-if="institutionInfo.international.display_name.zh-hans"
+                >
+                  （{{ institutionInfo.international.display_name.zh-hans }}）
+                </div>
+                <div
+                  class="institution-display-name"
+                  v-else-if="institutionInfo.international.display_name.zh"
                 >
                   （{{ institutionInfo.international.display_name.zh }}）
                 </div>

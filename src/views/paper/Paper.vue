@@ -17,7 +17,7 @@
                         <span>摘要</span>
                     </div>
                     <el-divider></el-divider>
-                    <span style="font-size:16px;line-height: 20px;">
+                    <span style="font-size:16px;line-height: 26px;font-family:'Times New Roman', Times, serif">
                         {{paperInfo.abstract}}
                     </span>
                 </el-card>
