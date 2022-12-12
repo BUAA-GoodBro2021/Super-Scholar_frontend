@@ -54,6 +54,9 @@ export function highlightText(text) {
       -webkit-line-clamp: 3;"
       >${text.replace(reg, highlightStr)}</span>`;
   }
+	else {
+		return text;
+	}
 }
 
 function escapeRegExp(string) {

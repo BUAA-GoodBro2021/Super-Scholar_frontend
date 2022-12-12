@@ -43,7 +43,7 @@
 <script setup>
 import { useSearchStore } from '../../stores/search.js';
 // TODO 删除所有搜索历史的确认对话框
-// import { showConfirmDialog } from '../../../../../libs/confirm/index.js';
+import { showConfirmDialog } from '../Dialog/index.js';
 
 const emits = defineEmits([EMIT_HISTORY_BUBBLE_CLICK]);
 
@@ -53,14 +53,13 @@ const searchStore = useSearchStore();
  * 删除所有记录
  */
 const onDeleteAllClick = () => {
-  searchStore.deleteAllHistory();
-  // showConfirmDialog('您要删除所有记录吗？')
-  // .then(() => {
-  //   store.commit('search/deleteAllHistory');
-  // })
-  // .catch(() => {
-  //   console.log('点击了取消');
-  // })
+  showConfirmDialog('清空历史记录', '您要删除所有记录吗？')
+  .then(() => {
+    searchStore.deleteAllHistory();
+  })
+  .catch(() => {
+    console.log('点击了取消');
+  })
 }
 
 /**
