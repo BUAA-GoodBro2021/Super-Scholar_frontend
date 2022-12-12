@@ -26,6 +26,9 @@
                 <el-dropdown-item class="dropdown-item" :icon="Notification" @click="checkMessage">
                     <span class="dropdown-text"><Message/></span>
                 </el-dropdown-item>
+                <el-dropdown-item class="dropdown-item" :icon="Promotion" @click="toChat">
+                    <span class="dropdown-text">AI助手</span>
+                </el-dropdown-item>
                 <el-dropdown-item class="dropdown-item" :icon="SwitchButton" @click="logout">
                     <span class="dropdown-text">{{$t("header.action1")}}</span>
                 </el-dropdown-item>
@@ -34,7 +37,7 @@
     </el-dropdown>
 </template>
 <script setup>
-import { Check, More, Notification, Star, SwitchButton, User } from '@element-plus/icons-vue'
+import { Check, More, Notification, Star, SwitchButton, User, Promotion } from '@element-plus/icons-vue'
 import { useWindowScroll, useWindowSize } from '@vueuse/core';
 import { useRoute } from "vue-router";
 import  Message  from './Message.vue';
@@ -74,6 +77,9 @@ const toCollection = () => {
 }
 const toClaimPortal = () => {
     router.push({name:"ClaimPortal"});
+}
+const toChat = () => {
+    router.push({name:"Chat"});
 }
 const toFollowList = () => {
     router.push({name:"FollowList"});
