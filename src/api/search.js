@@ -5,7 +5,8 @@ const url = {
     getGroupDataList: "/search/get_groups_of_data_view",
     getAssociateContent: "/search/associate_content_view",
     postSearchHistory: "/history/update_history",
-    getDataView:"/search/get_index_data_view"
+    getDataView:"/search/get_index_data_view",
+    getAdvanceSearch: "/search/advanced_search_view",
 }
 // 详细参考见：https://www.axios-http.cn/docs/req_config
 export class Search{
@@ -50,5 +51,12 @@ export class Search{
         method: "POST",
         data,
       })
-  }
+    }
+    // 高级检索
+    static async getAdvanceSearchDataList(data) {
+      return service(url.getAdvanceSearch, {
+        method: "POST",
+        data,
+      })
+    }
 }

@@ -176,12 +176,12 @@ const pageSizeArray = [5, 10, 20];
 </script>
 
 <script setup>
-import SearchInput from '../../components/SearchInput/Search.vue';
 import { Search } from '../../api/search';
 import { useSearchStore } from '../../stores/search.js';
 import { ElButton, ElCheckbox, ElCheckboxGroup, ElNotification, ElPagination } from "element-plus";
 import { onMounted, reactive, ref, shallowRef, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
+import SearchInput from '../../components/SearchInput/Search.vue';
 import WorksResCard from './WorksResCard.vue';
 import AuthorsResCard from './AuthorsResCard.vue';
 import VenuesResCard from './VenuesResCard.vue';
@@ -191,8 +191,7 @@ import ConceptsResCard from './ConceptsResCard.vue';
 
 onMounted(() => {
   // 默认选中 index = 1 的 每页10条
-  // chosePageSize(1);
-  chosePageSize(0);
+  chosePageSize(1);
   // 触发一次搜索
   handleFinalSearch(searchStore.searchInputText, searchStore.searchType);
 });
@@ -247,7 +246,7 @@ const pageIndexChangeSearchLock = ref(false);
  */
 const handlePageIndexChangeSearch = () => {
   var data = {
-    "entity_type": searchStore.searchType,  // 理论上来说这里只能是 works
+    "entity_type": searchStore.searchType,
     "params": {
       "filter": buildAllTypeFilterKey(),
       "page": searchResPageIndex.value,
@@ -274,7 +273,7 @@ const handlePageIndexChangeSearch = () => {
   })
   .catch((err) => {
     console.log(err);
-  })
+  });
 };
 watch(
   searchResPageIndex,
