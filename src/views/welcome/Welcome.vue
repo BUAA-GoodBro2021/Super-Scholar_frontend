@@ -4,7 +4,7 @@
       <div class="client-body">
          <Main/>
          <div v-if="loading">
-            loading...
+            <SandboxLoading style="margin-top:100vh"/>
          </div>
          <div v-else class="content" id="recommend">
             <div class="left-content-wrap">
@@ -45,6 +45,7 @@
 import Main from "./Main.vue";
 import { Search } from "../../api/search.js";
 import WorksResCard from "../search/WorksResCard.vue";
+import SandboxLoading from "../../components/Loading/SandboxLoading.vue";
 const recommendByCount = ref([]);
 const recommendByDate = ref([]);
 const activeName = ref("count");
