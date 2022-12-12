@@ -46,7 +46,6 @@
     </div>
   </template>
 <script setup>
-import { nextTick } from "vue-demi";
 import { Search } from "../../api/search";
 import * as echarts from 'echarts';
 

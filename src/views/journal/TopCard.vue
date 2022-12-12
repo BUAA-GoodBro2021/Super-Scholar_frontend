@@ -66,7 +66,6 @@
   </template>
   
   <script setup>
-  import { nextTick, onMounted } from "vue-demi";
 import { useRouter } from "vue-router";
 import * as echarts from 'echarts';
 import 'element-plus/theme-chalk/display.css'
