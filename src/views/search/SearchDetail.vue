@@ -75,8 +75,8 @@
           </div>
           <!-- 右侧结果/排序部分 -->
           <!-- <div class="col-lg-9 col-md-9 col-sm-8 " style="border: 1px solid black;"> -->
-            <div class="col-lg-9 col-md-9 col-sm-8 ">
-            <div class="search-result">
+          <div class="col-lg-9 col-md-9 col-sm-8">
+            <div class="search-result" >
               <!-- 搜索结果顶部信息 -->
               <div class="search-result__info">
                 <div class="search-num-info">

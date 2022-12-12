@@ -54,8 +54,10 @@ import { CirclePlus, RefreshLeft } from "@element-plus/icons-vue";
 import { ElNotification } from "element-plus";
 import {useGlobalStore} from "../../stores/global.js";
 import { Account } from "../../api/account";
+import { useRoute,useRouter } from "vue-router";
 const globalStore = useGlobalStore();
 const router = useRouter();
+const route = useRoute();
 const registerFormRef = ref();
 const validateName = (rule,value,callback)=>{
 	if(!value.length){
@@ -158,7 +160,7 @@ onMounted(() => {
 	// 监听enter事件
 	document.onkeydown = (e) => {
 		e = window.event || e;
-		if (e.code === "Enter" || e.code === "enter" || e.code === "NumpadEnter") {
+		if (route.name=="Regitser" && (e.code === "Enter" || e.code === "enter" || e.code === "NumpadEnter")) {
 			submit(registerFormRef.value);
 		}
 	};

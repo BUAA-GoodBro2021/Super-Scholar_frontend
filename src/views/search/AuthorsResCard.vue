@@ -15,8 +15,9 @@
           : '')"
       >
         <!-- TODO 需要加匹配高亮 -->
-        <span v-if="item.display_name !== null">
-          {{ item.display_name.replace(/<\/?i>/ig, "") }}
+        <span 
+          v-if="item.display_name !== null"
+          v-html="highlightText(item.display_name.replace(/<\/?i>/ig, ''))">
         </span>
         <span v-else>
           [Author Name Unknown]
@@ -157,7 +158,8 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { useClipboard } from '@vueuse/core'
+import { useClipboard } from '@vueuse/core';
+import { highlightText } from '../../utils/index.js';
 
 const router = useRouter();
 const props = defineProps({

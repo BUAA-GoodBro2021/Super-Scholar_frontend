@@ -315,7 +315,7 @@ const pageSizeArray = [5, 10, 20];
 <script setup>
 import { Search } from '../../api/search';
 import { useSearchStore } from '../../stores/search';
-import { reactive, ref, watch } from 'vue';
+import { onMounted, reactive, ref, watch } from 'vue';
 import { ElButton, ElCheckbox, ElCheckboxGroup, ElDatePicker, ElNotification, ElOption, ElSelect, ElPagination } from 'element-plus';
 import AdvSearchInput from '../../components/SearchInput/AdvSearch.vue';
 import WorksResCard from './WorksResCard.vue';
@@ -809,6 +809,7 @@ const handlePageSizeChangeSearch = (sizeIndex) => {
   })
 };
 // #endregion 每页数据量尺寸相关 --------------------------------------------------------------------
+
 
 // #region ！！过滤区域 -----------------------------------------------------------------------
 /**

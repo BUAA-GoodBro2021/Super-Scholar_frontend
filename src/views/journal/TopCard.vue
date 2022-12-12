@@ -79,6 +79,7 @@ import 'element-plus/theme-chalk/display.css'
     seed = ( seed * 9301 + 49297 ) % 233280; //为何使用这三个数?
     return seed / ( 233280.0 );
 };
+const tmpCounts = ref([])
 onMounted(
   ()=>{
     var sum = 0
@@ -93,7 +94,11 @@ onMounted(
     var xSeries = []
     var yWorkSeries = []
     var yCiteSeries = []
-    for(var item of props.journalInfo.counts_by_year){
+    tmpCounts.value.push(...props.journalInfo.counts_by_year);
+    tmpCounts.value.sort(function (a, b) {
+      return a.year - b.year;
+    });
+    for(var item of tmpCounts.value){
         xSeries.push(item.year)
         yWorkSeries.push(item.works_count)
         yCiteSeries.push(item.cited_by_count)
