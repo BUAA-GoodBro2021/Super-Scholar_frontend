@@ -3,7 +3,8 @@
     <Header style="height:64px" />
     <div class="chat-container">
       <div class="chat-responses">
-        <div v-for="response in responses" :key="response.id">
+        <SandboxLoading v-if="sending"/>
+        <div v-for="response in responses" :key="response.id" ref="chatRoom">
           <div class="chat-response">
             <div v-if="response.username === 'ChatGPT'" class="chat-response-GPT">
               <img :src="GPTUrl" width="40" class="chat-avatar"/>
@@ -25,7 +26,7 @@
         </div>
       </div>
       <div class="chat-input">
-        <el-input v-model="newRequest" :disabled="sending" @keydown.enter="sendRequest" placeholder="基于openAI,您忠实的学术助手">
+        <el-input v-model="newRequest" @keydown.enter="sendRequest" placeholder="基于chatGPT,您忠实的学术助手">
           <template #append>
             <el-icon @click="sendRequest">
               <Promotion />
@@ -44,6 +45,7 @@ import { marked } from "marked";
 import { useGlobalStore } from '../../stores/global.js';
 import GPTUrl from "../../assets/images/chat.png"
 import "highlight.js/styles/atom-one-dark.css";
+import SandboxLoading from '../../components/Loading/SandboxLoading.vue';
 const configuration = new Configuration({
   apiKey: "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",
 });
@@ -57,6 +59,16 @@ const responses = ref([
     text: '你好呀，我是Super Scholar 学术AI小助手，有什么学术领域上的问题，可以随时询问我哦！比如深度学习领域最有影响力的论文是哪些，这些我都是可以回答的呢。',
   },
 ]);
+const chatRoom = ref();
+watch(responses,()=>{
+  let len = chatRoom.value.length
+  // 使用nextTick确保获取到新渲染内容
+  nextTick(() => {
+    chatRoom.value[len-1].scrollIntoView()
+  })
+},{
+  deep: true,
+})
 const newRequest = ref('');
 const sending = ref(false);
 const chatBottom = ref();
@@ -174,16 +186,10 @@ background-color: transparent !important;
   left: 10%;
   bottom: calc(10% - 20px);
   padding: 0;
-}
-
-.chat-input {
-  width: 100%;
-}
-
-.chat-input input {
-  width: 80%;
   height: 50px;
-  box-sizing: border-box;
+  .el-input{
+    height:100%;
+  }
 }
 .chat-avatar{
   position: relative;
