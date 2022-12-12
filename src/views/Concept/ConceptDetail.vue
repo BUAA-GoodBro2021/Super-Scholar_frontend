@@ -142,6 +142,9 @@ const getPaperList = async (data) => {
     .then((res) => {
       if (res.data.result == 1) {
         pageTotalSize.value = res.data.list_of_data[0].meta.count;
+        if(pageTotalSize.value > 10000){
+          pageTotalSize = 10000;
+        }
         conceptPaperList.value = res.data.list_of_data[0].results;
       }
     })
