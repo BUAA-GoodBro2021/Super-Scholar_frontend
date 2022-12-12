@@ -903,8 +903,8 @@ a, a:hover, a:focus {
 }
 /* #region 搜索区域 */
 .search-area{
-  background-color: rgb(147 197 253);
-  /* background-color: white; */
+  /* background-color: rgb(147 197 253); */
+  background-color: white;
   width: 100%;
   padding: 10px 20px;
 }

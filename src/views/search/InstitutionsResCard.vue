@@ -196,10 +196,10 @@ const jumpToAuthorPage = (openAlexAuthorId) => {
 const jumpToVenuePage = (openAlexVenueId) => {
   console.log(openAlexVenueId);
   if (openAlexVenueId) {
-    // router.push({
-    //   name: 'OpenAlexAuthorDetail',
-    //   params: {tokenid: openAlexAuthorId}
-    // });
+    router.push({
+      name: 'JournalDetail',
+      params: {journalid: openAlexAuthorId}
+    });
   }
 };
 /**
