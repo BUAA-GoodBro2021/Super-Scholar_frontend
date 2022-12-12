@@ -12,7 +12,7 @@
         </el-input>
         <div style="width:100%" v-for="(item, index) in allComments" :key="index">
             <el-container>
-                <el-aside width="auto" style="border-right:2px #efefef solid;padding:10px">
+                <el-aside width="auto" style="border-right:2px #efefef solid;padding:10px" class="href_text" @click="gotoUser(item.user_information)">
                     <img class="author-avatar" :src="item.user_information.avatar_url" />
                     <span>{{ item.user_information.username }}</span>
                 </el-aside>
@@ -40,9 +40,11 @@
                     <el-main v-if="(item.son_comments.length>0)">
                         <div v-for="(item, index) in item.son_comments" :key="index">
                             <el-divider content-position="left">
-                                <img class="reply-author-avatar" :src="item.user_information.avatar_url" />
-                                <span>{{ item.user_information.username }}</span>
-                                <span  v-if="item.reply_user_information.username"> 回复 {{item.reply_user_information.username}}</span>
+                                <span  class="href_text" @click="gotoUser(item.user_information)">
+                                    <img class="reply-author-avatar" :src="item.user_information.avatar_url" />
+                                    <span>{{ item.user_information.username }}</span>
+                                </span>
+                                <span  v-if="item.reply_user_information.username"  class="href_text" @click="gotoUser(item.reply_user_information)"> 回复 {{item.reply_user_information.username}}</span>
                             </el-divider>
                             <div class="reply_content">{{item.content}}</div>
                             <div class="reply_date">{{(new Date(item.created_time)).toLocaleString()}}</div>
@@ -81,6 +83,7 @@ const selectedId = ref(-1)
 const replyContent = ref("")
 const commentContent = ref("")
 const loading = ref(true)
+const router = useRouter();
 const props = defineProps({
     paperId: String,
     workName: String
@@ -128,6 +131,18 @@ onMounted(() => {
     console.log("Comments of "+props.paperId)
     updateComment();
 })
+
+function gotoUser(concept){
+    if(!concept)
+    return;
+    let { href } = this.router.resolve({
+        name: "UserDetail",
+        params: {
+        tokenid: concept.user_id,
+        },
+    });
+    window.open(href, "_blank");
+}
 </script>
 <style>
 .author-avatar {

@@ -45,6 +45,7 @@ function chartResize(){
     )
 
 }
+
 onRenderTriggered(() => {
     if(citeChart)
         return;

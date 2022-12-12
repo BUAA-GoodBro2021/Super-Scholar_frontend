@@ -132,5 +132,6 @@ onMounted(() => {
 .card{
     border-radius:0px;
     box-shadow: 0 0.3125rem 0.5rem rgb(0 0 0 / 10%);
+    border:1px solid;
 }
 </style>

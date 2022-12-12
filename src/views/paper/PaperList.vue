@@ -3,7 +3,7 @@
         <el-table :data="paperList" @sort-change="sortChange">
             <el-table-column prop="display_name" label="标题">
                 <template #default="scope">
-                    <div class="authors_wrap" v-html="scope.row.display_name">
+                    <div class="authors_wrap href_text" @click="gotoPaper(scope.row)" v-html="scope.row.display_name">
                     </div>
                 </template>
             </el-table-column>
@@ -11,7 +11,7 @@
                 <template #default="scope">
                     <div class="authors_wrap">
                         <span class="document_authors" v-for="(item, index) in scope.row.authorships" :key="index">
-                            <span v-if="item.author_position=='first'">{{item.author.display_name}}</span>
+                            <span v-if="item.author_position=='first'" @click="gotoAuthorPage(item.author)" class="href_text">{{item.author.display_name}}</span>
                         </span>
                     </div>
                 </template>
@@ -29,7 +29,8 @@ import { Search } from "../../api/search";
 const props = defineProps({
     filter: Object,
 })
-
+const route = useRoute();
+const router = useRouter();
 const paperList = ref()
 const loading = ref(true)
 const page = ref(1)
@@ -87,6 +88,28 @@ function pageChange(a){
     page.value = a
     updateData()
 }
+function gotoAuthorPage(concept){
+    if(!concept)
+    return;
+    let { href } = this.router.resolve({
+        name: "OpenAlexAuthorDetail",
+        params: {
+        tokenid: concept.id.substring(21),
+        },
+    });
+    window.open(href, "_blank");
+}
+function gotoPaper(concept){
+    if(!concept)
+    return;
+    let { href } = this.router.resolve({
+        name: "PaperDetail",
+        params: {
+        paperid: concept.id.substring(21),
+        },
+    });
+    window.open(href, "_blank");
+}
 </script>
 <style scoped>
 
@@ -98,4 +121,14 @@ function pageChange(a){
     width: 100%;
     height: 36px;
   }
+  .href_text {
+    color: rgb(117, 117, 117);
+    background-color: transparent;
+    transition: .2s;
+    cursor:pointer;
+}
+
+.href_text:hover {
+    color: rgb(64, 158, 255);
+}
 </style>
