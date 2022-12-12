@@ -7,7 +7,6 @@
                <div class="slogen-dis">
                   上亿级数据，毫秒级响应<br/>
                   从引用图表到专家关系网络，构建专业可视化的学术成果分享平台
-				  {{width}}
                </div>
         </div>
 		<div class="login-form">
