@@ -1,152 +1,193 @@
 <template>
-    <div class="clearfix" style="height: 100vh;">
-    <Header style="height:64px"/>
-      <div class="chat-container">
-        <div class="chat-header">
-          <h3>ChatGPT App</h3>
-        </div>
-        <div class="chat-responses">
-          <div v-for="response in responses" :key="response.id">
-            <p class="chat-response" :class="{ 'chat-response-user': response.username === 'ChatGPT' }">
-              <span v-html="response.text"></span>
-            </p>
+  <div class="clearfix" style="height: 100vh;">
+    <Header style="height:64px" />
+    <div class="chat-container">
+      <div class="chat-responses">
+        <div v-for="response in responses" :key="response.id">
+          <div class="chat-response">
+            <div v-if="response.username === 'ChatGPT'" class="chat-response-GPT">
+              <img :src="GPTUrl" width="40" class="chat-avatar"/>
+              <div class="chat-index">
+                <div v-html="response.text">
+              </div>
+              </div>
+            </div>
+            <div v-else class="chat-response-user" >
+              <img :src="circleUrl" width="40" class="chat-avatar"/>
+              <div class="chat-index">
+                <div v-html="response.text">
+                </div>
+              </div>
+            </div>
+            <div ref="chatBottom">
+            </div>
           </div>
         </div>
-        <div class="chat-input">
-          <input
-            v-model="newRequest"
-            :disabled="sending"
-            @keydown.enter="sendRequest"
-            placeholder="Enter"
-          />
-        </div>
+      </div>
+      <div class="chat-input">
+        <el-input v-model="newRequest" :disabled="sending" @keydown.enter="sendRequest" placeholder="基于openAI,您忠实的学术助手">
+          <template #append>
+            <el-icon @click="sendRequest">
+              <Promotion />
+            </el-icon>
+          </template>
+        </el-input>
       </div>
     </div>
-  </template>
-  
-  <script>
-  import { ref } from 'vue';
-  import { Configuration, OpenAIApi } from 'openai';
-  
-  const configuration = new Configuration({
-    apiKey: "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",
+  </div>
+</template>
+<script setup>
+import { ref } from 'vue';
+import { Configuration, OpenAIApi } from 'openai';
+import hljs from "highlight.js";
+import { marked } from "marked";
+import { useGlobalStore } from '../../stores/global.js';
+import GPTUrl from "../../assets/images/chat.png"
+import "highlight.js/styles/atom-one-dark.css";
+const configuration = new Configuration({
+  apiKey: "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",
+});
+const globalStore = useGlobalStore();
+const circleUrl = globalStore.userInfo.avatar_url;
+const openai = new OpenAIApi(configuration);
+const responses = ref([
+  {
+    id: Date.now(),
+    username: 'ChatGPT',
+    text: '你好呀，我是Super Scholar 学术AI小助手，有什么学术领域上的问题，可以随时询问我哦！比如深度学习领域最有影响力的论文是哪些，这些我都是可以回答的呢。',
+  },
+]);
+const newRequest = ref('');
+const sending = ref(false);
+const chatBottom = ref();
+let render = new marked.Renderer();
+marked.setOptions({
+  renderer: render, // 这是必填项
+  gfm: true,	// 启动类似于Github样式的Markdown语法
+  pedantic: false, // 只解析符合Markdwon定义的，不修正Markdown的错误
+  // 高亮的语法规范
+  highlight: (code, lang) => hljs.highlight(code, { language: lang }).value,
+})
+const sendRequest = async () => {
+  if (!newRequest.value) return;
+  sending.value = true;
+  responses.value.push({
+    id: Date.now(),
+    username: 'Person',
+    text: newRequest.value,
   });
-  const openai = new OpenAIApi(configuration);
-  
-  export default {
-    setup() {
-      const responses = ref([
-        {
-          id: Date.now(),
-          username: 'ChatGPT',
-          text: '您好,我是ChatGPT,请问我能为你提供什么帮助?',
-        },
-      ]);
-  
-      const newRequest = ref('');
-      const sending = ref(false);
-  
-      const sendRequest = async () => {
-        if (!newRequest.value) return;
-  
-        sending.value = true;
-  
-        responses.value.push({
-          id: Date.now(),
-          username: 'Person',
-          text: newRequest.value,
-        });
-  
-        const completion = await openai.createCompletion({
-          model: 'text-davinci-003',
-          prompt: newRequest.value,
-          temperature: 0.7,
-          max_tokens: 4000,
-          top_p: 1,
-          frequency_penalty: 0,
-          presence_penalty: 0,
-        });
-  
-        newRequest.value = '';
-  
-        responses.value.push({
-          username: 'ChatGPT',
-          text: completion.data.choices[0].text,
-        });
-  
-        sending.value = false;
-      };
-  
-      return {
-        responses,
-        newRequest,
-        sendRequest,
-        sending,
-      };
-    },
-  };
-  </script>
-  
-  <style lang="scss">
-  .clearfix::before,
-    .clearfix::after {
-    content: '';
-    display: table;
-    clear: both;
-    }
-  .chat-container {
-    margin-top: 64px;
-    height: calc(100vh - 64px);
-    overflow-x: hidden;
-    width: 100vw;
+  const completion = await openai.createCompletion({
+    model: 'text-davinci-003',
+    prompt: newRequest.value,
+    temperature: 0.7,
+    max_tokens: 4000,
+    top_p: 1,
+    frequency_penalty: 0,
+    presence_penalty: 0,
+  });
+  newRequest.value = '';
+  let temp = completion.data.choices[0].text;
+  try {
+    temp = marked.parse(completion.data.choices[0].text);
+  } catch (error) {
+    console.error(error);
   }
+  temp.replace(/\n/g, '<br/>');
+  responses.value.push({
+    username: 'ChatGPT',
+    text: temp,
+  });
+
+  sending.value = false;
+};
+</script>
   
-  .chat-header {
-    background-color: #f5f5f5;
-    height: 50px;
-    text-align: center;
-  }
-  
-  h3 {
-    line-height: 50px;
-    margin: 0;
-  }
-  
-  .chat-responses {
-    height: calc(100vh - 180px);
-    overflow-y: scroll;
-    padding: 10px;
-  }
-  
-  .chat-response {
-    margin-bottom: 10px;
-    padding: 5px;
-    border-radius: 4px;
-  }
-  
-  .chat-input {
-    width: 100vw;
-    padding: 0;
-  }
-  
-  .chat-header {
-    background-color: #333;
-    color: #fff;
-  }
-  
-  .chat-response-user {
-    background-color: #333;
-    color: #fff;
-  }
-  
-  .chat-input {
-    width: 100%;
-  }
-  
-  .chat-input input {
-    width: 100%;
-    height: 36px;
-    box-sizing: border-box;
-  }
-  </style>
+<style lang="scss" scoped>
+.clearfix::before,
+.clearfix::after {
+  content: '';
+  display: table;
+  clear: both;
+}
+.avatar{
+  display: inline-block;
+}
+.chat-responses::-webkit-scrollbar {
+width: 8px;
+height: 8px;
+}
+/* ::-webkit-scrollbar-corner 边角 */
+.chat-responses::-webkit-scrollbar-corner {
+background-color: initial;
+}
+/* ::-webkit-scrollbar-thumb 滚动条里面可以拖动的那个 */
+.chat-responses::-webkit-scrollbar-thumb {
+background-color: transparent !important;
+border-radius: 10px;
+}
+/* ::-webkit-scrollbar-track 外层轨道 */
+.chat-responses::-webkit-scrollbar-track {
+background-color: transparent !important;
+}
+.chat-container {
+  margin-top: 64px;
+  height: calc(100vh - 64px);
+  overflow-x: hidden;
+  width: 100vw;
+  position: relative;
+}
+
+.chat-responses {
+  height: calc(80vh - 64px);
+  overflow-y: auto;
+}
+
+.chat-response {
+  text-align: center;
+  min-height: 3rem;
+  position: relative;
+}
+
+.chat-response-GPT {
+  padding: 2rem;
+  background-color: #f7f7f7;
+  width: 100%;
+  line-height: 1rem ;
+  font-size: 1rem;
+}
+.chat-response-user{
+  padding: 2rem;
+  background-color: white;
+  width: 100%;
+  line-height: 1rem ;
+  font-size: 1rem;
+  font-weight: 600;
+}
+.chat-index{
+  line-height: 1rem;
+  margin-top: 1rem;
+  text-align: left;
+}
+.chat-input {
+  position: absolute;
+  width: 80% !important;
+  left: 10%;
+  bottom: calc(10% - 20px);
+  padding: 0;
+}
+
+.chat-input {
+  width: 100%;
+}
+
+.chat-input input {
+  width: 80%;
+  height: 50px;
+  box-sizing: border-box;
+}
+.chat-avatar{
+  position: relative;
+  right:calc(50% - 20px);
+}
+</style>
   
