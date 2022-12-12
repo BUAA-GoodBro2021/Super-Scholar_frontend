@@ -11,7 +11,7 @@
           @current-change="changePage"
           v-model:current-page="pageCurrent"
           hide-on-single-page
-          :page-sizes="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]"
+          :page-size="5"
         />
       </div>
       <!-- 单个搜索结果卡片 -->
@@ -27,7 +27,7 @@
         @current-change="changePage"
         v-model:current-page="pageCurrent"
         hide-on-single-page
-        :page-sizes="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]"
+        :page-size="5"
       />
     </div>
   </div>

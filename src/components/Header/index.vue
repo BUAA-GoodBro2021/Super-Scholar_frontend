@@ -22,8 +22,11 @@ const { x, y } = useWindowScroll();
 const { width, height } = useWindowSize();
 const isDark = useDark();
 const onDarkChange = useToggle(isDark);
-const headerColor = route.name==="Welcome"? ref("#040d21") : ref("white");
-const showUser = route.name==="Welcome"? ref(false) : ref(true);
+const checkRouteName = ()=>{
+    return route.name==="Welcome"|| route.name==="Login" || route.name==="Register";
+}
+const headerColor = checkRouteName() ? ref("#040d21") : ref("white");
+const showUser = checkRouteName() ? ref(false) : ref(true);
 watch(y,(y)=>{
     if(y <= height.value-64 && route.name==="Welcome"){
         headerColor.value = "#040d21";
