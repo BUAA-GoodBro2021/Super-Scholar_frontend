@@ -102,8 +102,11 @@ function updateData(){
                 var chart = echarts.init(chartDom)
                 var xSeries = []
                 var ySeries = []
-                
-                for(var item of paperList.value[index].counts_by_year){
+                var tmpCount = []
+                tmpCount.push(...paperList.value[index].counts_by_year)
+                console.log(tmpCount)
+                tmpCount.sort((a,b)=>a.year-b.year)
+                for(var item of tmpCount){
                     xSeries.push(item.year)
                     ySeries.push(item.cited_by_count)
                 }
@@ -177,6 +180,10 @@ window.onresize = function(){
     display: flex;
     font-size: 0.875rem;
     float:left;
+    background-color: #fff;
+    margin-bottom: 10px;
+    border-radius: 3px;
+    box-shadow: 0 0.3125rem 0.5rem rgb(0 0 0 / 10%);
   }
   .left {
     width: 68%;

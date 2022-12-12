@@ -16,11 +16,10 @@
           /> -->
           <PaperList v-if="journalInfo" :filter="{'host_venue.id': 'V1983995261'}"></PaperList>
         </div>
-        
-        <!-- <div style="white-space: pre">
-          {{ institutionInfo }}
-        </div> -->
       </div>
+      <!-- <div style="white-space: pre">
+        {{ journalInfo }}
+      </div> -->
     </div>
   </template>
   
