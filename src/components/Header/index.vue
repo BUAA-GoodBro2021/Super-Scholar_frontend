@@ -5,11 +5,8 @@
                 <img src="/icon1.png" class="logo" />
             </router-link>
         </div>
-        
         <div class="avatar">
-            <template v-if="showUser">
-                <UserInfo />
-            </template>
+            <UserInfo/>
         </div>
     </div>
 </template>
@@ -26,14 +23,11 @@ const checkRouteName = ()=>{
     return route.name==="Welcome"|| route.name==="Login" || route.name==="Register";
 }
 const headerColor = checkRouteName() ? ref("#040d21") : ref("white");
-const showUser = checkRouteName() ? ref(false) : ref(true);
 watch(y,(y)=>{
     if(y <= height.value-64 && route.name==="Welcome"){
         headerColor.value = "#040d21";
-        showUser.value = false;
     }else{
         headerColor.value = "white";
-        showUser.value = true;
     }
 })
 onMounted(()=>{

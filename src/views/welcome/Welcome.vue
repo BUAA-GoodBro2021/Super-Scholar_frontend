@@ -19,7 +19,7 @@
                            :item="item" />
                      </el-tab-pane>
                      <div class="pag">
-                        <el-pagination layout="prev, pager, next" :total="15" :page-size="5" @current-change="goHeader"
+                        <el-pagination layout="prev, pager, next" :total="25" :page-size="5" @current-change="goHeader"
                            v-model:current-page="curPage" />
                      </div>
                   </el-tabs>
@@ -67,7 +67,7 @@ const goHeader = () => {
       .scrollIntoView({ behavior: 'smooth' });
 }
 onMounted(() => {
-   Search.getDataView({}).then((res) => {
+   Search.getRecommendedView({}).then((res) => {
       if (res.data.result == 1) {
          recommendByCount.value = res.data.recommended_work_list_by_cited_count[0].results;
          recommendByDate.value = res.data.recommended_work_list_by_publication_date[0].results;

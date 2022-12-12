@@ -89,7 +89,7 @@ const outputConcept = useTransition(conceptCount, {
    transition: TransitionPresets.linear,
 })
 onMounted(() => {
-   Search.getDataView({}).then((res) => {
+   Search.getNumView({}).then((res) => {
       if (res.data.result == 1) {
          authorCount.value = res.data.author_count;
          conceptCount.value = res.data.concepts_count;
