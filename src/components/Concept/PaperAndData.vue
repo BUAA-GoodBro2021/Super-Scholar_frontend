@@ -45,7 +45,6 @@ const changePage = (page) => {
 .paper_common_layout {
   width: 100%;
   background-color: white;
-  border-radius: 20px;
   box-shadow: 2px 2px 2px 2px #dedede;
   /* height: 100%; */
 
@@ -56,9 +55,9 @@ const changePage = (page) => {
 
 .demo-tabs {
   width: 90%;
-  height: 90%;
-  margin-top: 30px;
-  margin-bottom: 5%;
+  /* 页码高度是36px */
+  height: calc(100% - 36px);
+  margin-bottom: 36px;
 }
 
 :deep(.demo-tabs .el-tabs__item) {
@@ -74,6 +73,22 @@ const changePage = (page) => {
 :deep(.demo-tabs .el-tab-pane) {
   height: 100%;
   width: 100%;
+}
+
+:deep(.demo-tabs .is-active) {
+  color: rgb(162, 143, 42);
+}
+
+:deep(.demo-tabs  .el-tabs__active-bar) {
+  background-color: rgb(162, 143, 42);
+}
+
+:deep(.demo-tabs .el-tabs__item:hover) {
+  color: rgb(162, 143, 42);
+}
+
+:deep(.demo-tabs .el-tabs__header) {
+  margin-bottom: 5px;
 }
 
 .empty {
