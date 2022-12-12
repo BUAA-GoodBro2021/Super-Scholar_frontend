@@ -1,8 +1,10 @@
+import { useSearchStore } from '../stores/search.js';
+
 /**
  * @description 获取当前时间
  * @return string
  */
- export function getTimeState() {
+export function getTimeState() {
 	// 获取当前时间
 	let timeNow = new Date();
 	// 获取当前小时
@@ -19,7 +21,7 @@
  * @description 获取浏览器默认语言
  * @return string
  */
- export function getBrowserLang() {
+export function getBrowserLang() {
 	let browserLang = navigator.language ? navigator.language : navigator.browserLanguage;
 	let defaultBrowserLang = "";
 	if (browserLang.toLowerCase() === "cn" || browserLang.toLowerCase() === "zh" || browserLang.toLowerCase() === "zh-cn") {
@@ -29,4 +31,31 @@
 		defaultBrowserLang = "en";
 	}
 	return defaultBrowserLang;
+}
+
+/**
+ * @description 标题匹配高亮，用v-html代替原有的内容
+ * @return HTML string
+ */
+const searchStore = useSearchStore();
+export function highlightText(text) {
+  if (searchStore.searchInputText) {
+    // 生成高亮标签
+    const highlightStr = `<span style="background: #ffd255">${searchStore.searchInputText}</span>`
+    // 构建正则表达式
+    const regModelStr = escapeRegExp(searchStore.searchInputText);
+    const reg = new RegExp(regModelStr, 'gi');
+    // const reg = new RegExp(props.searchText, 'gi');
+    // 从《显示文本中》找出与《用户输入文本相同的内容》，使用《高亮标签》进行替换
+    return `<span style="
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 3;"
+      >${text.replace(reg, highlightStr)}</span>`;
+  }
+}
+
+function escapeRegExp(string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }

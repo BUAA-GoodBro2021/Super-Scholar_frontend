@@ -7,7 +7,10 @@
                   从引用图表到专家关系网络，构建专业可视化的学术成果分享平台
                </div>
             </div>
-            <SearchVue class="search" />
+            <SearchVue 
+               class="search" 
+               @final-search="jumpToSearchDetailPage"   
+            />
             <div class="intro">
                <div class="box">
                   <WorkCountVue />
@@ -44,7 +47,7 @@
 <script setup>
 import { TransitionPresets, useTransition } from "@vueuse/core";
 import { Search } from "../../api/search.js";
-import Header from "../../components/Header/index.vue"
+import { useRouter } from 'vue-router';
 import SearchVue from "../../components/SearchInput/Search.vue";
 import WorkCountVue from "../icon/WorkCount.vue";
 import AuthorCountVue from "../icon/AuthorCount.vue";
@@ -56,6 +59,15 @@ const conceptCount = ref(0);
 const institutionCount = ref(0);
 const workCount = ref(0);
 const venueCount = ref(0);
+
+const router = useRouter();
+const jumpToSearchDetailPage = (searchText, searchEntityType) => {
+   console.log("主页搜索的搜索文本和实体类型是: ", searchText, searchEntityType);
+   router.push({
+    name: "SearchDetail",
+  });
+};
+
 const outputAuthor = useTransition(authorCount, {
    duration: 1000,
    transition: TransitionPresets.linear,

@@ -9,9 +9,9 @@
       <!-- 论文的标题 -->
       <h5 class="card-title" @click="jumpToPaperPage(item.id?.slice(21))">
         <!-- TODO 需要加匹配高亮 -->
-        <span v-if="item.display_name !== null">
-          <!-- <a href="/doi/10.1145/3293353.3293383">HSD-<span onclick="highlight()" class="single_highlight_class">CNN</span>: Hierarchically self decomposing <span onclick="highlight()" class="single_highlight_class">CNN</span> architecture using class specific filter sensitivity analysis</a> -->
-          {{ item.display_name.replace(/<\/?i>/ig, "") }}
+        <span 
+          v-if="item.display_name !== null"
+          v-html="highlightText(item.display_name.replace(/<\/?i>/ig, ''))">
         </span>
         <span v-else>
           [Title Missed]
@@ -185,7 +185,8 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { useClipboard } from '@vueuse/core'
+import { useClipboard } from '@vueuse/core';
+import { highlightText } from '../../utils/index.js';
 
 const router = useRouter();
 const props = defineProps({
