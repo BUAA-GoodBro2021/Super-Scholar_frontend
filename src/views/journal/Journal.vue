@@ -14,14 +14,9 @@
             :pageTotalSize="pageTotalSize"
             @changePage="changePage"
           /> -->
+          <PaperList v-if="journalInfo" :filter="{'host_venue.id': 'V1983995261'}"></PaperList>
         </div>
-        <div class="right">
-          <!-- <Associated
-            :institutionList="associatedInstituionList"
-            :institutionTotalSize="institutionInfo.associated_institutions.length"
-            @associated-institution-page-change="associatedInstitutionPageChange"
-          /> -->
-        </div>
+        
         <!-- <div style="white-space: pre">
           {{ institutionInfo }}
         </div> -->
@@ -32,9 +27,10 @@
   <script setup>
   import { Search } from "../../api/search";
   import TopCard from "./TopCard.vue"
+  import PaperList from "./PaperList.vue"
   
   const route = useRoute();
-  const journalId = "V1983995261";
+  const journalId = route.params.journalid;
   const journalInfo = ref();
   const journalPapers = ref([]);
   const isLoading = ref(true);
@@ -83,15 +79,6 @@
     display: flex;
   }
   
-  .article_data_wrap .left {
-    width: 68%;
-    margin-right: 2%;
-  }
-  
-  .article_data_wrap .right {
-    width: 30%;
-  }
-  
   @media (max-width: 1500px) {
     .top_card {
       width: 90%;
@@ -110,15 +97,6 @@
     .article_data_wrap {
       width: 98%;
       flex-wrap: wrap;
-    }
-  
-    .article_data_wrap .left {
-      width: 100%;
-      margin: 10px 0 10px 0;
-    }
-  
-    .article_data_wrap .right {
-      width: 100%;
     }
   }
   </style>

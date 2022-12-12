@@ -1,25 +1,24 @@
 <template>
     <div class="name_card">
       <div class="card_body">
-        <ul>
-          <li style="vertical-align: middle">
-            <div class="avatar_wrap">
-              
+          <div style="vertical-align: middle;float:left">
+            <div :class="'cover_wrap hidden-lg-and-down g'+random">
+              <div class="cover_title" :style="{fontSize:coverTitleSize}">
+                {{journalInfo.display_name}}
+              </div>
             </div>
-          </li>
-          <li
-            style="min-width: 60%; height: 100%; max-width: 80%"
+          </div>
+          <div
+            style="width: 40%; height: 100%; float:left"
             class="title-profile-li"
           >
             <div class="title_profile">
               <div class="title-profile-block">
-                <!-- 机构名称 -->
                 <span class="name">
                   <div class="institution-display-name">
                     {{ journalInfo.display_name }}
                   </div>
                 </span>
-                <!-- 机构主页地址 -->
                 <div
                   v-if="journalInfo.homepage_url"
                   class="organization canClick"
@@ -39,9 +38,8 @@
                   期刊总被引数：{{ journalInfo.cited_by_count }}
                 </div>
                 <div v-if="journalInfo.apc_usd" class="organization">
-                    期刊版面费：{{ journalInfo.apc_usd }}(美元)
+                    期刊版面费：{{ journalInfo.apc_usd }} (美元)
                 </div>
-                <!-- 机构相关领域 -->
                 <div class="concept">
                   <div class="card-concepts clearfix">
                         <div
@@ -57,19 +55,109 @@
                 </div>
               </div>
             </div>
-          </li>
-        </ul>
+          </div>
+          <div>
+            <div id="chart" class="chart" style="float:left">
+
+            </div>
+          </div>
       </div>
     </div>
   </template>
   
   <script setup>
-  import { useRouter } from "vue-router";
+  import { nextTick, onMounted } from "vue-demi";
+import { useRouter } from "vue-router";
+import * as echarts from 'echarts';
+import 'element-plus/theme-chalk/display.css'
   const router = useRouter();
   const props = defineProps({
     journalInfo: Object,
   });
-  
+  const coverTitleSize=ref("20px")
+  const random = ref(-1)
+  function rnd( seed ){
+    seed = ( seed * 9301 + 49297 ) % 233280; //为何使用这三个数?
+    return seed / ( 233280.0 );
+};
+onMounted(
+  ()=>{
+    var sum = 0
+    for(const c of props.journalInfo.display_name){
+      sum+=c.charCodeAt();
+    }
+    console.log(sum)
+    random.value = parseInt(rnd(sum)*10-0.001);
+    nextTick(
+      ()=>{
+        var chart = echarts.init(document.getElementById('chart'))
+    var xSeries = []
+    var yWorkSeries = []
+    var yCiteSeries = []
+    for(var item of props.journalInfo.counts_by_year){
+        xSeries.push(item.year)
+        yWorkSeries.push(item.works_count)
+        yCiteSeries.push(item.cited_by_count)
+    }
+    chart.setOption(
+        {
+            // title:{
+            //     text:"论文被引量逐年变化"
+            // },
+            tooltip: {
+              trigger: 'axis',
+              axisPointer: { type: 'cross' }
+            },
+            legend: {},
+            xAxis:{
+                data:xSeries
+            },
+            yAxis:[
+              {
+                type:'value',
+                name:'文献数量',
+                position:'left'
+              },
+              {
+                type:'value',
+                name:'总被引量',
+                position:'right'
+              }
+            ],
+            series:[
+                {
+                    type:'bar',
+                    name:"文献数量",
+                    yAxisIndex:0,
+                    data:yWorkSeries
+                },
+                {
+                    type:'bar',
+                    name:"总被引量",
+                    yAxisIndex:1,
+                    data:yCiteSeries
+                },
+            ]
+        }
+    )
+    window.onresize=function(){
+      chart.resize()
+    }    
+  }
+    )
+    nextTick(
+    ()=>{
+      if(props.journalInfo.display_name.length<6){
+        coverTitleSize.value = "40px"
+      }else if(props.journalInfo.display_name.length<16){
+        coverTitleSize.value = "28px"
+      }
+    }
+  )
+  }
+)
+
+
   const gotoHomePage = () => {
     window.open(props.institutionInfo.homepage_url);
   };
@@ -86,15 +174,61 @@
   </script>
   
   <style scoped>
-  .avatar_wrap {
-    height: 400;
-    width: 300;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  .g0{
+    background-image: linear-gradient(to right , #7A88FF, #7AFFAF);
   }
-  
+  .g1{
+    background-image: linear-gradient(blue, pink);
+  }
+  .g2{
+    background-image: linear-gradient(to top, black, 20%, cyan);
+  }
+  .g3{
+    background-image: linear-gradient(120deg, #d4fc79 0%, #96e6a1 100%);
+  }
+  .g4{
+    background-image: linear-gradient(to top, #cfd9df 0%, #e2ebf0 100%);
+  }
+  .g5{
+    background-image: linear-gradient(120deg, #f093fb 0%, #f5576c 100%);
+  }
+  .g6{
+    background-image: linear-gradient(to right, #4facfe 0%, #00f2fe 100%);
+  }
+  .g7{
+    background-image: linear-gradient(to right, #fa709a 0%, #fee140 100%);
+  }
+  .g8{
+    background-image: linear-gradient(to top, #30cfd0 0%, #330867 100%);
+  }
+  .g9{
+    background-image: linear-gradient(135deg, #fdfcfb 0%, #e2d1c3 100%);
+  }
+  .cover_wrap {
+    height: 200px;
+    width: 150px;
+    border:1px solid;
+    box-shadow: 3px 3px 3px 3px #dedede;
+    
+    display:inline-block;
+    margin-left:-150px;
+    vertical-align: middle;
+  }
+  .cover_title{
+    background-color: rgba(64,64,64,0.4);
+    margin-top:100%;
+    height:25%;
+    word-wrap: break-word;
+    word-break:break-all;
+    white-space: normal;
+    color: white;
+  }
+  .chart{
+    height:300px;
+    width:40%;
+  }
   .name_card {
+    padding-top:40px;
     width: 100%;
     background-color: white;
     box-shadow: 3px 3px 3px 3px #dedede;
