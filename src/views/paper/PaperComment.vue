@@ -111,7 +111,6 @@ function updateComment(){
     loading.value = true
     Comment.get(props.paperId).then(
         (res)=>{
-            console.log(res)
             for(const childComment of res.data.all_comments){
                 extractGrandChild(childComment)
                 childComment.son_comments.sort(

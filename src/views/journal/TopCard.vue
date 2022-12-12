@@ -73,7 +73,7 @@ import 'element-plus/theme-chalk/display.css'
   const props = defineProps({
     journalInfo: Object,
   });
-  const coverTitleSize=ref("20px")
+  const coverTitleSize=ref("15px")
   const random = ref(-1)
   function rnd( seed ){
     seed = ( seed * 9301 + 49297 ) % 233280; //为何使用这三个数?
@@ -150,6 +150,8 @@ onMounted(
         coverTitleSize.value = "40px"
       }else if(props.journalInfo.display_name.length<16){
         coverTitleSize.value = "28px"
+      }else if(props.journalInfo.display_name.length<25){
+        coverTitleSize.value = "18px"
       }
     }
   )

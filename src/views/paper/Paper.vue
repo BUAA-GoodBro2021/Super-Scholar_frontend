@@ -1,18 +1,18 @@
 <template>
-    <el-container style="align-items: center;">
+    <el-container style="align-items: center;background-color: rgba(230, 230, 230, 0.234);">
         <el-header height="auto" class="article_top_bg">
             <el-container>
                 <el-main>
                     <PaperBriefVue :paperInfo="paperInfo" v-if="paperInfo"/>
                 </el-main>
                 <el-aside width="20%">
-                    <PaperActionVue></PaperActionVue>
+                    <PaperActionVue :paperInfo="paperInfo" v-if="paperInfo"></PaperActionVue>
                 </el-aside>
             </el-container>
         </el-header>
         <el-container style="width:80%">
             <el-main>
-                <el-card v-if="paperInfo" style="margin-bottom:25px">
+                <el-card v-if="paperInfo" style="margin-bottom:25px" class="card">
                     <div slot="header">
                         <span>摘要</span>
                     </div>
@@ -21,12 +21,12 @@
                         {{paperInfo.abstract}}
                     </span>
                 </el-card>
-                <el-card>
+                <el-card class="card">
                     <PaperDetailVue v-if="paperId && paperInfo" :paperId="paperId"  :paperInfo="paperInfo" />
                 </el-card>
             </el-main>
             <el-aside width="30%">
-                <el-card shadow="always"  v-if="paperInfo" style="margin:20px;">
+                <el-card shadow="always"  v-if="paperInfo" style="margin:20px;"  class="card">
                     <PaperRelatedVue :paperInfo="paperInfo" v-if="paperId" :paperId="paperId"/>
                 </el-card>
             </el-aside>
@@ -111,5 +111,26 @@ onMounted(() => {
     width: 30%;
     box-shadow: 0px 0px 10px skyblue;
     border-radius: 10px 10px 0px 0px;
+}
+
+.href_box {
+    display: block;
+    font-size: 1.1em;
+    color: rgb(117, 117, 117);
+    background-color: transparent;
+    text-decoration: none;
+    width: 90%;
+    height: 3vh;
+    padding-top: 2vh;
+    padding-left: 1vw;
+    transition: .2s;
+}
+
+.href_box:hover {
+    color: rgb(64, 158, 255);
+}
+.card{
+    border-radius:0px;
+    box-shadow: 0 0.3125rem 0.5rem rgb(0 0 0 / 10%);
 }
 </style>

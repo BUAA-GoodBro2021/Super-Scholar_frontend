@@ -19,7 +19,9 @@
             <el-table-column prop="publication_date" label="日期" width="120px" sortable="custom" align="center" />
             <el-table-column prop="cited_by_count" label="引用" sortable="custom" width="100px" align="center"/>
         </el-table>
-        <el-pagination layout="prev, pager, next" :total="total" :current-page="page" :page-size="25" @current-change="pageChange"/>
+        <div class="pagination-wrap">
+            <el-pagination layout="prev, pager, next" :total="total" :current-page="page" :page-size="25" @current-change="pageChange"/>
+        </div>
     </div>
 </template>
 <script setup>
@@ -88,5 +90,12 @@ function pageChange(a){
 </script>
 <style scoped>
 
-
+.pagination-wrap {
+    margin-top: 5%;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    height: 36px;
+  }
 </style>
