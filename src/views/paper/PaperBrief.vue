@@ -6,7 +6,7 @@
             <div class="authors" v-if="paperInfo.authorships">
                 <span v-for="(item, index) in paperInfo.authorships" :key="index">
                     <span  class="href_text" @click="gotoAuthorPage(item.author)" ><img class="author-avator" src="https://dl.acm.org/pb-assets/icons/DOs/default-profile-1543932446943.svg" />{{item.author.display_name}}</span>
-                    <span class="coor">[<span v-for="(autIns, index) in item.institutions" class="href_text" @click="gotoInstitution(autIns)">
+                    <span v-if="item.institutions.length!=0" class="coor">[<span v-for="(autIns, index) in item.institutions" class="href_text" @click="gotoInstitution(autIns)">
                             {{institutions.findIndex(ins=>autIns.id == ins.id)+1}}<span v-if="index != item.institutions.length - 1">,</span></span>]</span>
                     <span v-if="index != paperInfo.authorships.length - 1">
                         ,&nbsp;
@@ -16,7 +16,7 @@
             <div class="authors" v-else>
                 <el-skeleton></el-skeleton>
             </div>
-            <div class="institutions" v-if="institutions">
+            <div class="institutions" v-if="institutions && institutions.length !=0">
                 <el-icon><HomeFilled/></el-icon> &nbsp;
                 <span v-for="(ins, index) in institutions" class="href_text" @click="gotoInstitution(ins)">
                     [{{index+1}}] {{ins.display_name}}
@@ -25,9 +25,7 @@
                     </span>
                 </span>
             </div>
-            <div class="institutions" v-else>
-                <el-skeleton></el-skeleton>
-            </div>
+            
             <div class="source" v-if="paperInfo.host_venue">
                 <el-icon><Reading/></el-icon> &nbsp;
                 <span v-if="paperInfo.publication_year">
@@ -202,5 +200,18 @@ img {
     border-radius: 50%;
     object-fit: cover;
     object-position: top;
+  }
+  .name_card {
+    padding-top:40px;
+    width: 100%;
+    background-color: white;
+    box-shadow: 3px 3px 3px 3px #dedede;
+    height: 100%;
+    font-family: "Times New Roman", Times, "Microsoft YaHei", serif;
+  
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
 </style>

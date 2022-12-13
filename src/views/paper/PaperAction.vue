@@ -1,15 +1,15 @@
 <template>
     <el-row style="width:100%;height:100%;padding:0px" align="middle">
-        <el-col :sm="12" :md="12" :xl="6">
+        <el-col :sm="24" :md="12" :xl="6">
             <el-button type="primary" class="btn" size="large" :disabled="paperInfo.open_access.is_oa==-1" @click="download"><el-icon size="large"><Download /></el-icon></el-button>
         </el-col>
-        <el-col :sm="12" :md="12" :xl="6">
+        <el-col :sm="24" :md="12" :xl="6">
             <el-button type="success" class="btn" @click="star" size="large"><el-icon size="large"><Star v-if="amInList.length == 0"/><StarFilled v-else/></el-icon></el-button>
         </el-col>
-        <el-col :sm="12" :md="12" :xl="6">
+        <el-col :sm="24" :md="12" :xl="6">
             <el-button type="danger" class="btn" size="large" @click="openAlex"><el-icon size="large"><View /></el-icon></el-button>
         </el-col>
-        <el-col :sm="12" :md="12" :xl="6">
+        <el-col :sm="24" :md="12" :xl="6">
             <el-button type="warning"  class="btn" size="large" @click="getBiBTeX(paperInfo), bibtexDialogVisible = true"><el-icon size="large"><Share /></el-icon></el-button>
         </el-col>
     </el-row>
@@ -249,11 +249,12 @@ const getBiBTeX = (paperInfo) => {
 <style>
 .btn{
     border-radius:0px;
-    border:2px black solid;
+    background-color: rgb(162, 143, 42);
     transition: all 0.1s;
+    border:0.5px white solid
 }
 .btn:hover{
-    border:2px white solid;
+  background-color: rgb(255, 237, 132);
 }
 .card{
     border-radius:0px;

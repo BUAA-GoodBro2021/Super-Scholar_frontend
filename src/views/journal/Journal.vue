@@ -1,25 +1,13 @@
 <template>
     <div v-loading="isLoading" class="common_layout">
-      <!-- 上半部分：基本信息 -->
       <div class="top_card">
         <TopCard v-if="journalInfo" :journalInfo="journalInfo" />
       </div>
-      <!-- 下半部分：机构的具体论文以及论文的每年发表数量的图表 -->
-      <div class="article_data_wrap">
-        <div class="left">
-          <!-- <PaperAndData
-            :institution-info="institutionInfo"
-            :paper-list="institutionPaperList"
-            :data-count-by-year="institutionInfo.counts_by_year"
-            :pageTotalSize="pageTotalSize"
-            @changePage="changePage"
-          /> -->
-          <PaperList v-if="journalInfo" :filter="{'host_venue.id': 'V1983995261'}"></PaperList>
+      <div class="article_data_wrap card">
+        <div>
+          <PaperList v-if="journalInfo" :filter="{'host_venue.id': journalId}"></PaperList>
         </div>
       </div>
-      <!-- <div style="white-space: pre">
-        {{ journalInfo }}
-      </div> -->
     </div>
   </template>
   
@@ -56,6 +44,19 @@
   </script>
   
   <style scoped>
+  .card {
+    padding-top:40px;
+    width: 100%;
+    background-color: white;
+    box-shadow: 3px 3px 3px 3px #dedede;
+    height: 100%;
+    font-family: "Times New Roman", Times, "Microsoft YaHei", serif;
+  
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
   .common_layout {
     width: 100%;
     display: flex;

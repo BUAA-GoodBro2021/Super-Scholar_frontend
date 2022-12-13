@@ -1,7 +1,12 @@
 <template>
     <el-card  class="card" style="box-shadow: 3px 3px 3px 3px #dedede;">
         <el-collapse :model-value="['1']">
-        <el-collapse-item title="领域" name="1">
+        <el-collapse-item name="1">
+            <template #title>
+                <span class="ctitle">
+                    领域
+                </span>
+            </template>
             <el-scrollbar max-height="80vh">
                 
                     <div v-for="(item, index) in paperInfo.concepts" :key="index" class="href_text card-concepts-wrap" :style="{borderColor:getColor(item.score)}" @click="gotoConcept(item)">
@@ -15,7 +20,12 @@
     
     <el-card class="card  assiciated-wrap" style="margin-top:20px;box-shadow: 3px 3px 3px 3px #dedede;">
         <el-collapse :model-value="['2']">
-        <el-collapse-item title="相关文献" name="2">
+        <el-collapse-item  name="2">
+            <template #title>
+                <span class="ctitle">
+                    相关文献
+                </span>
+            </template>
             <el-scrollbar max-height="60vh">
                 <div v-for="(item, index) in related" :key="index" v-html="item.display_name" style="margin-bottom:10px"  class="href_text ppg" @click="gotoPaper(item)"></div>
             </el-scrollbar>
@@ -36,13 +46,13 @@ const props = defineProps({
 })
 function getColor(s){
     if(s>0.5){
-        return "#45a1fd"
+        return "#ffe25e"
     }else if(s>0.3){
-        return "skyblue"
+        return "#cfbb45"
     }else if(s>0.1){
-        return "aqua"
+        return "#998e52"
     }else{
-        return "lightgrey"
+        return "grey"
     }
 }
 function gotoPaper(concept){
@@ -83,6 +93,16 @@ onMounted(() => {
     })
 </script>
 <style>
+.ctitle {
+    font-size: 18px;
+    font-weight: 800;
+    text-align: left;
+    width: 90%;
+    height: 40px;
+    line-height: 40px;
+    border-left:10px rgb(162, 143, 42) solid;
+    padding-left:5px
+}
 .href_text {
     color: rgb(117, 117, 117);
     background-color: transparent;
@@ -116,7 +136,7 @@ onMounted(() => {
   }
 
   .ppg{
-    border-left: 5px skyblue solid;
+    border-left: 5px #998e52 solid;
     padding: 3px;
     margin-bottom:5px;
     box-shadow: 1px 1px 1px 1px #dedede;

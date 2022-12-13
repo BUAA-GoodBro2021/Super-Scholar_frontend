@@ -1,7 +1,7 @@
 <template>
     
     <div class="paper-list-wrap" v-loading="loading">
-        <div style="padding:10px;margin-left:100px">
+        <div style="margin-left:100px">
             按照 
             <el-select style="margin:10px" @change="sortChange"  v-model="sortBy">
                 <el-option
@@ -58,7 +58,7 @@ import WorksResCard from "../../views/search/WorksResCard.vue";
 const props = defineProps({
     filter: Object,
 })
-
+const colors = ['#d7ab82', '#919e8b', '#919e8b'];
 const paperList = ref()
 const loading = ref(true)
 const page = ref(1)
@@ -116,6 +116,7 @@ function updateData(){
                 }
                 chart.setOption(
                     {
+                        color:colors,
                         title:{
                             text:"论文被引量逐年变化"
                         },
@@ -188,6 +189,8 @@ window.onresize = function(){
 
   }
   .left {
+    background-color: white;
+    box-shadow: 3px 3px 3px 3px #dedede;
     width: 60%;
     margin-right: 2%;
   }
