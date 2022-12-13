@@ -251,12 +251,13 @@
                 </div>
               </div>
               <!-- 搜索结果主体 -->
-              <ul class="rlist">
+              <ul class="rlist" v-show="totalSearchResNum">
                 <!-- 单个搜索结果卡片 -->
                 <li class="result-item" v-for="item in searchDataList">
                   <component :is="searchResCard[searchStore.searchType]" :item="item" />
                 </li>
               </ul>
+              <ElEmpty v-show="!totalSearchResNum" description="No Result Found"/>
               <!-- 分页器，由于分页只能取到前1万条数据，这里做一个限制 -->
               <div class="search-result__pagination">
                 <div class="pagination-container">
@@ -327,7 +328,7 @@ import { toThousands } from '../../utils';
 import { Search } from '../../api/search';
 import { useSearchStore } from '../../stores/search';
 import { onMounted, reactive, ref, watch } from 'vue';
-import { ElCheckbox, ElCheckboxGroup, ElDatePicker, ElNotification, ElOption, ElSelect, ElPagination } from 'element-plus';
+import { ElCheckbox, ElCheckboxGroup, ElDatePicker, ElEmpty, ElNotification, ElOption, ElSelect, ElPagination } from 'element-plus';
 import AdvSearchInput from '../../components/SearchInput/AdvSearch.vue';
 import WorksResCard from './WorksResCard.vue';
 import AuthorsResCard from './AuthorsResCard.vue';
