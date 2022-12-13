@@ -130,8 +130,6 @@
         <div class="row clearfix">
           <!-- 左侧筛选部分 -->
           <div class="col-lg-3 col-md-3 col-sm-4">
-            <ElButton v-if="confirmFilterSearch" @click="handleAllTypeFilterSearch">确认更改测试</ElButton>
-            <ElButton v-if="confirmFilterSearch" @click="cancelFilterSearch">取消更改测试</ElButton>
             <div class="sticko__child colored-block">
               <!-- 
                 AllTypeFilterList[searchStore.searchType] 即当前搜索的实体类型对应的筛选列表
@@ -205,6 +203,18 @@
               </div>
               <!-- 随着滚动 sticky 在header下方的筛选栏 -->
               <div class="search-result__sort clearfix">
+                <div class="filter-btn-wrapper" :class="{'extended': confirmFilterSearch}">
+                  <button class="confirm-filter-btn" @click="handleAllTypeFilterSearch">
+                    确认筛选
+                    <span></span>
+                  </button>
+                </div>
+                <div class="filter-btn-wrapper" :class="{'extended': confirmFilterSearch}">
+                  <button class="cancel-filter-btn" @click="cancelFilterSearch">
+                    取消筛选
+                    <span></span>
+                  </button>
+                </div>
                 <div class="search-result__sort-right">
                   <!-- 每页尺寸 -->
                   <div class="per-page">
@@ -629,7 +639,10 @@ const buildAdvanceFilterKey = () => {
 
 const handleAdvanceSearch = () => {
   if (searchStore.searchInputText) {
+    // 收起高级检索卡片
     advanceCardExpanded.value = false;
+    // 取消下方过滤区域的所有已经勾选的筛选项
+    cancelFilterSearch();
     var data = {
       "entity_type": searchStore.searchType,
       "params": {
@@ -1744,6 +1757,110 @@ a, a:hover, a:focus {
     padding: .625rem 0;
   }
 }
+
+/* #region 左侧筛选区域的确认和取消按钮 */
+.filter-btn-wrapper {
+  float: left; 
+  margin-top: 10px;
+  width: 0;
+  overflow: hidden;
+  transition: all 0.2s;
+}
+.filter-btn-wrapper.extended {
+  width: 134.6px;
+}
+
+.confirm-filter-btn {
+  border: none;
+  outline: none;
+  display: inline-block;
+  position: relative;
+  z-index: 0;
+  padding: 8px 35.2px;
+  height: 38px;
+  font-size: 16px;
+  cursor: pointer;
+  background: transparent;
+  user-select: none;
+  color: black;
+  overflow: hidden;
+}
+.confirm-filter-btn span {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  z-index: -1;
+  border: 4px solid black;
+}
+.confirm-filter-btn span::before {
+  content: "";
+  position: absolute;
+  width: 8%;
+  height: 500%;
+  background: white;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-60deg);
+  transition: all 0.3s;
+}
+.confirm-filter-btn:hover span::before {
+  transform: translate(-50%, -50%) rotate(-90deg);
+  width: 100%;
+  background: black;
+}
+.confirm-filter-btn:hover {
+  color: white;
+}
+
+.cancel-filter-btn {
+  border: none;
+  display: inline-block;
+  position: relative;
+  z-index: 0;
+  padding: 8px 35.2px;
+  height: 38px;
+  font-size: 16px;
+  cursor: pointer;
+  background: transparent;
+  user-select: none;
+  color: white;
+  overflow: hidden;
+}
+.cancel-filter-btn span {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  z-index: -1;
+  border: 4px solid black;
+}
+.cancel-filter-btn span::before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 500%;
+  background: black;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-90deg);
+  transition: all 0.3s;
+}
+.cancel-filter-btn:hover span::before {
+  transform: translate(-50%, -50%) rotate(-60deg);
+  width: 8%;
+  background: white;
+}
+.cancel-filter-btn:hover {
+  color: black;
+}
+/* #endregion 左侧筛选区域的确认和取消按钮 */
+
+
 /* #region 每页数据的数量 */
 .search-result__sort-right .per-page {
   border-right: .0625rem solid #d9d9d9;
