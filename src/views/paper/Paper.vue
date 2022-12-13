@@ -10,8 +10,8 @@
                 </el-aside>
             </el-container>
         </el-header>
-        <el-container style="width:80%">
-            <el-main>
+        <div style="width:80%;display:flex;margin:20px;overflow:visible;">
+            <div style="width:70%">
                 <el-card v-if="paperInfo" style="margin-bottom:25px" class="card">
                     <div slot="header">
                         <span>摘要</span>
@@ -24,13 +24,13 @@
                 <el-card class="card">
                     <PaperDetailVue v-if="paperId && paperInfo" :paperId="paperId"  :paperInfo="paperInfo" />
                 </el-card>
-            </el-main>
-            <el-aside width="30%">
-                <el-card shadow="always"  v-if="paperInfo" style="margin:20px;"  class="card">
+            </div>
+            <div style="width:28%;height:100%;margin-left:2%;height:100%;overflow:visible">
+                <div v-if="paperInfo" style="overflow:visible">
                     <PaperRelatedVue :paperInfo="paperInfo" v-if="paperId" :paperId="paperId"/>
-                </el-card>
-            </el-aside>
-        </el-container>
+                </div>
+            </div>
+        </div>
     </el-container>
 </template>
 <script setup>
@@ -131,7 +131,7 @@ onMounted(() => {
 }
 .card{
     border-radius:0px;
-    box-shadow: 0 0.3125rem 0.5rem rgb(0 0 0 / 10%);
-    border:1px solid;
+    box-shadow: 3px 3px 3px 3px #dedede;
+    
 }
 </style>

@@ -11,16 +11,16 @@
             </template>
         </el-input>
         <div style="width:100%" v-for="(item, index) in allComments" :key="index">
-            <el-container>
+            <el-container  v-if="item">
                 <el-aside width="auto" style="border-right:2px #efefef solid;padding:10px" class="href_text" @click="gotoUser(item.user_information)">
                     <img class="author-avatar" :src="item.user_information.avatar_url" />
                     <span>{{ item.user_information.username }}</span>
                 </el-aside>
                 <el-container>
-                    <el-header style="height:auto;min-height: auto;">
+                    <el-header style="height:auto;min-height: auto;padding-top:20px">
                         <div class="reply_content">{{item.content}}</div>
                         <div class="reply_date">{{(new Date(item.created_time)).toLocaleString()}}</div>
-                        <el-icon size="25px" @click="(selectedId == item.id)?(selectedId = -1):(selectedId = item.id);replyContent='';">
+                        <el-icon size="15px" @click="(selectedId == item.id)?(selectedId = -1):(selectedId = item.id);replyContent='';">
                             <ChatSquare v-if="(selectedId != item.id)"/>
                             <ChatDotSquare v-else/>
                         </el-icon>
@@ -37,33 +37,35 @@
                             </el-input>
                         </div>
                     </el-header>
-                    <el-main v-if="(item.son_comments.length>0)">
+                    <el-main v-if="(item.son_comments.length>0)" style="margin-top:-20px">
                         <div v-for="(item, index) in item.son_comments" :key="index">
-                            <el-divider content-position="left">
-                                <span  class="href_text" @click="gotoUser(item.user_information)">
-                                    <img class="reply-author-avatar" :src="item.user_information.avatar_url" />
-                                    <span>{{ item.user_information.username }}</span>
-                                </span>
-                                <span  v-if="item.reply_user_information.username"  class="href_text" @click="gotoUser(item.reply_user_information)"> 回复 {{item.reply_user_information.username}}</span>
-                            </el-divider>
-                            <div class="reply_content">{{item.content}}</div>
-                            <div class="reply_date">{{(new Date(item.created_time)).toLocaleString()}}</div>
-                            <el-icon size="25px" @click="((selectedId == item.id)?(selectedId = -1):(selectedId = item.id));replyContent='';">
-                                <ChatSquare v-if="(selectedId != item.id)"/>
-                                <ChatDotSquare v-else/>
-                            </el-icon>
-                            <div v-if="(selectedId == item.id)">
-                            
-                            <el-input
-                                v-model="replyContent"
-                                :placeholder="'回复 '+item.user_information.username"
-                                maxlength="440"
-                                show-word-limit
-                            >
-                                <template #append>
-                                    <el-button :icon="Right" @click="replyComment"/>
-                                </template>
-                            </el-input>
+                            <div  v-if="item">
+                                <el-divider content-position="left">
+                                    <span  class="href_text" @click="gotoUser(item.user_information)">
+                                        <img class="reply-author-avatar" :src="item.user_information.avatar_url" />
+                                        <span>{{ item.user_information.username }}</span>
+                                    </span>
+                                    <span  v-if="item.reply_user_information.username"  class="href_text" @click="gotoUser(item.reply_user_information)"> 回复 {{item.reply_user_information.username}}</span>
+                                </el-divider>
+                                <div class="reply_content">{{item.content}}</div>
+                                <div class="reply_date">{{(new Date(item.created_time)).toLocaleString()}}</div>
+                                <el-icon size="15px" @click="((selectedId == item.id)?(selectedId = -1):(selectedId = item.id));replyContent='';">
+                                    <ChatSquare v-if="(selectedId != item.id)"/>
+                                    <ChatDotSquare v-else/>
+                                </el-icon>
+                                <div v-if="(selectedId == item.id)">
+                                
+                                <el-input
+                                    v-model="replyContent"
+                                    :placeholder="'回复 '+item.user_information.username"
+                                    maxlength="440"
+                                    show-word-limit
+                                >
+                                    <template #append>
+                                        <el-button :icon="Right" @click="replyComment"/>
+                                    </template>
+                                </el-input>
+                            </div>
                         </div>
                         </div>
                     </el-main>
@@ -89,6 +91,8 @@ const props = defineProps({
     workName: String
 })
 function extractGrandChild(child){
+    if(!child.son_comments)
+        return
     for(const gc of child.son_comments){
         extractGrandChild(gc)
         child.son_comments = child.son_comments.concat(gc.son_comments)
@@ -172,6 +176,7 @@ function gotoUser(concept){
     color: gray;
     float: right;
     margin-bottom: 10px;
+    font-size: 15px;
 }
 .reply_content{
     margin-bottom: 10px;

@@ -30,7 +30,9 @@
         <ul>
             <!-- 单个搜索结果卡片 -->
             <li class="result-item" v-for="(item, index) in paperList">
-                <WorksResCard class="left" :item="item" />
+                <div class="left">
+                    <WorksResCard :item="item" />
+                </div>
                 <div class="right" :id="'paperChart'+index"></div>
             </li>
 
@@ -107,7 +109,6 @@ function updateData(){
                 var ySeries = []
                 var tmpCount = []
                 tmpCount.push(...paperList.value[index].counts_by_year)
-                console.log(tmpCount)
                 tmpCount.sort((a,b)=>a.year-b.year)
                 for(var item of tmpCount){
                     xSeries.push(item.year)
@@ -183,34 +184,20 @@ window.onresize = function(){
     width: 100%;
     display: flex;
     font-size: 0.875rem;
-    float:left;
-    background-color: #fff;
     margin-bottom: 10px;
-    border-radius: 3px;
-    box-shadow: 0 0.3125rem 0.5rem rgb(0 0 0 / 10%);
+
   }
   .left {
-    width: 68%;
+    width: 60%;
     margin-right: 2%;
   }
   
   .right {
-    width: 30%;
+    width: 38%;
     margin-bottom:30px;
     margin-top:30px;
   }
   
-  @media (max-width: 1200px) {
-  
-    .left {
-      width: 100%;
-      margin: 10px 0 10px 0;
-    }
-  
-    .right {
-      width: 100%;
-    }
-  }
 
 .hint {
   margin: 20px;
