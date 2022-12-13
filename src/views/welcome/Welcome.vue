@@ -123,7 +123,7 @@ onMounted(() => {
    background-color: #f0f0f0;
 }
 :deep(.is-active) {
-    color: rgb(162, 143, 42);
+    color: rgb(162, 143, 42) !important;
 }
 :deep(.el-tabs__active-bar) {
     background-color: rgb(162, 143, 42);
