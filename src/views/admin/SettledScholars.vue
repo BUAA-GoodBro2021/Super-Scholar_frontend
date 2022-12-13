@@ -3,26 +3,27 @@
         <div class="top">
             <svg style="margin: 0; padding: 0; width: 15; height: 15;">
                 <rect width="10" height="14"
-                style="fill:rgb(0,0,0);stroke-width:1;stroke:rgb(0,0,0)"/>
+                style="fill:rgb(255,255,255);stroke-width:1;stroke:rgb(255,255,255)"/>
             </svg>
             <span>&nbsp;&nbsp;</span>
             <span>{{$t('header.SSTitle1')}}</span>
-            <span style="color: rgb(130, 130, 130)">{{requestData.totalUser}}</span>
+            <span style="color: rgb(230, 230, 230)">{{requestData.totalUser}}</span>
             <span>{{$t('header.SSTitle2')}}</span>
         </div>
-        <el-row style="
+        <!-- <el-row style="
         background-color: rgb(247, 247, 247);
         border-radius: 3px;
         box-shadow: 2px 2px 2px 2px #dedede;
         padding-top: 3vh;
-        padding-left: 3vw">
+        padding-left: 3vw"> -->
+        <el-row>
             <el-col
             v-for.sync="(o, index) in requestData.user.slice((pages.currentPage*9 - 9), (pages.currentPage*9))"
             :key="o"
             :span="7"
             :offset="(index%3) > 0 ? 1 : 0"
             >
-                <el-card :body-style="{ padding: '0px'}" style="margin-bottom: 3vh; min-width: 220px;">
+                <el-card :body-style="{ padding: '0px'}" style="margin-bottom: 3vh; min-width: 220px;" class="card">
                     <!-- <el-checkbox :key="o.user_id" label="" class="checkbox"></el-checkbox> -->
                     <div style="padding: 14px">
                         <span class="card_header">
@@ -38,8 +39,8 @@
                         </div>
                         <div class="bottom">
                             <span class="name">{{$t('header.institution')}}</span>
-                            <span class="time">{{o.institution}}</span>
                             <el-button text class="button-opr" @click="clearInstitution(o)">{{$t('header.clearInstitution')}}</el-button>
+                            <span class="mid">{{o.institution}}</span>
                         </div>
                         <div class="bottom">
                             <span class="name">{{$t('header.SSCreatedTime')}}</span>
@@ -164,8 +165,8 @@ function clearInstitution(o){
 }
 
 .el-pagination.is-background .el-pager li:not(.is-disabled).is-active {
-    background-color: black !important;
-    color: var(--el-color-white);
+    background-color: rgb(85, 85, 85) !important;
+    color: white;
     font-weight: 700;
 }
 
@@ -173,7 +174,7 @@ function clearInstitution(o){
     color: rgb(139, 139, 139);
 }
 .el-pager li:focus-visible {
-    outline: 1px solid black;
+    outline: 1px solid rgb(231, 247, 253);
 }
 </style>
 
@@ -193,6 +194,7 @@ function clearInstitution(o){
     font-size: 1.7em;
     text-align: left;
     left: 0;
+    color: white;
 }
 
 .bottomButton {
@@ -231,7 +233,7 @@ function clearInstitution(o){
 .time {
     display: inline-block;
     font-size: 12px;
-    color: #999;
+    color: rgb(214, 214, 214);
     float: right;
     width: 10vw;
     text-align: right;
@@ -239,5 +241,46 @@ function clearInstitution(o){
     text-overflow: ellipsis;
     white-space: nowrap;
     background-color: transparent;
+}
+
+.mid{
+    display: inline-block;
+    font-size: 12px;
+    color: rgb(214, 214, 214);
+    float: right;
+    width: 10vw;
+    text-align: right;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    background-color: transparent;
+}
+.button-opr{
+    display: inline-block;
+    font-size: 12px;
+    color: rgb(214, 214, 214);
+    float: right;
+    text-align: right;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    background-color: transparent;
+}
+
+.card {
+    /* background: linear-gradient(70deg, rgb(221, 245, 255),rgb(255, 234, 237)); */
+    background-color: rgba(255, 255, 255, 0.55);
+    border-color: white;
+    box-shadow: rgb(199, 199, 199);
+}
+
+::v-deep .el-button--primary{
+    background-color: rgb(0, 27, 37) !important;
+    border-color: rgb(138, 138, 138);
+}
+
+::v-deep .el-button--primary:active, .el-button--primary:hover{
+    background-color: rgb(255, 255, 255) !important;
+    color: black;
 }
 </style>

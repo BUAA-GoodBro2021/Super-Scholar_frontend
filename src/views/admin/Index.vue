@@ -3,15 +3,13 @@
     <el-container>
       <el-aside width="19vw">
         <div style="text-align: left">
-          <el-radio-group v-model="isCollapse" style="margin-bottom: 20px">
-            <el-radio-button :label="false" style="border-radius: 0">expand</el-radio-button>
-            <el-radio-button :label="true" class="radio-button">collapse</el-radio-button>
-         </el-radio-group>
+          <el-button @click="clickButton" class="button" v-if="button.isCollapse">{{button.show[button.isCollapse]}}</el-button>
+          <el-button @click="clickButton" class="button_" v-if="!button.isCollapse">{{button.show[button.isCollapse]}}</el-button>
         </div>
         <el-menu
             default-active="1"
             class="el-menu-vertical-demo"
-            :collapse="isCollapse"
+            :collapse="button.isCollapse"
             @open="handleOpen"
             @close="handleClose"
             :router="true"
@@ -43,7 +41,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref,reactive } from 'vue';
 import {
   Document,
   Menu as IconMenu,
@@ -51,12 +49,19 @@ import {
   Setting,
 } from '@element-plus/icons-vue'
 
-const isCollapse = ref(true)
+const button = reactive({
+  isCollapse : 1,
+  show: ['收起', '展开']
+})
 const handleOpen = (key: string, keyPath: string[]) => {
   console.log(key, keyPath)
 }
 const handleClose = (key: string, keyPath: string[]) => {
   console.log(key, keyPath)
+}
+
+function clickButton(){
+  button.isCollapse = 1 -button.isCollapse
 }
 </script>
 
@@ -68,6 +73,11 @@ const handleClose = (key: string, keyPath: string[]) => {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  /* background: linear-gradient(70deg, rgb(221, 245, 255),rgb(255, 234, 237)); */
+  /* background: linear-gradient(70deg, rgb(0, 0, 0),rgb(49, 49, 49)); */
+  /* background: linear-gradient(70deg, rgba(199, 167, 23, 0.733),rgba(255, 235, 168, 0.76)); */
+  background: linear-gradient(70deg, rgb(0, 0, 0),rgba(0, 36, 53, 0.836));
+  height: 100%;
 }
 ::v-deep .el-aside {
   height: 89vh;
@@ -80,12 +90,14 @@ const handleClose = (key: string, keyPath: string[]) => {
 }
 ::v-deep .el-menu-vertical-demo:not(.el-menu--collapse) {
   width: 200px;
-  min-height: 400px;
+  min-height: 80vh;
+  background-color: rgb(0, 0, 0);
 }
 ::v-deep .el-menu-item,
 .el-submenu {
   text-align: left;
-  background-color: rgba(255, 255, 255, 0.4);
+  background-color: rgb(0, 0, 0);
+  color: white;
 }
 ::v-deep .el-menu-item:hover,
 .el-menu-item:active,
@@ -124,7 +136,7 @@ const handleClose = (key: string, keyPath: string[]) => {
 }
 ::v-deep .el-menu-item:focus,
 .el-menu-item:hover {
-  background-color: rgba(223, 223, 223, 0.898);
+  background-color: rgba(41, 41, 41, 0.898);
 }
 ::v-deep .el-tabs__item:hover {
   color: #46c1fa;
@@ -137,5 +149,42 @@ const handleClose = (key: string, keyPath: string[]) => {
 }
 .opa {
   opacity: 80%;
+}
+
+.button {
+  border-radius: 1px;
+  width: 4vw;
+  position: relative;
+  left: 0.2vw;
+  margin-top: 2vh;
+  margin-bottom: 2vh;
+  color: rgb(255, 255, 255);
+  height: 4vh !important;
+  background-color: rgb(0, 0, 0);
+  border-color: #606266;
+  /* background-color: rgba(245, 245, 245, 0.747);
+  border-color: #c7c7c7; */
+}
+.button_ {
+  border-radius: 1px;
+  width: 13vw;
+  position: relative;
+  left: 0.2vw;
+  margin-top: 2vh;
+  margin-bottom: 2vh;
+  color: rgb(255, 255, 255);
+  height: 4vh !important;
+  background-color: rgb(0, 0, 0);
+  border-color: #606266;
+  /* background-color: rgba(245, 245, 245, 0.747);
+  border-color: #c7c7c7; */
+}
+.button:active, .button:hover{
+  background-color: rgb(0, 26, 37);
+  border-color: #606266;
+}
+.button_:active, .button_:hover{
+  background-color: rgb(0, 26, 37);
+  border-color: #606266;
 }
 </style>
