@@ -84,14 +84,14 @@
                 <li>
                   <span class="citation">
                     <i class="iconfont icon-quotes" style="font-size: 1.1rem"></i>
-                    <span>{{ item.cited_by_count }}</span>
+                    <span>{{ toThousands(item.cited_by_count) }}</span>
                   </span>
                 </li>
                 <!-- 下载数量 -->
                 <li>
                   <span class="metric">
                     <i class="iconfont icon-Rise" style="font-size: 1.3rem"></i>
-                    <span>{{ item["2022_cited_count"]}}</span>
+                    <span>{{ toThousands(item["2022_cited_count"])}}</span>
                   </span>
                 </li>
               </ul>
@@ -202,7 +202,7 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useClipboard } from '@vueuse/core';
-import { highlightText } from '../../utils/index.js';
+import { highlightText, toThousands } from '../../utils/index.js';
 import { Collection } from '../../api/collect';
 
 const router = useRouter();

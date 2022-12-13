@@ -72,14 +72,14 @@
                 <li>
                   <span class="citation">
                     <i class="iconfont icon-quotes" style="font-size: 1.1rem"></i>
-                    <span>{{ item.cited_by_count }}</span>
+                    <span>{{ toThousands(item.cited_by_count) }}</span>
                   </span>
                 </li>
                 <!-- 该领域concept的论文的总数量 -->
                 <li>
                   <span class="metric">
                     <i class="iconfont icon-paper" style="font-size: 1rem"></i>
-                    <span>{{ item.works_count }}</span>
+                    <span>{{ toThousands(item.works_count) }}</span>
                   </span>
                 </li>
               </ul>
@@ -152,6 +152,7 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useClipboard } from '@vueuse/core'
+import { toThousands } from '../../utils';
 
 const router = useRouter();
 const props = defineProps({

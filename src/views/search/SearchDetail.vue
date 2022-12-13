@@ -78,7 +78,7 @@
                 <div class="search-num-info">
                   <span class="left-border-span"></span>
                   <div class="search-num-info-detail">
-                    <span class="hitlength">{{totalSearchResNum}}</span>
+                    <span class="hitlength">{{toThousands(totalSearchResNum)}}</span>
                     <span> Results</span>
                     <span> for: </span>
                   </div>
@@ -183,11 +183,12 @@ const pageSizeArray = [5, 10, 20];
 </script>
 
 <script setup>
+import { toThousands } from '../../utils';
 import { Search } from '../../api/search';
 import { useSearchStore } from '../../stores/search.js';
 import { onMounted, reactive, ref, shallowRef, watch } from 'vue';
 import { useRoute } from 'vue-router';
-import { ElButton, ElCheckbox, ElCheckboxGroup, ElNotification, ElPagination } from "element-plus";
+import { ElCheckbox, ElCheckboxGroup, ElNotification, ElPagination } from "element-plus";
 import SearchInput from '../../components/SearchInput/Search.vue';
 import WorksResCard from './WorksResCard.vue';
 import AuthorsResCard from './AuthorsResCard.vue';
@@ -871,6 +872,35 @@ const handleFinalSearch = (searchText, searchEntityType) => {
 };
 
 </script>
+
+<style>
+.el-checkbox__input.is-checked .el-checkbox__inner {
+  background-color: black;
+  border-color: black;
+}
+.el-checkbox__inner:hover {
+  border-color: black;
+}
+.el-checkbox__input.is-checked+.el-checkbox__label {
+  color: black;
+  font-weight: bold;
+}
+.pagination-container .el-pager li.is-active {
+  cursor: default;
+  color: black;
+  font-weight: bold;
+}
+.pagination-container .el-pager li:hover {
+  color: black;
+  font-weight: bold;
+}
+.pagination-container .el-pagination button:hover {
+  color: black;
+}
+.pagination-container .el-input__wrapper.is-focus {
+  box-shadow: 0 0 0 1px black;
+}
+</style>
 
 <style scoped>
 /* 这里的样式造成了在a标签中 图标i标签在hover时的变色 */

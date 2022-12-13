@@ -62,3 +62,15 @@ export function highlightText(text) {
 function escapeRegExp(string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
+
+
+// 方法四
+export function toThousands(num) {
+	var num = (num || 0).toString(), result = '';
+	while (num.length > 3) {
+			result = ',' + num.slice(-3) + result;
+			num = num.slice(0, num.length - 3);
+	}
+	if (num) { result = num + result; }
+	return result;
+}
