@@ -8,7 +8,7 @@
     <div class="result-item__content">
       <!-- 论文的标题 -->
       <h5 class="card-title" @click="jumpToPaperPage(item.id?.slice(21))">
-        <!-- TODO 需要加匹配高亮 -->
+        <!-- 匹配高亮 -->
         <span 
           v-if="item.display_name !== null"
           v-html="highlightText(item.display_name.replace(/<\/?i>/ig, ''))">
@@ -102,7 +102,7 @@
         <!-- 论文底部快捷操作 -->
         <div class="card-footer-right">
           <ul class="rlist--inline" style="float: left;">
-            <!-- TODO 导出bibtex等引用格式 -->
+            <!-- 导出bibtex等引用格式 -->
             <li>
               <div class="card-tool-btn" @click="getBiBTeX(item), bibtexDialogVisible = true">
                 <i class="iconfont icon-quotes" style="font-size: 1.1rem;"></i>
@@ -118,7 +118,6 @@
             <li v-if="notInCollection">
               <div class="card-tool-btn">
                 <i class="iconfont icon-folderplus-fill"></i>
-                <!-- <i class="iconfont icon-folder-add-fill"></i> -->
                 <span class="card-btn-hint">
                   <span class="card-btn-hint-arrow"></span>
                   Add to Favor
@@ -126,6 +125,7 @@
               </div>
             </li>
           </ul>
+          
           <ul class="rlist--inline dot-separator" style="float: right;"
             v-if="(item.open_access?.is_oa === 1 || item.host_venue?.id || item.doi)">
             <!--
@@ -203,6 +203,7 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useClipboard } from '@vueuse/core';
 import { highlightText } from '../../utils/index.js';
+import { Collection } from '../../api/collect';
 
 const router = useRouter();
 const props = defineProps({
@@ -314,6 +315,10 @@ const getBiBTeX = (paperInfo) => {
   console.log(bibtex.value);
   return bibtex.value;
 };
+
+// 收藏夹浮窗
+
+
 </script>
 
 <style scoped>
@@ -518,6 +523,13 @@ a:focus {
 }
 .dialog-cancel-btn:hover {
   color: black;
+}
+
+.cb.el-checkbox.is-bordered.is-checked{
+  border-color: black;
+}
+.cb /deep/ .el-checkbox__inner{
+  background-color: #000;
 }
 /* #endregion 对话框 */
 .result-item-card {
