@@ -15,10 +15,12 @@
       <div class="result-content clearfix">
         <div class="row clearfix">
           <!-- 左侧筛选部分 -->
-          <!-- <div class="col-lg-3 col-md-3 col-sm-4" style="border: 1px solid black;"> -->
           <div class="col-lg-3 col-md-3 col-sm-4">
             <ElButton v-if="confirmFilterSearch" @click="handleAllTypeFilterSearch">确认更改测试</ElButton>
             <ElButton v-if="confirmFilterSearch" @click="cancelFilterSearch">取消更改测试</ElButton>
+            <div style="position: fixed; top: 64px; left: 0px; z-index: 555; border: 1px solid black; width: 50px; height: 50px;">
+              xxx
+            </div>
             <div class="sticko__child colored-block">
               <!-- 
                 AllTypeFilterList[searchStore.searchType] 即当前搜索的实体类型对应的筛选列表
@@ -74,7 +76,6 @@
             </div>
           </div>
           <!-- 右侧结果/排序部分 -->
-          <!-- <div class="col-lg-9 col-md-9 col-sm-8 " style="border: 1px solid black;"> -->
           <div class="col-lg-9 col-md-9 col-sm-8">
             <div class="search-result" >
               <!-- 搜索结果顶部信息 -->
@@ -93,6 +94,9 @@
               </div>
               <!-- 随着滚动 sticky 在header下方的筛选栏 -->
               <div class="search-result__sort clearfix">
+                <div style="float: left; width: 100px; height: 30px; margin-top:10px; border: 1px solid black; display: inline-block;">
+                  xxx
+                </div>
                 <div class="search-result__sort-right">
                   <!-- 每页尺寸 -->
                   <div class="per-page">
