@@ -326,7 +326,8 @@ const toDocument = (item) => {
 .document-btn {
     width: 70px;
     height: 37px;
-    background-color: rgb(87, 146, 211);
+    /* background-color: rgb(87, 146, 211); */
+    background-color: rgb(76 98 121);
     font-size: 0.8rem;
     color: white;
     border: none;
