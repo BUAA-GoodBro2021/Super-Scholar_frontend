@@ -3,7 +3,7 @@
         <div class="toptitle">
             <svg style="margin: 0; padding: 0; width: 15; height: 15;">
                 <rect width="10" height="14"
-                style="fill:rgb(0,0,0);stroke-width:1;stroke:rgb(0,0,0)"/>
+                style="fill:rgb(255,255,255);stroke-width:1;stroke:rgb(255,255,255)"/>
             </svg>
             <span>&nbsp;&nbsp;</span>
             <span>{{$t('header.UA')}}</span>
@@ -179,8 +179,8 @@ function refuse(uid, num){
  }
 
 .el-pagination.is-background .el-pager li:not(.is-disabled).is-active {
-    background-color: white !important;
-    color: black;
+    background-color: rgb(85, 85, 85) !important;
+    color: white;
     font-weight: 700;
 }
 
@@ -188,7 +188,7 @@ function refuse(uid, num){
     color: rgb(139, 139, 139);
 }
 .el-pager li:focus-visible {
-    outline: 1px solid black;
+    outline: 1px solid rgb(231, 247, 253);
 }
 </style>
 
@@ -236,6 +236,7 @@ function refuse(uid, num){
     font-size: 1.7em;
     text-align: left;
     left: 0;
+    color: white;
 }
 
 .name {
@@ -244,7 +245,7 @@ function refuse(uid, num){
 .time {
     display: inline-block;
     font-size: 12px;
-    color: #999;
+    color: rgb(214, 214, 214);
     float: right;
     width: 11vw;
     text-align: right;
@@ -256,17 +257,18 @@ function refuse(uid, num){
 
 .card {
     /* background: linear-gradient(70deg, rgb(221, 245, 255),rgb(255, 234, 237)); */
-    background-color: rgba(255, 255, 255, 0.11);
+    background-color: rgba(255, 255, 255, 0.55);
     border-color: white;
     box-shadow: rgb(199, 199, 199);
 }
 
 ::v-deep .el-button--primary{
-    background-color: rgba(151, 217, 255, 0.932) !important;
-    border-color: rgb(255,255,255);
+    background-color: rgb(0, 27, 37) !important;
+    border-color: rgb(138, 138, 138);
 }
 
 ::v-deep .el-button--primary:active, .el-button--primary:hover{
-    background-color: rgba(125, 200, 230, 0.911) !important;
+    background-color: rgb(255, 255, 255) !important;
+    color: black;
 }
 </style>

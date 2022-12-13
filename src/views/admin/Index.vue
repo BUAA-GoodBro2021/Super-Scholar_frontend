@@ -73,10 +73,10 @@ function clickButton(){
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  background: linear-gradient(70deg, rgb(221, 245, 255),rgb(255, 234, 237));
+  /* background: linear-gradient(70deg, rgb(221, 245, 255),rgb(255, 234, 237)); */
   /* background: linear-gradient(70deg, rgb(0, 0, 0),rgb(49, 49, 49)); */
   /* background: linear-gradient(70deg, rgba(199, 167, 23, 0.733),rgba(255, 235, 168, 0.76)); */
-  /* background: linear-gradient(70deg, rgb(221, 245, 255),rgba(94, 204, 255, 0.836)); */
+  background: linear-gradient(70deg, rgb(0, 0, 0),rgba(0, 36, 53, 0.836));
   height: 100%;
 }
 ::v-deep .el-aside {
@@ -91,12 +91,13 @@ function clickButton(){
 ::v-deep .el-menu-vertical-demo:not(.el-menu--collapse) {
   width: 200px;
   min-height: 80vh;
-  background-color: rgb(231, 247, 253);
+  background-color: rgb(0, 0, 0);
 }
 ::v-deep .el-menu-item,
 .el-submenu {
   text-align: left;
-  background-color: rgb(231, 247, 253);
+  background-color: rgb(0, 0, 0);
+  color: white;
 }
 ::v-deep .el-menu-item:hover,
 .el-menu-item:active,
@@ -135,7 +136,7 @@ function clickButton(){
 }
 ::v-deep .el-menu-item:focus,
 .el-menu-item:hover {
-  background-color: rgb(209, 241, 255);
+  background-color: rgba(41, 41, 41, 0.898);
 }
 ::v-deep .el-tabs__item:hover {
   color: #46c1fa;
@@ -157,9 +158,10 @@ function clickButton(){
   left: 0.2vw;
   margin-top: 2vh;
   margin-bottom: 2vh;
-  color: black;
+  color: rgb(255, 255, 255);
   height: 4vh !important;
-  background-color: rgb(232, 248, 255);
+  background-color: rgb(0, 0, 0);
+  border-color: #606266;
   /* background-color: rgba(245, 245, 245, 0.747);
   border-color: #c7c7c7; */
 }
@@ -170,16 +172,19 @@ function clickButton(){
   left: 0.2vw;
   margin-top: 2vh;
   margin-bottom: 2vh;
-  color: black;
+  color: rgb(255, 255, 255);
   height: 4vh !important;
-  background-color: rgb(232, 248, 255);
+  background-color: rgb(0, 0, 0);
+  border-color: #606266;
   /* background-color: rgba(245, 245, 245, 0.747);
   border-color: #c7c7c7; */
 }
-.button:active{
-  background-color: rgb(179, 232, 255);
+.button:active, .button:hover{
+  background-color: rgb(0, 26, 37);
+  border-color: #606266;
 }
-.button_:active{
-  background-color: rgb(179, 232, 255);
+.button_:active, .button_:hover{
+  background-color: rgb(0, 26, 37);
+  border-color: #606266;
 }
 </style>
