@@ -230,7 +230,7 @@ function starChanged(which){
     }else{
         changedCollection.push(which)
     }
-    console.log(changedCollection)
+    
 }
 
 
