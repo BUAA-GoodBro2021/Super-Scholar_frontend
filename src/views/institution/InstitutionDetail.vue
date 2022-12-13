@@ -1,7 +1,7 @@
 <template>
-  <el-icon v-if="isLoading" class="is-loading">
-    <Loading />
-  </el-icon>
+  <div v-if="isLoading">
+    <SandboxLoading />
+  </div>
   <div v-else class="common_layout">
     <!-- 上半部分：基本信息 -->
     <div class="top_card">
@@ -37,6 +37,7 @@ import { Institution } from "../../api/institution";
 import TopCard from "../../components/Institution/TopCard.vue";
 import PaperAndData from "../../components/Institution/PaperAndData.vue";
 import Associated from "../../components/Institution/Associated.vue";
+import SandboxLoading from "../../components/Loading/SandboxLoading.vue";
 
 const route = useRoute();
 const institutionid = route.params.institutionid;
@@ -58,7 +59,6 @@ onMounted(() => {
     .then((res) => {
       if (res.data.result == 1) {
         institutionInfo.value = res.data.single_data;
-        isLoading.value = false;
         UpdateAssociatedInstitution(1);
       }
     })
@@ -97,6 +97,7 @@ const getPaperList = async (data) => {
       if (res.data.result == 1) {
         pageTotalSize.value = res.data.list_of_data[0].meta.count;
         institutionPaperList.value = res.data.list_of_data[0].results;
+        isLoading.value = false;
       }
     })
     .catch((err) => {

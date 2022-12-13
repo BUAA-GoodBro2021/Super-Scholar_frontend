@@ -17,10 +17,10 @@
          </el-menu>
       </div>
       <div class="chat-right">
-         <div class="chat-content">
-            <el-button class="del-btn" type="danger" @click="handleDelete">
+         <el-button class="del-btn" type="danger" @click="handleDelete">
             删除所选
             </el-button>
+         <div class="chat-content">
             <template v-if="curKey == 1">
                   <MessageCard 
                      v-for="(item,index) in systemList"
@@ -169,26 +169,35 @@ onMounted(() => {
    max-height: 90vh;
 
    background-color: white;
-   border-radius: 20px;
+   border-radius: 2px;
    box-shadow: 3px 3px 3px 3px #dedede;
 
    &-left {
       width: 20vw;
-      background-color: white;
+      .el-menu{
+         background-color: white;
+      }
+      .el-menu-item:hover{
+         background-color: #f0f0f0;
+      }
+      .el-menu-item.is-active{
+         color: #a28f2a;
+      }
    }
 
    &-right {
       flex: 1;
-      border-left: solid 1px var(--el-menu-border-color);
+      position: relative;
       overflow: auto;
-      .chat-content{
-         padding: 2rem;
-         position: relative;
-         .del-btn{
+      .del-btn{
                position: absolute;
                right:3rem;
-               top: 5px;
+               top: 1rem;
          }
+      .chat-content{
+         margin-top: 1rem;
+         padding: 2rem;
+         position: relative;
       }
    }
    /* 设置滚动条的样式 */

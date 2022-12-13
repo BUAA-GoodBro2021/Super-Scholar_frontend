@@ -211,7 +211,7 @@ const getChineseName = (name) => {
 
 .concept {
   font-size: 15px;
-  color: rgb(162, 143, 42);
+  /* color: rgb(162, 143, 42); */
   height: 73%;
   width: 100%;
   line-height: 20px;
@@ -231,7 +231,7 @@ const getChineseName = (name) => {
   margin-bottom: 5px;
   padding: 3px 5px;
   box-sizing: border-box;
-  border: 1.6px solid rgb(162, 143, 42);
+  border: 1.6px solid;
   border-radius: 5px;
   font-size: 15px;
 }

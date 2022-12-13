@@ -89,6 +89,9 @@ onMounted(() => {
    margin-top: 64px;
    height: calc(100vh - 64px);
 }
+.el-card{
+   background-color: #f0f0f0;
+}
 .content {
    position: relative;
    z-index: 1;
@@ -124,7 +127,7 @@ onMounted(() => {
 
       .right-content {
          width: 80%;
-         margin: 2rem auto;
+         margin: 3rem auto;
          text-align: center;
 
          .yiyan {
