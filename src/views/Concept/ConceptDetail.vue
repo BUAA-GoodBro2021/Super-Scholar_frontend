@@ -78,7 +78,7 @@
                 </a>
             </div> -->
           <el-collapse :model-value="['1','2']">
-            <el-collapse-item title="&nbsp;&nbsp;父级概念" name="1">
+            <el-collapse-item title="&nbsp;&nbsp;父级概念" name="1" class="noBorder">
               <el-scrollbar max-height="80vh">
                   <div v-for="(item, index) in conceptInfo.ancestors" class="hbb">
                     <a :href="'https://scholar.super2021.com/client/concept/' + item.id.slice(21)" target="_blank" class="href_box">
@@ -495,5 +495,14 @@ watch(()=>route.params.tokenid, (newval)=>{
   width: 100%;
   height: 100%;
   color: white;
+}
+
+::v-deep .el-collapse-item__header.is-active {
+    background-color: rgb(247, 247, 247);
+    /* border-top: 1px solid #999; */
+}
+
+::v-deep .el-collapse-item__content {
+    padding-bottom: 5px;
 }
 </style>
