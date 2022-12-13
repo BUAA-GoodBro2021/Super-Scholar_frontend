@@ -3,7 +3,7 @@
         <div class="toptitle">
             <svg style="margin: 0; padding: 0; width: 15; height: 15;">
                 <rect width="10" height="14"
-                style="fill:rgb(0,0,0);stroke-width:1;stroke:rgb(0,0,0)"/>
+                style="fill:rgb(255,255,255);stroke-width:1;stroke:rgb(255,255,255)"/>
             </svg>
             <span>&nbsp;&nbsp;</span>
             <span>{{$t('header.UA')}}</span>
@@ -19,19 +19,20 @@
             @change="handleCheckedAppliesChange"
             style="width: 100%; height: 100%; background: transpatrent"
         > -->
-            <el-row style="
+            <!-- <el-row style="
             background-color: rgb(247, 247, 247);
             border-radius: 3px;
             box-shadow: 2px 2px 2px 2px #dedede;
             padding-top: 3vh;
-            padding-left: 3vw">
+            padding-left: 3vw"> -->
+            <el-row>
                 <el-col
                 v-for.sync="(o, index) in requestData.list.slice((pages.currentPage*9 - 9), (pages.currentPage*9))"
                 :key="o"
                 :span="7"
                 :offset="(index%3) > 0 ? 1 : 0"
                 >
-                    <el-card :body-style="{ padding: '0px'}" style="margin-bottom: 2.5vh; min-width: 190px;">
+                    <el-card :body-style="{ padding: '0px'}" style="margin-bottom: 2.5vh; min-width: 190px;" class="card">
                         <!-- <el-checkbox :key="o.user_id" label="" class="checkbox"></el-checkbox> -->
                         <div style="padding: 14px">
                             <span class="card_header">
@@ -107,20 +108,6 @@ const func1= () => {
     Admin.managerCheckUploadPdf({}).then((res)=>{
             requestData.list = res.data.upload_pdf_form_dic_list;
             console.log(requestData.list)
-            requestData.list.push(requestData.dead);
-            requestData.list.push(requestData.dead);
-            requestData.list.push(requestData.dead);
-            requestData.list.push(requestData.dead);
-            requestData.list.push(requestData.dead);
-            requestData.list.push(requestData.dead);
-            requestData.list.push(requestData.dead);
-            requestData.list.push(requestData.dead);
-            requestData.list.push(requestData.dead);
-            requestData.list.push(requestData.dead);
-            requestData.list.push(requestData.dead);
-            requestData.list.push(requestData.dead);
-            requestData.list.push(requestData.dead);
-            requestData.list.push(requestData.dead);
             requestData.totalApply = Object.keys(requestData.list).length;
             requestData.totalPage = Math.floor(requestData.totalApply / 9) + 1;
             for(let i = 0; i < Object.keys(requestData.list).length; i++){
@@ -192,8 +179,8 @@ function refuse(uid, num){
  }
 
 .el-pagination.is-background .el-pager li:not(.is-disabled).is-active {
-    background-color: black !important;
-    color: var(--el-color-white);
+    background-color: rgb(85, 85, 85) !important;
+    color: white;
     font-weight: 700;
 }
 
@@ -201,7 +188,7 @@ function refuse(uid, num){
     color: rgb(139, 139, 139);
 }
 .el-pager li:focus-visible {
-    outline: 1px solid black;
+    outline: 1px solid rgb(231, 247, 253);
 }
 </style>
 
@@ -249,6 +236,7 @@ function refuse(uid, num){
     font-size: 1.7em;
     text-align: left;
     left: 0;
+    color: white;
 }
 
 .name {
@@ -257,7 +245,7 @@ function refuse(uid, num){
 .time {
     display: inline-block;
     font-size: 12px;
-    color: #999;
+    color: rgb(214, 214, 214);
     float: right;
     width: 11vw;
     text-align: right;
@@ -265,5 +253,22 @@ function refuse(uid, num){
     text-overflow: ellipsis;
     white-space: nowrap;
     background-color: transparent;
+}
+
+.card {
+    /* background: linear-gradient(70deg, rgb(221, 245, 255),rgb(255, 234, 237)); */
+    background-color: rgba(255, 255, 255, 0.55);
+    border-color: white;
+    box-shadow: rgb(199, 199, 199);
+}
+
+::v-deep .el-button--primary{
+    background-color: rgb(0, 27, 37) !important;
+    border-color: rgb(138, 138, 138);
+}
+
+::v-deep .el-button--primary:active, .el-button--primary:hover{
+    background-color: rgb(255, 255, 255) !important;
+    color: black;
 }
 </style>

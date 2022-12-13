@@ -132,11 +132,12 @@ const PageChange = () => {
     /**配色 深 */
     /* box-shadow: 3px 3px 0px 0px #726a6a; */
     /**配色 浅 */
+    background-color: #f0f0f0;
     box-shadow: 3px 3px 0px 0px #cfcfcf;
 }
 
 .author-card:hover {
-    background-color: #b7b7a8;
+    background-color: #c2c2c2;
 }
 
 .author-card-left {
@@ -145,7 +146,9 @@ const PageChange = () => {
     height: 30px;
     left: 0;
     top: 20px;
-    background-color: rgb(162, 143, 42);
+    /**黄金之风 */
+    /* background-color: rgb(162, 143, 42); */
+    background-color: black
 }
 
 
@@ -196,7 +199,8 @@ const PageChange = () => {
 }
 
 .author-card .coauthor-name:hover {
-    color: rgb(162, 143, 42);
+    /* color: rgb(162, 143, 42); */
+    color: white;
     /* height: 20%;
     margin-top: 5; */
     /* display: block; */
@@ -218,7 +222,8 @@ const PageChange = () => {
 }
 
 .right-arrow-wrap:hover{
-    color: rgb(162, 143, 42);
+    /* color: rgb(162, 143, 42); */
+    color: white;
 }
 
 .empty {
