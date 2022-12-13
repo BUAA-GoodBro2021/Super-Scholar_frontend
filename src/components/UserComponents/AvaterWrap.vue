@@ -52,10 +52,10 @@
                                     <span v-if="openAlexAccount == 1 || claimed == 1"
                                         class="claim-document-data"><el-icon class="claim-document-icon">
                                             <List />
-                                        </el-icon>&nbsp; {{ userInfo.works_count }}</span>
+                                        </el-icon>&nbsp; {{ preProcess(userInfo.works_count) }}</span>
                                     <span v-if="openAlexAccount == 1 || claimed == 1" class="claim-document-data"><i
                                             class="iconfont icon-quotes claim-document-icon"></i>&nbsp;
-                                        {{ userInfo.cited_by_count }}</span>
+                                        {{ preProcess(userInfo.cited_by_count) }}</span>
 
                                     <!-- <el-tag style="margin-left: 20px; font-size: 10px;" v-if="openAlexAccount == 1"
                                         type="success">OpenAlex作者</el-tag> -->
@@ -423,6 +423,17 @@ const toOrganization = () => {
     }
 }
 
+/*将数字转换为千分制 加逗号 */
+const preProcess = (number) => {
+    let data = String(number)
+    let num = ''
+    for(let i = 0; i < data.length; i ++) {
+        num = data[data.length -1 -i] + num;
+        if(i % 3 == 2 && i != data.length - 1) num = ',' + num 
+    }
+    return num;
+}
+
 watch(() => props.userInfo.is_follow, (newVal) => {
     is_follow.value = newVal
 })
@@ -507,24 +518,22 @@ watch(() => props.userInfo.is_follow, (newVal) => {
 /**名字 设置 */
 .name .name-display_name {
     position: relative;
-    /* margin-right: 10px; */
     cursor: default;
-    height: auto;
-    /* min-height: 37.6px; */
-    /* height: 100%;
-    display: flex;
-    align-items: center; */
+    /* height: auto; */
+    height: 38px;
+    margin-top: 10px;
 
-    max-width: 450px;
+    max-width: 300px !important;
     white-space: nowrap;
     text-overflow: ellipsis;
     /* 设置hidden会导致父元素的高度不能被子元素撑开 */
-    /* overflow: hidden; */
+    overflow: hidden;
 }
 
 .name .name-display_name .name-display_name-span {
-    height: auto;
-    max-width: 450px;
+    /* height: auto; */
+    height: 38px;
+    max-width: 300px !important;
 }
 
 .name .name-claim-flag {
@@ -731,11 +740,9 @@ watch(() => props.userInfo.is_follow, (newVal) => {
     .name .claim-wrap-name {
         max-width: 100px;
     }
-}
 
-@media (max-width: 900px) {
     .name .name-display_name {
-        max-width: 130px;
+        max-width: 130px !important;
         white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden;

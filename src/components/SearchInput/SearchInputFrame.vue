@@ -255,6 +255,11 @@ onClickOutside(searchContainerTarget, () => {
   line-height: 18px;
   background-color: rgb(244 244 245);
   transition-duration: 500ms;
+  font-weight: 600;
+  color: gray;
+}
+.search-type-select option {
+  font-weight: 500;
 }
 .group:hover .search-type-select {
   background-color: white;

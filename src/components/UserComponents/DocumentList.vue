@@ -16,7 +16,11 @@
                     </template>
                 </el-table-column>
                 <el-table-column prop="publication_date" label="日期" min-width="17%" align="center" />
-                <el-table-column prop="cited_by_count" label="引用" min-width="13%" align="center" />
+                <el-table-column prop="cited_by_count" label="引用" min-width="13%" align="center" > 
+                    <template #default="scope">
+                        {{ preProcess(scope.row.cited_by_count) }}
+                    </template>
+                </el-table-column>
                 <el-table-column prop="pdf" label="状态" min-width="18%">
                     <template #default="scope">
                         <button class="document-btn no-pdf-btn" v-if="scope.row.open_access.is_oa == -1">暂无pdf</button>
@@ -203,6 +207,17 @@ const toDocument = (item) => {
         params: { paperid: item.id.substring(21) }
     })
     window.open(href, "_blank")
+}
+
+/*将数字转换为千分制 加逗号 */
+const preProcess = (number) => {
+    let data = String(number)
+    let num = ''
+    for(let i = 0; i < data.length; i ++) {
+        num = data[data.length -1 -i] + num;
+        if(i % 3 == 2 && i != data.length - 1) num = ',' + num 
+    }
+    return num;
 }
 
 </script>

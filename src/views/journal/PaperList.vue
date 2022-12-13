@@ -190,7 +190,6 @@ window.onresize = function(){
   }
   .left {
     background-color: white;
-    box-shadow: 3px 3px 3px 3px #dedede;
     width: 60%;
     margin-right: 2%;
   }

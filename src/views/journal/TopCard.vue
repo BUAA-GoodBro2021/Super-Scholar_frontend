@@ -76,7 +76,7 @@ import 'element-plus/theme-chalk/display.css'
   const coverTitleSize=ref("15px")
   const random = ref(-1)
   function rnd( seed ){
-    seed = ( seed * 9301 + 49297 ) % 233280; //为何使用这三个数?
+    seed = ( seed * 9301 + 49297 ) % 233280;
     return seed / ( 233280.0 );
 };
 const tmpCounts = ref([])
@@ -239,6 +239,7 @@ onMounted(
     word-break:break-all;
     white-space: normal;
     color: white;
+    overflow: hidden;
   }
   .chart{
     height:300px;
