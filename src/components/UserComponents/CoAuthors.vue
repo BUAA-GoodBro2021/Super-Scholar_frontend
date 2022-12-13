@@ -2,6 +2,7 @@
     <div class="coauthors-wrap">
         <div class="coauthors-title">合著作者</div>
         <div class="author-list" v-if="claimed == 1">
+            <!-- {{authorList}} {{authorTotalSize}} -->
             <div class="author-card" v-for="(item, index) in authorList" :key="index">
                 <div class="author-card-left"></div>
                 <ul class="list-item">

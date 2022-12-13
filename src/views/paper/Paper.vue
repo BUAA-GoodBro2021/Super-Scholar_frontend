@@ -19,9 +19,11 @@
                         <span class="title">摘要</span>
                     </div>
                     <el-divider></el-divider>
-                    <span style="font-size:16px;line-height: 26px;font-family:'Times New Roman', Times, serif">
-                        {{paperInfo.abstract}}
-                    </span>
+                    <el-scrollbar max-height="400px">
+                        <span style="font-size:16px;line-height: 26px;font-family:'Times New Roman', Times, serif">
+                            {{paperInfo.abstract}}
+                        </span>
+                    </el-scrollbar>
                 </el-card>
                 <el-card class="card">
                     <PaperDetailVue v-if="paperId && paperInfo" :paperId="paperId"  :paperInfo="paperInfo" />
@@ -41,7 +43,7 @@ import PaperActionVue from './PaperAction.vue';
 import PaperDetailVue from './PaperDetail.vue';
 import PaperRelatedVue from './PaperRelated.vue';
 import { Search } from "../../api/search";
-
+import {showLoading,hideLoading} from "../../components/Loading/index"
 import {useRouter, useRoute} from 'vue-router'
 const route = useRoute()
 const paperId = route.params.paperid
@@ -51,6 +53,7 @@ const paperInfo = ref()
 
 
 onMounted(() => {
+    showLoading()
     Search.single(
         {
             entity_type: "works",
@@ -60,6 +63,7 @@ onMounted(() => {
         }
     ).then((res)=>{
         paperInfo.value = res.data.single_data
+        hideLoading()
         })
     })
 
