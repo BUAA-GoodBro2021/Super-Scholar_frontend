@@ -9,7 +9,7 @@
             </router-link>
         </div>
         <div class="avatar">
-            <UserInfo v-if="globalStore.isAuth"/>
+            <UserInfo/>
         </div>
     </div>
 </template>
