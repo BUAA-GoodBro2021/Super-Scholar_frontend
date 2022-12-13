@@ -1,36 +1,36 @@
 <template>
-    <el-container style="align-items: center;">
+    <el-container style="align-items: center;background-color: rgba(230, 230, 230, 0.234);">
         <el-header height="auto" class="article_top_bg">
             <el-container>
                 <el-main>
                     <PaperBriefVue :paperInfo="paperInfo" v-if="paperInfo"/>
                 </el-main>
                 <el-aside width="20%">
-                    <PaperActionVue></PaperActionVue>
+                    <PaperActionVue :paperInfo="paperInfo" v-if="paperInfo"></PaperActionVue>
                 </el-aside>
             </el-container>
         </el-header>
-        <el-container style="width:80%">
-            <el-main>
-                <el-card v-if="paperInfo" style="margin-bottom:25px">
+        <div style="width:80%;display:flex;margin:20px;overflow:visible;">
+            <div style="width:70%">
+                <el-card v-if="paperInfo" style="margin-bottom:25px" class="card">
                     <div slot="header">
                         <span>摘要</span>
                     </div>
                     <el-divider></el-divider>
-                    <span style="font-size:16px;line-height: 20px;">
+                    <span style="font-size:16px;line-height: 26px;font-family:'Times New Roman', Times, serif">
                         {{paperInfo.abstract}}
                     </span>
                 </el-card>
-                <el-card>
+                <el-card class="card">
                     <PaperDetailVue v-if="paperId && paperInfo" :paperId="paperId"  :paperInfo="paperInfo" />
                 </el-card>
-            </el-main>
-            <el-aside width="30%">
-                <el-card shadow="always"  v-if="paperInfo" style="margin:20px;">
+            </div>
+            <div style="width:28%;height:100%;margin-left:2%;height:100%;overflow:visible">
+                <div v-if="paperInfo" style="overflow:visible">
                     <PaperRelatedVue :paperInfo="paperInfo" v-if="paperId" :paperId="paperId"/>
-                </el-card>
-            </el-aside>
-        </el-container>
+                </div>
+            </div>
+        </div>
     </el-container>
 </template>
 <script setup>
@@ -111,5 +111,27 @@ onMounted(() => {
     width: 30%;
     box-shadow: 0px 0px 10px skyblue;
     border-radius: 10px 10px 0px 0px;
+}
+
+.href_box {
+    display: block;
+    font-size: 1.1em;
+    color: rgb(117, 117, 117);
+    background-color: transparent;
+    text-decoration: none;
+    width: 90%;
+    height: 3vh;
+    padding-top: 2vh;
+    padding-left: 1vw;
+    transition: .2s;
+}
+
+.href_box:hover {
+    color: rgb(64, 158, 255);
+}
+.card{
+    border-radius:0px;
+    box-shadow: 3px 3px 3px 3px #dedede;
+    
 }
 </style>

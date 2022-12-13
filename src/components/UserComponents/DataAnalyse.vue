@@ -290,7 +290,7 @@ const initChart1 = () => {
             }
         },
         grid: {
-            right: '20%',
+            right: '22%',
             left: '15%'
         },
         toolbox: {
@@ -370,7 +370,7 @@ const initChart2 = () => {
     chart2 = document.getElementById('network')
     chart2 = echarts.init(chart2)
     let option = {
-        backgroundColor: 'white',
+        backgroundColor: '',
         tooltip: {
             // formatter: '合著数量{c}',
         },
@@ -509,7 +509,7 @@ const toArticle = (item) => {
 
 
 .tabs {
-    width: 90%;
+    width: 95%;
     height: 90%;
     /* margin-top: 10px; */
     margin-bottom: 5%;
@@ -550,9 +550,9 @@ const toArticle = (item) => {
 }
 
 .dialog-wrap {
-    padding: 0px 10px 10px 10px;
+    padding: 0px 70px 10px 10px;
     min-height: 200px;
-    max-height: 400px;
+    max-height: 50vh;
     width: 100%;
     overflow-y: scroll;
     display: block;

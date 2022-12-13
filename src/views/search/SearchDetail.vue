@@ -75,8 +75,8 @@
           </div>
           <!-- 右侧结果/排序部分 -->
           <!-- <div class="col-lg-9 col-md-9 col-sm-8 " style="border: 1px solid black;"> -->
-            <div class="col-lg-9 col-md-9 col-sm-8 ">
-            <div class="search-result">
+          <div class="col-lg-9 col-md-9 col-sm-8">
+            <div class="search-result" >
               <!-- 搜索结果顶部信息 -->
               <div class="search-result__info">
                 <div class="search-num-info">
@@ -91,7 +91,6 @@
                   </div>
                 </div>
               </div>
-              <div class="search-result__tabs"></div>
               <!-- 随着滚动 sticky 在header下方的筛选栏 -->
               <div class="search-result__sort clearfix">
                 <div class="search-result__sort-right">
@@ -176,12 +175,12 @@ const pageSizeArray = [5, 10, 20];
 </script>
 
 <script setup>
-import SearchInput from '../../components/SearchInput/Search.vue';
 import { Search } from '../../api/search';
 import { useSearchStore } from '../../stores/search.js';
-import { ElButton, ElCheckbox, ElCheckboxGroup, ElNotification, ElPagination } from "element-plus";
 import { onMounted, reactive, ref, shallowRef, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
+import { ElButton, ElCheckbox, ElCheckboxGroup, ElNotification, ElPagination } from "element-plus";
+import SearchInput from '../../components/SearchInput/Search.vue';
 import WorksResCard from './WorksResCard.vue';
 import AuthorsResCard from './AuthorsResCard.vue';
 import VenuesResCard from './VenuesResCard.vue';
@@ -191,8 +190,7 @@ import ConceptsResCard from './ConceptsResCard.vue';
 
 onMounted(() => {
   // 默认选中 index = 1 的 每页10条
-  // chosePageSize(1);
-  chosePageSize(0);
+  chosePageSize(1);
   // 触发一次搜索
   handleFinalSearch(searchStore.searchInputText, searchStore.searchType);
 });
@@ -213,9 +211,7 @@ const searchStore = useSearchStore();
  * /search-detail?countrySearch=facebook
  */
 const route = useRoute();
-// console.log(route.query);
 if (route.query.countrySearch) {
-  // console.log(route.query.countrySearch);
   searchStore.searchType = "works";
   searchStore.searchInputText = route.query.countrySearch;
 }
@@ -247,7 +243,7 @@ const pageIndexChangeSearchLock = ref(false);
  */
 const handlePageIndexChangeSearch = () => {
   var data = {
-    "entity_type": searchStore.searchType,  // 理论上来说这里只能是 works
+    "entity_type": searchStore.searchType,
     "params": {
       "filter": buildAllTypeFilterKey(),
       "page": searchResPageIndex.value,
@@ -274,7 +270,7 @@ const handlePageIndexChangeSearch = () => {
   })
   .catch((err) => {
     console.log(err);
-  })
+  });
 };
 watch(
   searchResPageIndex,
@@ -437,7 +433,7 @@ const AllTypeFilterList = reactive({
       selectedArray: []
     },
     {
-      group: "last_known_institution.id",
+      group: "last_known_institution.type",
       title: "机构类型 Institution Type",
       objectArray: [],
       stringArray: [],
@@ -511,6 +507,7 @@ const AllTypeFilterList = reactive({
 /**
  * 展开/收起过滤单元的下拉栏
  * 并触发 “分组搜索”
+ * 注意，用户已经勾选的筛选项也会影响“分组搜索”获取的结果
  * @param {HTMLElement} filterDOM 当前搜索筛选列表中的 某个过滤单元对应的DOM
  * @param {Number} index 过滤单元DOM在整个DOM数组中的位置，也是过滤单元在 当前搜索筛选列表 中的位置
  */
@@ -557,7 +554,7 @@ const handleChange = (index) => {
   confirmFilterSearch.value = true;
 };
 /**
- * 遍历所有的works筛选字段。
+ * 遍历所有的筛选字段。
  * 将用户已经勾选的条目构建出 filter 字段
  * (对象类型)以便于发送给后端
  * @return 一个对象
@@ -906,7 +903,8 @@ a, a:hover, a:focus {
 }
 /* #region 搜索区域 */
 .search-area{
-  background-color: rgb(147 197 253);
+  /* background-color: rgb(147 197 253); */
+  background-color: white;
   width: 100%;
   padding: 10px 20px;
 }
@@ -1120,7 +1118,7 @@ a, a:hover, a:focus {
 .search-result__info {
   font-weight: 300;
   font-style: italic;
-  margin-bottom: 2.1875rem;
+  /* margin-bottom: 2.1875rem; */
   /* 10px */
   margin-top: .625rem;
   background-color: white;
@@ -1170,7 +1168,9 @@ a, a:hover, a:focus {
     left: 0;
     /* 这里改为我们的header高度-1 */
     top: 63px; 
-    margin: .625rem 0;
+    /* margin: .625rem 0; */
+    margin: 0;
+    margin-bottom: .625rem;
   }
   .search-result__sort-right {
     padding: .625rem 0;

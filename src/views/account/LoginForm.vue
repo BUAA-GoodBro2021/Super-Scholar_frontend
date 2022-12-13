@@ -41,10 +41,12 @@ import { useSearchStore } from "../../stores/search.js";
 import { Account } from "../../api/account";
 import { getTimeState } from "../../utils";
 import i18n from "../../language/index"
+import { useRoute,useRouter } from "vue-router";
 const globalStore = useGlobalStore();
 const searchStore = useSearchStore();
 const router = useRouter();
 const loginFormRef = ref();
+const route = useRoute();
 const validateName = (rule,value,callback)=>{
 	if(!value.length){
 		callback(new Error("请输入用户名"))
@@ -123,7 +125,7 @@ onMounted(() => {
 	// 监听enter事件
 	document.onkeydown = (e) => {
 		e = window.event || e;
-		if (e.code === "Enter" || e.code === "enter" || e.code === "NumpadEnter") {
+		if (route.name=="Login" && (e.code === "Enter" || e.code === "enter" || e.code === "NumpadEnter")) {
 			submit(loginFormRef.value);
 		}
 	};

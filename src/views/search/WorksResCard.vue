@@ -9,9 +9,9 @@
       <!-- 论文的标题 -->
       <h5 class="card-title" @click="jumpToPaperPage(item.id?.slice(21))">
         <!-- TODO 需要加匹配高亮 -->
-        <span v-if="item.display_name !== null">
-          <!-- <a href="/doi/10.1145/3293353.3293383">HSD-<span onclick="highlight()" class="single_highlight_class">CNN</span>: Hierarchically self decomposing <span onclick="highlight()" class="single_highlight_class">CNN</span> architecture using class specific filter sensitivity analysis</a> -->
-          {{ item.display_name.replace(/<\/?i>/ig, "") }}
+        <span 
+          v-if="item.display_name !== null"
+          v-html="highlightText(item.display_name.replace(/<\/?i>/ig, ''))">
         </span>
         <span v-else>
           [Title Missed]
@@ -112,18 +112,8 @@
                 </span>
               </div>
             </li>
-            <el-dialog v-model="bibtexDialogVisible" title="BiBTeX 引用格式" width="60%">
-              <span style="white-space: pre-wrap">{{ bibtex }}</span>
-              <template #footer>
-                <span class="dialog-footer">
-                  <el-button @click="bibtexDialogVisible = false">取消</el-button>
-                  <el-button type="primary" @click="copy(bibtex)">
-                    <span v-if='!copied'>复制到剪切板</span>
-                    <span v-else>复制成功!</span>
-                  </el-button>
-                </span>
-              </template>
-            </el-dialog>
+            <!-- Bibtex 复制窗口 -->
+            
             <!-- TODO 添加收藏夹的浮窗 -->
             <li v-if="notInCollection">
               <div class="card-tool-btn">
@@ -180,12 +170,39 @@
       </div>
     </div>
   </div>
+  <teleport to='body' >
+    <!-- 蒙版 -->
+    <transition name="fade">
+      <div v-if="bibtexDialogVisible" class="dialog-container" @click="bibtexDialogVisible = false"></div>
+    </transition>
+    <!-- 浮窗 -->
+    <transition name="up">
+      <div v-if="bibtexDialogVisible" class="dialog-window">
+        <!-- 标题 -->
+        <div class="dialog-title">BiBTeX 引用格式</div>
+        <!-- 文本 -->
+        <div class="dialog-content" style="white-space: pre-wrap;">{{ bibtex }}</div>
+        <!-- 按钮 -->
+        <div class="dialog-btn-wrapper">
+          <button class="dialog-cancel-btn" @click="bibtexDialogVisible = false" style="margin-right: 8px;">
+            Cancel
+            <span></span>
+          </button>
+          <button class="dialog-confirm-btn" @click="copy(bibtex)" style="margin-right: 8px;">
+            {{ !copied ? 'CopyBib': 'Copied!' }}
+            <span></span>
+          </button>
+        </div>
+      </div>
+    </transition>
+  </teleport>
 </template>
 
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { useClipboard } from '@vueuse/core'
+import { useClipboard } from '@vueuse/core';
+import { highlightText } from '../../utils/index.js';
 
 const router = useRouter();
 const props = defineProps({
@@ -236,10 +253,10 @@ const jumpToAuthorPage = (openAlexAuthorId) => {
 const jumpToVenuePage = (openAlexVenueId) => {
   console.log(openAlexVenueId);
   if (openAlexVenueId) {
-    // router.push({
-    //   name: 'OpenAlexAuthorDetail',
-    //   params: {tokenid: openAlexAuthorId}
-    // });
+    router.push({
+      name: 'JournalDetail',
+      params: {journalid: openAlexVenueId}
+    });
   }
 };
 /**
@@ -293,7 +310,8 @@ const getBiBTeX = (paperInfo) => {
     title = {${display_name}},
     journal = {${journal}},
     year = {${publication_year}},
-}`;
+  }`;
+  console.log(bibtex.value);
   return bibtex.value;
 };
 </script>
@@ -333,7 +351,175 @@ a:focus {
 }
 /* #endregion 通用样式结束 */
 
+/* #region 对话框 */
+.fade-enter-active,
+.fade-leave-active{
+  transition: all v-bind(closeDuration);
+}
+.fade-enter-from,
+.fade-leave-to{
+  opacity: 0;
+}
 
+.up-enter-active,
+.up-leave-active{
+  transition: all v-bind(closeDuration);
+}
+
+.up-enter-from,
+.up-leave-to{
+  opacity: 0;
+  transform: translate3d(-50%, 100px, 0);
+}
+
+.dialog-container {
+  width: 100vw;
+  height: 100vh;
+  /* background-color: rgb(24 24 27 / 0.8); */
+  background-color: rgba(255, 255, 255, 0.6);
+  position: fixed;
+  z-index: 9999;
+  top: 0;
+  left: 0;
+}
+.dialog-window {
+  width: 80%;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10000;
+  padding: 6px 8px;
+  border-radius: 2px;
+  border: 4px solid black;
+  cursor: pointer;
+  background-color: white;
+}
+@media (min-width: 1280px) {
+  .dialog-window{
+    width: 35%;
+  } 
+}
+.dark.dialog-window {
+  background-color: rgb(39 39 42);
+  border-color: rgb(82 82 91);
+}
+
+.dialog-title {
+  font-size: 22px;
+  line-height: 26px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+.dark.dialog-title {
+  color: rgb(228 228 231);
+}
+
+.dialog-content {
+  font-size: 16.8px;
+  line-height: 20.8px;
+  color: rgb(24 24 27);
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+.dark.dialog-content {
+  color: rgb(228 228 231);
+}
+
+.dialog-btn-wrapper {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.dialog-confirm-btn {
+  border: none;
+  outline: none;
+  display: inline-block;
+  position: relative;
+  z-index: 0;
+  padding: 8px 35.2px;
+  height: 38px;
+  font-size: 16px;
+  cursor: pointer;
+  background: transparent;
+  user-select: none;
+  color: black;
+  overflow: hidden;
+}
+.dialog-confirm-btn span {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  z-index: -1;
+  border: 4px solid black;
+}
+.dialog-confirm-btn span::before {
+  content: "";
+  position: absolute;
+  width: 8%;
+  height: 500%;
+  background: white;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-60deg);
+  transition: all 0.3s;
+}
+.dialog-confirm-btn:hover span::before {
+  transform: translate(-50%, -50%) rotate(-90deg);
+  width: 100%;
+  background: black;
+}
+.dialog-confirm-btn:hover {
+  color: white;
+}
+
+.dialog-cancel-btn {
+  border: none;
+  display: inline-block;
+  position: relative;
+  z-index: 0;
+  padding: 8px 35.2px;
+  height: 38px;
+  font-size: 16px;
+  cursor: pointer;
+  background: transparent;
+  user-select: none;
+  color: white;
+  overflow: hidden;
+}
+.dialog-cancel-btn span {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  z-index: -1;
+  border: 4px solid black;
+}
+.dialog-cancel-btn span::before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 500%;
+  background: black;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-90deg);
+  transition: all 0.3s;
+}
+.dialog-cancel-btn:hover span::before {
+  transform: translate(-50%, -50%) rotate(-60deg);
+  width: 8%;
+  background: white;
+}
+.dialog-cancel-btn:hover {
+  color: black;
+}
+/* #endregion 对话框 */
 .result-item-card {
   /* 30px */
   margin-left: 1.875rem;

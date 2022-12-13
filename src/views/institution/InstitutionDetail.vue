@@ -1,5 +1,7 @@
 <template>
-  <div v-if="isLoading">Loading...</div>
+  <el-icon v-if="isLoading" class="is-loading">
+    <Loading />
+  </el-icon>
   <div v-else class="common_layout">
     <!-- 上半部分：基本信息 -->
     <div class="top_card">
@@ -25,12 +27,16 @@
       </div>
     </div>
   </div>
+  <!-- <div style="white-space: pre">
+    {{ institutionInfo }}
+  </div> -->
 </template>
 
 <script setup>
 import { Institution } from "../../api/institution";
 import TopCard from "../../components/Institution/TopCard.vue";
 import PaperAndData from "../../components/Institution/PaperAndData.vue";
+import Associated from "../../components/Institution/Associated.vue";
 
 const route = useRoute();
 const institutionid = route.params.institutionid;
@@ -40,7 +46,7 @@ const associatedInstituionList = ref([]);
 const isLoading = ref(true);
 
 const pageTotalSize = ref(10);
-const countPerPage = 10;
+const countPerPage = 5;
 
 onMounted(() => {
   Institution.GetInstitutionDetail({
@@ -124,6 +130,7 @@ const UpdateAssociatedInstitution = (page) => {
   justify-content: center;
   align-items: center;
   background-color: rgba(230, 230, 230, 0.234);
+  padding-bottom: 1%;
 }
 
 .top_card {
@@ -138,21 +145,23 @@ const UpdateAssociatedInstitution = (page) => {
   display: flex;
 }
 
-.article_data_wrap .left {
-  width: 68%;
-  margin-right: 2%;
-  /* box-shadow: 3px 6px 10px 5px #888888; */
+.article_data_wrap:deep(.el-tabs__content) {
+  padding-right: 2vw;
+  overflow: visible;
 }
 
-.article_data_wrap .right {
+.left {
+  width: 68%;
+  margin-right: 2%;
+}
+
+.right {
   width: 30%;
-  /* box-shadow: 3px 6px 10px 5px #888888; */
 }
 
 @media (max-width: 1500px) {
   .top_card {
     width: 90%;
-    /* border: 2px solid red; */
   }
 
   .article_data_wrap {
@@ -163,7 +172,6 @@ const UpdateAssociatedInstitution = (page) => {
 @media (max-width: 1200px) {
   .top_card {
     width: 98%;
-    /* border: 2px solid red; */
   }
 
   .article_data_wrap {
@@ -174,12 +182,10 @@ const UpdateAssociatedInstitution = (page) => {
   .article_data_wrap .left {
     width: 100%;
     margin: 10px 0 10px 0;
-    /* box-shadow: 3px 6px 10px 5px #888888; */
   }
 
   .article_data_wrap .right {
     width: 100%;
-    /* box-shadow: 3px 6px 10px 5px #888888; */
   }
 }
 </style>

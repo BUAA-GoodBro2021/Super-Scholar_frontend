@@ -16,7 +16,7 @@
         @change="handleSelectSearchType"
         class="group search-type-select"
       >
-        <option value="works" sel>论文</option>
+        <option value="works">论文</option>
         <option value="authors">作者</option>
         <option value="venues">期刊会议</option>
         <option value="institutions">机构</option>
@@ -234,7 +234,8 @@ onClickOutside(searchContainerTarget, () => {
   transition-duration: 500ms;
 }
 .search-container:hover {
-  background-color: rgb(254 226 226 / 0.4);
+  /* background-color: rgb(254 226 226 / 0.4); */
+  background-color: rgba(226, 241, 254, 0.4);
 }
 .dark .search-container {
   border-color: rgb(228 228 231);
@@ -294,7 +295,9 @@ input {
   transition-duration: 500ms;
 }
 .search-input:focus {
-  border-color: rgb(252 165 165);
+  /* border-color: rgb(252 165 165); */
+  border-color: rgb(68, 177, 250);
+  /* border-color: rgb(37, 146, 241); */
 }
 .group:hover .search-input {
   background-color: white;

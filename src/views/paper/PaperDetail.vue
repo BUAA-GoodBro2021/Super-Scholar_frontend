@@ -45,16 +45,21 @@ function chartResize(){
     )
 
 }
+
 onRenderTriggered(() => {
     if(citeChart)
         return;
     nextTick(
         ()=>{
             citeChart = echarts.init(document.getElementById("citeChart"))
+            
+            var tmpCount = []
+            tmpCount.push(...props.paperInfo.counts_by_year)
+            tmpCount.sort((a,b)=>a.year-b.year)
             var xSeries = []
             var ySeries = []
             
-            for(var item of props.paperInfo.counts_by_year){
+            for(var item of tmpCount){
                 xSeries.push(item.year)
                 ySeries.push(item.cited_by_count)
             }

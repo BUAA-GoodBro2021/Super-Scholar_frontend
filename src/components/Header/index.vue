@@ -4,12 +4,12 @@
             <router-link to="/" class="link">
                 <img src="/icon1.png" class="logo" />
             </router-link>
+            <router-link to="/advance-search-detail" class="link">
+                <span >高级检索</span>
+            </router-link>
         </div>
-        
         <div class="avatar">
-            <template v-if="showUser">
-                <UserInfo />
-            </template>
+            <UserInfo v-if="globalStore.isAuth"/>
         </div>
     </div>
 </template>
@@ -17,20 +17,25 @@
 import UserInfo from "./UserInfo.vue";
 import { useDark, useToggle, useWindowScroll, useWindowSize } from '@vueuse/core';
 import { useRoute } from "vue-router";
+import {useGlobalStore} from "../../stores/global";
+const globalStore = useGlobalStore();
 const route = useRoute();
 const { x, y } = useWindowScroll();
 const { width, height } = useWindowSize();
 const isDark = useDark();
 const onDarkChange = useToggle(isDark);
-const headerColor = route.name==="Welcome"? ref("#040d21") : ref("white");
-const showUser = route.name==="Welcome"? ref(false) : ref(true);
+const checkRouteName = ()=>{
+    return route.name==="Welcome"|| route.name==="Login" || route.name==="Register";
+}
+const headerColor = checkRouteName() ? ref("#040d21") : ref("white");
+const fontColor = checkRouteName() ? ref("white") : ref("black");
 watch(y,(y)=>{
     if(y <= height.value-64 && route.name==="Welcome"){
         headerColor.value = "#040d21";
-        showUser.value = false;
+        fontColor.value = "white";
     }else{
         headerColor.value = "white";
-        showUser.value = true;
+        fontColor.value = "black";
     }
 })
 onMounted(()=>{
@@ -57,12 +62,13 @@ onMounted(()=>{
         font-size: 16px;
         font-weight: 600;
         text-decoration: none;
-        color: black;
+        color: v-bind(fontColor);
         margin-left: 3vw;
         }
         .logo {
+        margin-top: 4px;
         width: 120px;
-        height: 64px;
+        height: 60px;
         }
     }
     .avatar {
