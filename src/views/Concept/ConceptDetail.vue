@@ -9,47 +9,23 @@
             <el-image style="width: 150px; height: 150px" :src="conceptInfo.image_thumbnail_url" fit="fill" />
         </div>
         <div class="word">
-            <div class="title">
+            <span class="title">
                 <span>{{conceptInfo.display_name}}</span>
-            </div>
-            <div
+            </span>
+            <span
               class="title"
-              v-if="conceptInfo.international.display_name.zh-cn"
+              v-if="getChineseName(conceptInfo.international.display_name)"
             >
-              （{{ conceptInfo.international.display_name.zh-cn }}）
-            </div>
-            <div
-              class="title"
-              v-else-if="conceptInfo.international.display_name.zh-hans"
-            >
-              （{{ conceptInfo.international.display_name.zh-hans }}）
-            </div>
-            <div
-              class="title"
-              v-else-if="conceptInfo.international.display_name.zh"
-            >
-              （{{ conceptInfo.international.display_name.zh }}）
-            </div>
+              （{{ getChineseName(conceptInfo.international.display_name) }}）
+            </span>
             <div class="description">
                 <span>{{conceptInfo.description}}</span>
             </div>
             <div
               class="description"
-              v-if="conceptInfo.international.description.zh-cn"
+              v-if="getChineseName(conceptInfo.international.description)"
             >
-              （{{ conceptInfo.international.description.zh-cn }}）
-            </div>
-            <div
-              class="description"
-              v-else-if="conceptInfo.international.description.zh-hans"
-            >
-              （{{ conceptInfo.international.description.zh-hans }}）
-            </div>
-            <div
-              class="description"
-              v-else-if="conceptInfo.international.description.zh"
-            >
-              （{{ conceptInfo.international.description.zh }}）
+              （{{ getChineseName(conceptInfo.international.description) }}）
             </div>
             <div class="counts">
               <div class="organization">
@@ -218,6 +194,10 @@ function jumpTo(id){
   router.push('/client/concept/'+id)
   // location.reload()
 }
+
+const getChineseName = (name) => {
+  return name["zh-cn"] || name["zh-hans"] || name.zh;
+};
 </script>
 
 <style scoped>
@@ -248,7 +228,6 @@ function jumpTo(id){
 .article_data_wrap .left {
   width: 68%;
   margin-right: 2%;
-  background-color: #fff;
   /* box-shadow: 3px 6px 10px 5px #888888; */
 }
 

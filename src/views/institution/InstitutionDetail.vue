@@ -25,11 +25,11 @@
           @associated-institution-page-change="associatedInstitutionPageChange"
         />
       </div>
-      <!-- <div style="white-space: pre">
-        {{ institutionInfo }}
-      </div> -->
     </div>
   </div>
+  <!-- <div style="white-space: pre">
+    {{ institutionInfo }}
+  </div> -->
 </template>
 
 <script setup>
