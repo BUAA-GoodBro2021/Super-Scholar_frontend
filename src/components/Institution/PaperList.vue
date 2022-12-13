@@ -52,6 +52,14 @@ const changePage = () => {
   height: 36px;
 }
 
+:deep(.pagination-wrap .is-active) {
+    color: #d5d3c9 !important;
+}
+
+:deep(.pagination-wrap .el-pager li:hover) {
+    color:rgb(144 144 144);
+}
+
 .search-result__list {
   list-style: none;
   padding: 0;
