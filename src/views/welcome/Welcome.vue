@@ -27,14 +27,30 @@
             </div>
             <div class="right-content-wrap">
                <div class="right-content">
-                  <el-card>
-                     <template #header>
+                  <div class="right-menu">
+                     <div class="menu-card" @click="toClaimPortal">
+                        <div class="menu-card-left"></div>
+                        <span class="route-name">认领门户</span>
+                     </div>
+                     <div class="menu-card" @click="toCollection">
+                        <div class="menu-card-left"></div>
+                        <span class="route-name">收藏夹</span>
+                     </div>
+                     <div class="menu-card" @click="toFollowList">
+                        <div class="menu-card-left"></div>
+                        <span class="route-name">关注列表</span>
+                     </div>
+                     <div class="menu-card" @click="toChat">
+                        <div class="menu-card-left"></div>
+                        <span class="route-name">学术助手</span>
+                     </div>
+                  </div>
+                  <div class="right-yiyan">
                         <div class="yiyan">一言</div>
-                     </template>
                      <div class="text">{{ oneWord.hitokoto }}</div>
                      <div class="text">{{ oneWord.from_who }}</div>
                      <div class="text">{{ oneWord.from }}</div>
-                  </el-card>
+                  </div>
                </div>
             </div>
          </div>
@@ -46,12 +62,14 @@ import Main from "./Main.vue";
 import { Search } from "../../api/search.js";
 import WorksResCard from "../search/WorksResCard.vue";
 import SandboxLoading from "../../components/Loading/SandboxLoading.vue";
+import { useRouter } from "vue-router";
 const recommendByCount = ref([]);
 const recommendByDate = ref([]);
 const activeName = ref("count");
 const oneWord = ref({});
 const curPage = ref(1);
 const loading = ref(true);
+const router = useRouter();
 const itemIndex = computed(() => {
    return (curPage.value - 1) * 5;
 })
@@ -66,6 +84,18 @@ const getOneWord = () => {
 const goHeader = () => {
    document.getElementById("recommend")
       .scrollIntoView({ behavior: 'smooth' });
+}
+const toCollection = () => {
+    router.push({ name: "Collection" });
+}
+const toChat = () => {
+    router.push({ name: "Chat" });
+}
+const toFollowList = () => {
+    router.push({ name: "FollowList" });
+}
+const toClaimPortal = () => {
+    router.push({ name: "ClaimPortal" });
 }
 onMounted(() => {
    Search.getRecommendedView({}).then((res) => {
@@ -92,6 +122,16 @@ onMounted(() => {
 .el-card{
    background-color: #f0f0f0;
 }
+:deep(.is-active) {
+    color: rgb(162, 143, 42);
+}
+:deep(.el-tabs__active-bar) {
+    background-color: rgb(162, 143, 42);
+}
+
+:deep(.el-tabs__item:hover) {
+    color: rgb(162, 143, 42);
+}
 .content {
    position: relative;
    z-index: 1;
@@ -100,7 +140,6 @@ onMounted(() => {
 
    .left-content-wrap {
       flex: 1;
-
       .left-content {
          margin: 0 5vw;
          height: 100%;
@@ -126,19 +165,67 @@ onMounted(() => {
       width: 30vw;
       .right-content {
          width: 80%;
-         margin: 3rem auto;
+         margin: 3.5rem auto;
          text-align: center;
-
-         .yiyan {
+         .right-menu{
+            width: 100%;
+            border-radius: 2px;
+            box-shadow: 3px 3px 3px 3px #dedede;
+            .menu-card{
+               margin: 5px 0px 5px 0px;
+               position: relative;
+               padding: 17px 0 7px 20px;
+               border-radius: 2px;
+               height: 70px;
+               background-color: #f0f0f0;
+               box-shadow: 3px 3px 0px 0px #cfcfcf;
+            }
+            .menu-card:hover {
+               background-color: #c2c2c2;
+            }
+            .menu-card-left{
+               position: absolute;
+               width: 7px;
+               height: 30px;
+               left: 0;
+               top: 20px;
+               background-color: black;
+            }
+            .route-name{
+               font-size: 20px;
+               font-weight: 800;
+               text-align: left;
+               display: flex;
+               align-items: center;
+               height: 80%;
+               width: 100%;
+               cursor: pointer;
+            }
+            .route-name:hover{
+               color: white;
+            }
+         }
+         .right-yiyan{
+            margin-top: 2rem;
+            border-radius: 2px;
+            box-shadow: 3px 3px 3px 3px #dedede;
+            padding: 1rem;
+            padding-top: 10px;
+            .yiyan {
             font-weight: 800;
+            font-size: 20px;
+            padding: 1rem;
             text-align: center;
+            border-bottom: #f0f0f0 3px solid;
          }
 
          .text {
             margin-top: 1rem;
-            font-size: large;
+            font-size: 1.2rem;
+            line-height: 1.5rem;
             font-weight: bold;
             color: rgba(121, 116, 116, 0.9);
+         }
          }
 
          .text:last-child {
@@ -146,7 +233,7 @@ onMounted(() => {
          }
       }
    }
-   @media screen and (max-width: 768px) {
+   @media screen and (max-width: 1120px) {
       .right-content-wrap {
          display: none;
       }
