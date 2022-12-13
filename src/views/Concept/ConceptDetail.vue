@@ -6,7 +6,13 @@
     <!-- 上半部分：基本信息 -->
     <div class="top_card">
         <div class="pic">
-            <el-image style="width: 150px; height: 150px" :src="conceptInfo.image_thumbnail_url" fit="fill" />
+            <el-image style="width: 130px; height: 130px" :src="conceptInfo.image_thumbnail_url" fit="fill">
+              <template #error>
+                <div style="width: 130px; height: 130px">
+                  <el-icon class="erroricon"><icon-picture /></el-icon>
+                </div>
+              </template>
+            </el-image>
         </div>
         <div class="word">
             <span class="title">
@@ -105,7 +111,9 @@ import { Concept } from "../../api/concept";
 import PaperAndData from "../../components/Concept/PaperAndData.vue";
 
 const route = useRoute();
-const conceptid = route.params.tokenid;
+const conceptid = reactive({
+  id: route.params.tokenid
+});
 const conceptInfo = ref();
 const conceptPaperList = ref([]);
 const associatedConceptList = ref([]);
@@ -119,12 +127,12 @@ onMounted(() => {
   Concept.GetConceptDetail({
     entity_type: "concepts",
     params: {
-      id: conceptid,
+      id: conceptid.id,
     },
   })
     .then((res) => {
       if (res.data.result == 1) {
-        console.log(conceptid)
+        console.log(conceptid.id)
         conceptInfo.value = res.data.single_data;
         console.log("displayname", conceptInfo.value.display_name)
         isLoading.value = false;
@@ -138,7 +146,7 @@ onMounted(() => {
     entity_type: "works",
     params: {
       filter: {
-        "concepts.id": conceptid,
+        "concepts.id": conceptid.id,
       },
       page: 1,
       per_page: countPerPage,
@@ -146,12 +154,44 @@ onMounted(() => {
   });
 });
 
+function init(){
+ conceptid.id = route.params.tokenid
+  Concept.GetConceptDetail({
+    entity_type: "concepts",
+    params: {
+      id: conceptid.id,
+    },
+  })
+    .then((res) => {
+      if (res.data.result == 1) {
+        console.log(conceptid.id)
+        conceptInfo.value = res.data.single_data;
+        console.log("displayname", conceptInfo.value.display_name)
+        isLoading.value = false;
+        UpdateAssociatedConcept(1);
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  getPaperList({
+    entity_type: "works",
+    params: {
+      filter: {
+        "concepts.id": conceptid.id,
+      },
+      page: 1,
+      per_page: countPerPage,
+    },
+  });
+}
+
 const changePage = async (page) => {
   let data = {
     entity_type: "works",
     params: {
       filter: {
-        "concepts.id": conceptid,
+        "concepts.id": conceptid.id,
       },
       page: page,
       per_page: countPerPage,
@@ -201,6 +241,10 @@ function jumpTo(id){
 const getChineseName = (name) => {
   return name["zh-cn"] || name["zh-hans"] || name.zh;
 };
+
+watch(()=>route.params.tokenid, (newval)=>{
+  if(newval != undefined) init()
+})
 </script>
 
 <style scoped>
@@ -217,8 +261,8 @@ const getChineseName = (name) => {
 .top_card {
   width: 70%;
   margin: 0.5% 0 0.5% 0;
-  height: 40%;  
-  background-color: white;
+  height: 40%;
+  background-color: rgb(236, 236, 236);
   box-shadow: 3px 3px 3px 3px #dedede;
 }
 
@@ -298,7 +342,7 @@ const getChineseName = (name) => {
 
 .top_card {
     width: 90%;
-    background-color: #fff;
+    background-color: rgb(247, 247, 247);
     border-radius: 3px;
     box-shadow: 2px 2px 2px 2px #dedede;
     /* height: 100%; */
@@ -331,14 +375,14 @@ const getChineseName = (name) => {
 .word {
     position: relative;
     left: 10%;
-    width: 70%;
+    width: 75%;
     background-color: #fff;
     /* 30px */
     margin-left: 5%;
     /* 15px */
     margin-top: 0.9375rem;
     padding: 0.9375rem;
-    /* box-shadow: 0 0.3125rem 0.5rem rgb(0 0 0 / 10%); */
+    box-shadow: 0 0.3125rem 0.5rem rgb(0 0 0 / 10%);
     background: #fff;
     word-break: break-word;
     margin-bottom: 2vh;
@@ -348,12 +392,12 @@ const getChineseName = (name) => {
 
 .pic {
     position: absolute;
-    left: 10vw;
-    top: 13vh;
+    left: 11vw;
+    top: 15vh;
     background-color: rgb(0, 0, 0);
     border-radius: 50%;
-    width: 120px;
-    height: 120px;
+    width: 130px;
+    height: 130px;
     z-index: 10;
     overflow: hidden;
     border: #999 solid 1px;
@@ -397,5 +441,41 @@ const getChineseName = (name) => {
 
 .hbb:hover {
     background-color: white;
+}
+
+::v-deep .demo-image__error .image-slot {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background: var(--el-fill-color-light);
+  color: rgb(206, 206, 206);
+  font-size: 30px;
+}
+::v-deep .demo-image__error .image-slot .el-icon {
+  font-size: 30px;
+}
+::v-deep .demo-image__error .block {
+  padding: 30px 0;
+  text-align: center;
+  border-right: solid 1px var(--el-border-color);
+  display: inline-block;
+  width: 49%;
+  box-sizing: border-box;
+  vertical-align: top;
+}
+::v-deep .demo-image__error .demonstration {
+  display: block;
+  color: var(--el-text-color-secondary);
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.erroricon{
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+  color: white;
 }
 </style>
