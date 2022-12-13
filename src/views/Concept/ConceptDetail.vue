@@ -1,7 +1,7 @@
 <template>
-  <el-icon v-if="isLoading" class="is-loading">
-    <Loading />
-  </el-icon>
+  <div v-if="isLoading">
+    <SandboxLoading />
+  </div>
   <div v-else class="common_layout">
     <!-- 上半部分：基本信息 -->
     <div class="top_card">
@@ -103,6 +103,7 @@
 <script setup>
 import { Concept } from "../../api/concept";
 import PaperAndData from "../../components/Concept/PaperAndData.vue";
+import SandboxLoading from "../../components/Loading/SandboxLoading.vue";
 
 const route = useRoute();
 const conceptid = route.params.tokenid;
@@ -127,7 +128,6 @@ onMounted(() => {
         console.log(conceptid)
         conceptInfo.value = res.data.single_data;
         console.log("displayname", conceptInfo.value.display_name)
-        isLoading.value = false;
         UpdateAssociatedConcept(1);
       }
     })
@@ -166,6 +166,7 @@ const getPaperList = async (data) => {
       if (res.data.result == 1) {
         pageTotalSize.value = res.data.list_of_data[0].meta.count;
         conceptPaperList.value = res.data.list_of_data[0].results;
+        isLoading.value = false;
       }
     })
     .catch((err) => {

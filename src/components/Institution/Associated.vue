@@ -6,9 +6,10 @@
         class="institution-card"
         v-for="(item, index) in institutionList"
         :key="index"
+        @click="toInstitution(item)" 
       >
         <div class="associate-left"></div>
-        <ul class="list-item" @click="toInstitution(item)">
+        <ul class="list-item">
           <li class="associated-name-li">
             <span class="associated-name" :title="item.display_name">
               {{ item.display_name }}
@@ -115,6 +116,8 @@ const toInstitution = (item) => {
   position: relative;
   padding: 17px 0 7px 20px;
   box-shadow: 3px 3px 0px 0px #dedede;
+  background-color: #f0f0f0;
+  cursor: pointer;
 }
 
 .institution-card:hover {
@@ -161,15 +164,11 @@ const toInstitution = (item) => {
   height: 30px;
   left: 0;
   top: 20px;
-  background-color: rgb(162, 143, 42);
+  background-color: black;
 }
 
 .list-item {
   cursor: pointer;
-}
-
-.list-item:hover {
-  color: rgb(162, 143, 42);
 }
 
 .right-arrow-li {
