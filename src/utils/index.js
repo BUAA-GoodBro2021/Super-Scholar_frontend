@@ -64,7 +64,10 @@ function escapeRegExp(string) {
 }
 
 
-// 方法四
+/**
+ * @description 数字千分位显示
+ * @return string
+ */
 export function toThousands(num) {
 	var num = (num || 0).toString(), result = '';
 	while (num.length > 3) {
