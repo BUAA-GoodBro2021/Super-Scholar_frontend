@@ -1,6 +1,6 @@
 <template>
     <div class="brief_main_wrap">
-        <div class="title_profile">
+        <div style="display:grid">
             <div v-html="paperInfo.display_name" style="font-size:2rem"></div>
             <el-divider></el-divider>
             <div class="authors" v-if="paperInfo.authorships">
@@ -178,7 +178,7 @@ export default defineComponent({
     vertical-align: top;
 }
 .href_text {
-    color: rgb(117, 117, 117);
+    color: rgb(48, 48, 48);
     background-color: transparent;
     transition: .2s;
     cursor:pointer;
