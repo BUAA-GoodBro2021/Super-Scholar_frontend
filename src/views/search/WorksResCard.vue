@@ -116,7 +116,7 @@
             
             <!-- TODO 添加收藏夹的浮窗 -->
             <li v-if="notInCollection">
-              <div class="card-tool-btn">
+              <div class="card-tool-btn" @click="showFav">
                 <i class="iconfont icon-folderplus-fill"></i>
                 <!-- <i class="iconfont icon-folder-add-fill"></i> -->
                 <span class="card-btn-hint">
@@ -196,6 +196,60 @@
       </div>
     </transition>
   </teleport>
+
+  <teleport to='body' >
+    <!-- 蒙版 -->
+    <transition name="fade">
+      <div v-if="favDialogVisible" 
+        class="dialog-container" 
+        @click="favDialogVisible = false"></div>
+    </transition>
+    <!-- 浮窗 -->
+    <transition name="up" v-loading="favLoading">
+      <div v-if="starDialogVisible" class="dialog-window">
+        <!-- 标题 -->
+        <div class="dialog-title">收藏此文献</div>
+        <!-- 文本 -->
+        <div v-if="collections.length != 0" class="dialog-content" style="white-space: pre-wrap;">
+            <el-scrollbar max-height="400px">
+            <el-checkbox 
+              class="cb" 
+              v-for="(collection, index) in collections" 
+              :key="index" 
+              @change="starChanged(collection)" 
+              :checked="amInCol.find((col,idx,arr)=>{return col.package_id == collection.id})!=null" 
+              size="large" border 
+              style="width:95%;margin-bottom:20px;border-raidus:0px"
+            >
+                <el-tag
+                    type="info"
+                    effect="light"
+                    round
+                >{{collection.sum}}</el-tag>
+                &nbsp;&nbsp;&nbsp;
+                {{collection.name}}
+                
+            </el-checkbox>
+        </el-scrollbar>
+        </div>
+        <div v-else>
+          您还没有创建收藏夹。
+        </div>
+        <!-- 按钮 -->
+        <div class="dialog-btn-wrapper">
+          <button class="dialog-cancel-btn" @click="starDialogVisible = false" style="margin-right: 8px;">
+            取消
+            <span></span>
+          </button>
+          <button class="dialog-confirm-btn" @click="likeIt();starDialogVisible = false" style="margin-right: 8px;">
+            确定
+            <span></span>
+          </button>
+        </div>
+      </div>
+    </transition>
+  </teleport>
+
 </template>
 
 <script setup>
@@ -314,6 +368,20 @@ const getBiBTeX = (paperInfo) => {
   console.log(bibtex.value);
   return bibtex.value;
 };
+
+// 收藏
+const favDialogVisible = ref(false)
+const favLoading = ref(true)
+const collections = ref([])
+const amInCol = ref([])
+
+async function showFav(){
+  favLoading.value = false
+  favDialogVisible.value = true
+  amInCol.value = await Collection.GetCollectionListByPaper({"work_id":props.item.id.substring(21)})
+  console.log(amInCol.value)
+}
+
 </script>
 
 <style scoped>
