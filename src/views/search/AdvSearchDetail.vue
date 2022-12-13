@@ -192,7 +192,7 @@
                 <div class="search-num-info">
                   <span class="left-border-span"></span>
                   <div class="search-num-info-detail">
-                    <span class="hitlength">{{totalSearchResNum}}</span>
+                    <span class="hitlength">{{ toThousands(totalSearchResNum) }}</span>
                     <span> Results</span>
                     <span> for: </span>
                   </div>
@@ -251,12 +251,13 @@
                 </div>
               </div>
               <!-- 搜索结果主体 -->
-              <ul class="rlist">
+              <ul class="rlist" v-show="totalSearchResNum">
                 <!-- 单个搜索结果卡片 -->
                 <li class="result-item" v-for="item in searchDataList">
                   <component :is="searchResCard[searchStore.searchType]" :item="item" />
                 </li>
               </ul>
+              <ElEmpty v-show="!totalSearchResNum" description="No Result Found"/>
               <!-- 分页器，由于分页只能取到前1万条数据，这里做一个限制 -->
               <div class="search-result__pagination">
                 <div class="pagination-container">
@@ -323,10 +324,11 @@ const pageSizeArray = [5, 10, 20];
 </script>
 
 <script setup>
+import { toThousands } from '../../utils';
 import { Search } from '../../api/search';
 import { useSearchStore } from '../../stores/search';
 import { onMounted, reactive, ref, watch } from 'vue';
-import { ElButton, ElCheckbox, ElCheckboxGroup, ElDatePicker, ElNotification, ElOption, ElSelect, ElPagination } from 'element-plus';
+import { ElCheckbox, ElCheckboxGroup, ElDatePicker, ElEmpty, ElNotification, ElOption, ElSelect, ElPagination } from 'element-plus';
 import AdvSearchInput from '../../components/SearchInput/AdvSearch.vue';
 import WorksResCard from './WorksResCard.vue';
 import AuthorsResCard from './AuthorsResCard.vue';
@@ -1307,6 +1309,33 @@ const handleAllTypeSortSearch = async (newSortType) => {
 
 .hide {
   visibility: hidden;
+}
+
+.el-checkbox__input.is-checked .el-checkbox__inner {
+  background-color: black;
+  border-color: black;
+}
+.el-checkbox__inner:hover {
+  border-color: black;
+}
+.el-checkbox__input.is-checked+.el-checkbox__label {
+  color: black;
+  font-weight: bold;
+}
+.pagination-container .el-pager li.is-active {
+  cursor: default;
+  color: black;
+  font-weight: bold;
+}
+.pagination-container .el-pager li:hover {
+  color: black;
+  font-weight: bold;
+}
+.pagination-container .el-pagination button:hover {
+  color: black;
+}
+.pagination-container .el-input__wrapper.is-focus {
+  box-shadow: 0 0 0 1px black;
 }
 </style>
 

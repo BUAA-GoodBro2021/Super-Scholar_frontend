@@ -9,21 +9,19 @@
             </router-link>
         </div>
         <div class="avatar">
-            <UserInfo v-if="globalStore.isAuth"/>
+            <UserInfo/>
         </div>
     </div>
 </template>
 <script setup>
 import UserInfo from "./UserInfo.vue";
-import { useDark, useToggle, useWindowScroll, useWindowSize } from '@vueuse/core';
+import { useWindowScroll, useWindowSize } from '@vueuse/core';
 import { useRoute } from "vue-router";
 import {useGlobalStore} from "../../stores/global";
 const globalStore = useGlobalStore();
 const route = useRoute();
 const { x, y } = useWindowScroll();
 const { width, height } = useWindowSize();
-const isDark = useDark();
-const onDarkChange = useToggle(isDark);
 const checkRouteName = ()=>{
     return route.name==="Welcome"|| route.name==="Login" || route.name==="Register";
 }
@@ -39,9 +37,6 @@ watch(y,(y)=>{
     }
 })
 onMounted(()=>{
-    if(isDark.value){
-        onDarkChange();
-    }
 })
 
 </script>

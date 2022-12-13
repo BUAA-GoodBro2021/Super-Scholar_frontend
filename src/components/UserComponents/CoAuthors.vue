@@ -182,7 +182,6 @@ const PageChange = () => {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    
 }
 
 .author-card .coauthor-name {

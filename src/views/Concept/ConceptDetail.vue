@@ -68,36 +68,48 @@
           @changePage="changePage"
         />
       </div>
-      <div class="right">
-          <!-- <div style="font-size: 1.4em; margin-top: 3vh; margin-left: 1vw; margin-bottom: 2vh">相关概念</div>
-          <div v-for="(item, index) in conceptInfo.related_concepts" class="hbb">
-              <a :href="'https://scholar.super2021.com/client/concept/' + item.id.slice(21)" target="_blank" class="href_box">
-                    <span class="related_hrefs">{{item.display_name}}</span>
-                    <el-icon class="arrow"><Right /></el-icon>
-              </a>
-          </div> -->
-        <el-collapse :model-value="['1','2']">
-          <el-collapse-item title="&nbsp;&nbsp;父级概念" name="1">
-            <el-scrollbar max-height="80vh">
-                <div v-for="(item, index) in conceptInfo.ancestors" class="hbb">
-                  <a :href="'https://scholar.super2021.com/client/concept/' + item.id.slice(21)" target="_blank" class="href_box">
-                        <span class="related_hrefs">{{item.display_name}}</span>
-                        <el-icon class="arrow"><Right /></el-icon>
-                  </a>
-                </div>
-            </el-scrollbar>
-          </el-collapse-item>
-          <el-collapse-item title="&nbsp;&nbsp;相关概念" name="2">
-            <el-scrollbar max-height="100vh">
-                <div v-for="(item, index) in conceptInfo.related_concepts" class="hbb">
-                  <a :href="'https://scholar.super2021.com/client/concept/' + item.id.slice(21)" target="_blank" class="href_box">
-                        <span class="related_hrefs">{{item.display_name}}</span>
-                        <el-icon class="arrow"><Right /></el-icon>
-                  </a>
-                </div>
-            </el-scrollbar>
-          </el-collapse-item>
-        </el-collapse>
+      <div class="rightBox">
+        <div class="right">
+            <!-- <div style="font-size: 1.4em; margin-top: 3vh; margin-left: 1vw; margin-bottom: 2vh">相关概念</div>
+            <div v-for="(item, index) in conceptInfo.related_concepts" class="hbb">
+                <a :href="'https://scholar.super2021.com/client/concept/' + item.id.slice(21)" target="_blank" class="href_box">
+                      <span class="related_hrefs">{{item.display_name}}</span>
+                      <el-icon class="arrow"><Right /></el-icon>
+                </a>
+            </div> -->
+          <el-collapse :model-value="['1','2']">
+            <el-collapse-item title="&nbsp;&nbsp;父级概念" name="1" class="noBorder">
+              <el-scrollbar max-height="80vh">
+                  <div v-for="(item, index) in conceptInfo.ancestors" class="hbb">
+                    <a :href="'https://scholar.super2021.com/client/concept/' + item.id.slice(21)" target="_blank" class="href_box">
+                          <svg style="margin: 0; padding: 0; width: 8; height: 8;">
+                              <rect width="5" height="7"
+                              style="fill:rgb(0,0,0);stroke-width:1;stroke:rgb(0,0,0)"/>
+                          </svg>
+                          <span>&nbsp;&nbsp;</span>
+                          <span class="related_hrefs">{{item.display_name}}</span>
+                          <el-icon class="arrow"><Right /></el-icon>
+                    </a>
+                  </div>
+              </el-scrollbar>
+            </el-collapse-item>
+            <el-collapse-item title="&nbsp;&nbsp;相关概念" name="2">
+              <el-scrollbar max-height="100vh">
+                  <div v-for="(item, index) in conceptInfo.related_concepts" class="hbb">
+                    <a :href="'https://scholar.super2021.com/client/concept/' + item.id.slice(21)" target="_blank" class="href_box">
+                          <svg style="margin: 0; padding: 0; width: 8; height: 10;">
+                              <rect width="5" height="7"
+                              style="fill:rgb(0,0,0);stroke-width:1;stroke:rgb(0,0,0)"/>
+                          </svg>
+                          <span>&nbsp;&nbsp;</span>
+                          <span class="related_hrefs">{{item.display_name}}</span>
+                          <el-icon class="arrow"><Right /></el-icon>
+                    </a>
+                  </div>
+              </el-scrollbar>
+            </el-collapse-item>
+          </el-collapse>
+        </div>
       </div>
     </div>
   </div>
@@ -401,13 +413,20 @@ watch(()=>route.params.tokenid, (newval)=>{
 }
 
 .right {
-    width: 90%;
+    min-width: 100%;
     background-color: rgb(247, 247, 247);
     border-radius: 3px;
     box-shadow: 2px 2px 2px 2px #dedede;
-    /* height: 100%; */
-    margin-bottom: 4vh;
-    height: auto;
+    /* margin-bottom: 2vh; */
+    position: sticky;
+    top: 70px;
+}
+.rightBox{
+    width: 30%;
+    background-color: rgb(247, 247, 247);
+    border-radius: 3px;
+    box-shadow: 2px 2px 2px 2px #dedede;
+    /* height: auto; */
 }
 
 .href_box {
@@ -416,11 +435,13 @@ watch(()=>route.params.tokenid, (newval)=>{
     color: rgb(117, 117, 117);
     background-color: transparent;
     text-decoration: none;
-    width: 90%;
-    height: 3vh;
+    width: 95%;
+    height: 4vh;
     padding-top: 2vh;
     padding-left: 1vw;
     transition: .2s;
+    border-top: 1px solid #999;
+    margin: auto 0;
 }
 
 .href_box:hover {
@@ -474,5 +495,14 @@ watch(()=>route.params.tokenid, (newval)=>{
   width: 100%;
   height: 100%;
   color: white;
+}
+
+::v-deep .el-collapse-item__header.is-active {
+    background-color: rgb(247, 247, 247);
+    /* border-top: 1px solid #999; */
+}
+
+::v-deep .el-collapse-item__content {
+    padding-bottom: 5px;
 }
 </style>

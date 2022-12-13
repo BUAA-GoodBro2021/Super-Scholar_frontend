@@ -32,10 +32,7 @@ export const useGlobalStore = defineStore({
       this.language = language;
     },
     logout(){
-      this.token = null;
-      this.userInfo = null;
-      this.language = null;
-      localStorage.clear();
+      this.token = "";
     }
   },
 })
