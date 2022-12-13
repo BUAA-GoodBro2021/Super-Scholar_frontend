@@ -6,7 +6,7 @@
     <!-- 上半部分：基本信息 -->
     <div class="top_card">
         <div class="pic">
-            <el-image style="width: 130px; height: 130px" :src="conceptInfo.image_thumbnail_url" fit="fill">
+            <el-image style="width: 130px; height: 130px" :src="conceptInfo.image_url" fit="fill">
               <template #error>
                 <div style="width: 130px; height: 130px">
                   <el-icon class="erroricon"><icon-picture /></el-icon>
@@ -167,7 +167,6 @@ function init(){
         console.log(conceptid.id)
         conceptInfo.value = res.data.single_data;
         console.log("displayname", conceptInfo.value.display_name)
-        isLoading.value = false;
         UpdateAssociatedConcept(1);
       }
     })
@@ -205,9 +204,6 @@ const getPaperList = async (data) => {
     .then((res) => {
       if (res.data.result == 1) {
         pageTotalSize.value = res.data.list_of_data[0].meta.count;
-        if(pageTotalSize.value > 10000){
-          pageTotalSize = 10000;
-        }
         conceptPaperList.value = res.data.list_of_data[0].results;
         isLoading.value = false;
       }
