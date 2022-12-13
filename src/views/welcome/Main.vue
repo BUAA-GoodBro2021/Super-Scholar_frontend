@@ -103,8 +103,9 @@ onMounted(() => {
 <style lang="scss" scoped>
    @media screen and (min-height: 794px) {
       .earth {
-         display: block;
-         top: 15vh;
+         left:80%;
+         margin-left: -400px;
+         overflow: hidden;
       }
    }
    .main {

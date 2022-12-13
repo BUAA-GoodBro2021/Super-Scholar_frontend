@@ -124,7 +124,6 @@ onMounted(() => {
    }
    .right-content-wrap {
       width: 30vw;
-
       .right-content {
          width: 80%;
          margin: 3rem auto;
