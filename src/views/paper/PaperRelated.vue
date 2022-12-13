@@ -46,13 +46,13 @@ const props = defineProps({
 })
 function getColor(s){
     if(s>0.5){
-        return "#ffe25e"
+        return "#000"
     }else if(s>0.3){
-        return "#cfbb45"
+        return "#888"
     }else if(s>0.1){
-        return "#998e52"
+        return "#bbb"
     }else{
-        return "grey"
+        return "#ddd"
     }
 }
 function gotoPaper(concept){
@@ -100,7 +100,7 @@ onMounted(() => {
     width: 90%;
     height: 40px;
     line-height: 40px;
-    border-left:10px rgb(162, 143, 42) solid;
+    border-left:10px rgb(202, 202, 202) solid;
     padding-left:5px
 }
 .href_text {
@@ -136,7 +136,7 @@ onMounted(() => {
   }
 
   .ppg{
-    border-left: 5px #998e52 solid;
+    border-left: 5px #8f8f89 solid;
     padding: 3px;
     margin-bottom:5px;
     box-shadow: 1px 1px 1px 1px #dedede;
