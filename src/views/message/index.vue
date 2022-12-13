@@ -1,4 +1,7 @@
 <template>
+   <div v-if="loading">
+      <SandboxLoading/>
+   </div>
    <div class="chat">
       <div class="chat-left">
          <el-menu default-active="1" @select="handleSelect">
@@ -56,7 +59,9 @@ import {
    Document,
    Menu as IconMenu,
 } from '@element-plus/icons-vue'
+import SandboxLoading from "../../components/Loading/SandboxLoading.vue";
 const curKey = ref(1);
+const loading = ref(true);
 const handleSelect = (key, keyPath) => {
    curKey.value = key;
    checkedList.value.length = 0;
@@ -117,6 +122,7 @@ const getList = ()=>{
                break;
          }
       })
+      loading.value = false;
       ElNotification({
          message: res.data.message,
          type: "success",

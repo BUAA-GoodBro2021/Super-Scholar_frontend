@@ -56,7 +56,9 @@ const responses = ref([
   {
     id: Date.now(),
     username: 'ChatGPT',
-    text: '你好呀，我是Super Scholar 学术AI小助手，有什么学术领域上的问题，可以随时询问我哦！比如深度学习领域最有影响力的论文是哪些，这些我都是可以回答的呢。',
+    text: `你好呀，我是Super Scholar 学术AI小助手，有什么学术领域上的问题，可以随时询问我哦！比如:<br/>
+    深度学习领域最有影响力的论文是哪些，并给出对应网址。<br/>
+    计算机视觉领域知名学者有哪些，他们有哪些代表作品？<br/>`,
   },
 ]);
 const chatRoom = ref();
@@ -176,7 +178,7 @@ background-color: transparent !important;
   font-weight: 600;
 }
 .chat-index{
-  line-height: 1rem;
+  line-height: 1.5rem;
   margin-top: 1rem;
   text-align: left;
 }
