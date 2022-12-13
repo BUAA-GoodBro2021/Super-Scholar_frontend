@@ -73,13 +73,14 @@ import 'element-plus/theme-chalk/display.css'
   const props = defineProps({
     journalInfo: Object,
   });
-  const coverTitleSize=ref("20px")
+  const coverTitleSize=ref("15px")
   const random = ref(-1)
   function rnd( seed ){
     seed = ( seed * 9301 + 49297 ) % 233280; //为何使用这三个数?
     return seed / ( 233280.0 );
 };
 const tmpCounts = ref([])
+const colors = ['#d7ab82', '#919e8b', '#919e8b'];
 onMounted(
   ()=>{
     var sum = 0
@@ -108,6 +109,7 @@ onMounted(
             // title:{
             //     text:"论文被引量逐年变化"
             // },
+            color:colors,
             tooltip: {
               trigger: 'axis',
               axisPointer: { type: 'cross' }
@@ -151,10 +153,21 @@ onMounted(
     )
     nextTick(
     ()=>{
-      if(props.journalInfo.display_name.length<6){
-        coverTitleSize.value = "40px"
-      }else if(props.journalInfo.display_name.length<16){
-        coverTitleSize.value = "28px"
+      var a = /([\u4e00-\u9fa5]|[\ufe30-\uffa0])/;
+      if(a.test(props.journalInfo.display_name)){
+        if(props.journalInfo.display_name.length<6){
+          coverTitleSize.value = "30px"
+        }else if(props.journalInfo.display_name.length<16){
+          coverTitleSize.value = "15px"
+        }
+      }else{
+        if(props.journalInfo.display_name.length<6){
+          coverTitleSize.value = "40px"
+        }else if(props.journalInfo.display_name.length<16){
+          coverTitleSize.value = "28px"
+        }else if(props.journalInfo.display_name.length<25){
+          coverTitleSize.value = "18px"
+        }
       }
     }
   )

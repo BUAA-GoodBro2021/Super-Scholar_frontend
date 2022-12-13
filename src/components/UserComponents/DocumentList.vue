@@ -252,7 +252,9 @@ const toDocument = (item) => {
 }
 
 .document_title:hover{
-    color: rgb(162, 143, 42);
+    /*黄金之风*/
+    /* color: rgb(162, 143, 42); */
+    color: white;
 }
 
 .authors_wrap {
@@ -288,7 +290,8 @@ const toDocument = (item) => {
 }
 
 :deep(.el-table tr:hover>td.el-table__cell) {
-    background-color: #b7b7a8;
+    /* background-color: #b7b7a8; */
+    background-color: #cfcfcf;
 }
 
 :deep(.el-table th) {
@@ -323,7 +326,8 @@ const toDocument = (item) => {
 .document-btn {
     width: 70px;
     height: 37px;
-    background-color: rgb(87, 146, 211);
+    /* background-color: rgb(87, 146, 211); */
+    background-color: rgb(76 98 121);
     font-size: 0.8rem;
     color: white;
     border: none;
@@ -335,12 +339,16 @@ const toDocument = (item) => {
 }
 
 .no-pdf-btn {
-    background-color: rgb(164, 41, 41);
+    /**黄金之风 */
+    /* background-color: rgb(164, 41, 41); */
+    background-color: rgb(211, 176, 87);
     cursor: default;
 }
 
 .no-pdf-btn:hover {
-    background-color: rgba(164, 41, 41, 0.83);
+    /**黄金之风 */
+    /* background-color: rgba(164, 41, 41, 0.83); */
+    background-color: rgba(211, 176, 87, 0.893);
 }
 
 .check-pdf-btn {
@@ -353,12 +361,16 @@ const toDocument = (item) => {
 }
 
 .to-pdf-btn {
-    background-color: rgb(162, 143, 42);
+    /**黄金之风 */
+    /* background-color: rgb(162, 143, 42); */
+    background-color: #9c9c9c;
     cursor: pointer;
 }
 
 .to-pdf-btn:hover{
-    background-color: rgba(211, 176, 87, 0.893);
+    /**黄金之风 */
+    /* background-color: rgba(211, 176, 87, 0.893); */
+    background-color: #767676;
 }
 
 </style>

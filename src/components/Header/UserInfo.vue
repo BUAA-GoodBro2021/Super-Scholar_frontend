@@ -27,7 +27,7 @@
                     <span class="dropdown-text"><Message/></span>
                 </el-dropdown-item>
                 <el-dropdown-item class="dropdown-item" :icon="Promotion" @click="toChat">
-                    <span class="dropdown-text">AI助手</span>
+                    <span class="dropdown-text">学术助手</span>
                 </el-dropdown-item>
                 <el-dropdown-item class="dropdown-item" :icon="SwitchButton" @click="logout">
                     <span class="dropdown-text">{{$t("header.action1")}}</span>

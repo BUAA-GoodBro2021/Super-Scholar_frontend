@@ -1,7 +1,7 @@
 <template>
     
     <div class="paper-list-wrap" v-loading="loading">
-        <div style="padding:10px;margin-left:100px">
+        <div style="margin-left:100px">
             按照 
             <el-select style="margin:10px" @change="sortChange"  v-model="sortBy">
                 <el-option
@@ -24,10 +24,15 @@
             排序 
             
         </div>
+        <div class="hint" v-if="total > 10000">
+            *由于结果数量超过10,000，出于实用性考虑，列表只会展示相关度排序的前10,000条
+        </div>
         <ul>
             <!-- 单个搜索结果卡片 -->
             <li class="result-item" v-for="(item, index) in paperList">
-                <WorksResCard class="left" :item="item" />
+                <div class="left">
+                    <WorksResCard :item="item" />
+                </div>
                 <div class="right" :id="'paperChart'+index"></div>
             </li>
 
@@ -38,7 +43,7 @@
               :page-size="5"
               @current-change="pageChange"
               hide-on-single-page
-              :total="total" 
+              :total="total <= 10000 ? total : 10000" 
               :current-page="page"
             />
           </div>
@@ -53,7 +58,7 @@ import WorksResCard from "../../views/search/WorksResCard.vue";
 const props = defineProps({
     filter: Object,
 })
-
+const colors = ['#d7ab82', '#919e8b', '#919e8b'];
 const paperList = ref()
 const loading = ref(true)
 const page = ref(1)
@@ -104,7 +109,6 @@ function updateData(){
                 var ySeries = []
                 var tmpCount = []
                 tmpCount.push(...paperList.value[index].counts_by_year)
-                console.log(tmpCount)
                 tmpCount.sort((a,b)=>a.year-b.year)
                 for(var item of tmpCount){
                     xSeries.push(item.year)
@@ -112,6 +116,7 @@ function updateData(){
                 }
                 chart.setOption(
                     {
+                        color:colors,
                         title:{
                             text:"论文被引量逐年变化"
                         },
@@ -168,6 +173,7 @@ window.onresize = function(){
     justify-content: center;
     width: 100%;
     height: 36px;
+    background-color: #fff;
   }
   
   .search-result__list {
@@ -179,32 +185,25 @@ window.onresize = function(){
     width: 100%;
     display: flex;
     font-size: 0.875rem;
-    float:left;
-    background-color: #fff;
     margin-bottom: 10px;
-    border-radius: 3px;
-    box-shadow: 0 0.3125rem 0.5rem rgb(0 0 0 / 10%);
+
   }
   .left {
-    width: 68%;
+    background-color: white;
+    box-shadow: 3px 3px 3px 3px #dedede;
+    width: 60%;
     margin-right: 2%;
   }
   
   .right {
-    width: 30%;
+    width: 38%;
     margin-bottom:30px;
     margin-top:30px;
   }
   
-  @media (max-width: 1200px) {
-  
-    .left {
-      width: 100%;
-      margin: 10px 0 10px 0;
-    }
-  
-    .right {
-      width: 100%;
-    }
-  }
+
+.hint {
+  margin: 20px;
+  font-style: italic;
+}
 </style>

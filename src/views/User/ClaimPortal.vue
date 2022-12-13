@@ -91,7 +91,10 @@
             <SuccessFilled />
         </el-icon>
         <span class="step2-message" style="margin-top: 20px;">管理员将在3天时间内完成审核，请耐心等待。</span>
-        <el-button @click="abandonPortalDialog = true">解除认证</el-button>
+        <div class="step-2-btn-wrap">
+            <el-button @click="toPersonalPage()">回到个人主页</el-button>
+            <el-button @click="abandonPortalDialog = true">解除认证</el-button>
+        </div>
     </div>
     <div class="wrap2" v-if="accountType == 1">
         <el-icon class="step2-icon">

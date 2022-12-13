@@ -613,7 +613,9 @@ watch(() => props.userInfo.is_follow, (newVal) => {
 
 .areas {
     font-size: 15px;
-    color: rgb(162, 143, 42);
+    /**黄金之风 */
+    /* color: rgb(162, 143, 42); */
+    color: black;
     /* height: 63%; */
     height: 73%;
     width: 100%;
@@ -637,7 +639,9 @@ watch(() => props.userInfo.is_follow, (newVal) => {
   margin-bottom: 5px;
   padding: 3px 4px;
   box-sizing: border-box;
-  border: 1.6px solid rgb(162, 143, 42);
+  /**黄金之风 */
+  /* border: 1.6px solid rgb(162, 143, 42); */
+  border: 1.6px solid black;
   border-radius: 4px;
   font-size: 14px;
   cursor: pointer;

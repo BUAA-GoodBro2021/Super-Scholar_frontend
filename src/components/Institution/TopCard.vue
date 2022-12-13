@@ -16,24 +16,25 @@
             </el-avatar>
           </div>
         </li>
-        <li
-          style="min-width: 60%; height: 100%; max-width: 80%"
-          class="title-profile-li"
-        >
+        <li class="title-profile-li">
           <div class="title_profile">
             <div class="title-profile-block">
               <!-- 机构名称 -->
-              <span class="name">
-                <div class="institution-display-name">
+              <div class="name">
+                <span class="institution-display-name">
                   {{ institutionInfo.display_name }}
-                </div>
-                <div
+                </span>
+                <span
                   class="institution-display-name"
-                  v-if="institutionInfo.international.display_name.zh"
+                  v-if="
+                    getChineseName(institutionInfo.international.display_name)
+                  "
                 >
-                  （{{ institutionInfo.international.display_name.zh }}）
-                </div>
-              </span>
+                  （{{
+                    getChineseName(institutionInfo.international.display_name)
+                  }}）
+                </span>
+              </div>
               <!-- 机构主页地址 -->
               <div
                 v-if="institutionInfo.homepage_url"
@@ -112,6 +113,10 @@ const gotoConcept = (concept) => {
   });
   window.open(href, "_blank");
 };
+
+const getChineseName = (name) => {
+  return name["zh-cn"] || name["zh-hans"] || name.zh;
+};
 </script>
 
 <style scoped>
@@ -159,6 +164,7 @@ const gotoConcept = (concept) => {
   height: 40%;
   line-height: 100%;
   text-align: left;
+  margin: 3% 0%;
 }
 
 .institution-display-name {
@@ -182,6 +188,7 @@ const gotoConcept = (concept) => {
 .title-profile-li {
   padding-left: 3rem;
   min-width: 60%;
+  max-width: 80%;
 }
 
 .organization {
@@ -204,7 +211,7 @@ const gotoConcept = (concept) => {
 
 .concept {
   font-size: 15px;
-  color: rgb(162, 143, 42);
+  /* color: rgb(162, 143, 42); */
   height: 73%;
   width: 100%;
   line-height: 20px;
@@ -224,7 +231,7 @@ const gotoConcept = (concept) => {
   margin-bottom: 5px;
   padding: 3px 5px;
   box-sizing: border-box;
-  border: 1.6px solid rgb(162, 143, 42);
+  border: 1.6px solid;
   border-radius: 5px;
   font-size: 15px;
 }

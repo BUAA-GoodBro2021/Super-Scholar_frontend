@@ -1,23 +1,48 @@
 <template>
-  <div v-if="isLoading">Loading...</div>
+  <div v-if="isLoading">
+    <SandboxLoading />
+  </div>
   <div v-else class="common_layout">
     <!-- 上半部分：基本信息 -->
     <div class="top_card">
         <div class="pic">
-            <el-image style="width: 150px; height: 150px" :src="conceptInfo.image_thumbnail_url" fit="fill" />
+            <el-image style="width: 130px; height: 130px" :src="conceptInfo.image_url" fit="fill">
+              <template #error>
+                <div style="width: 130px; height: 130px">
+                  <el-icon class="erroricon"><icon-picture /></el-icon>
+                </div>
+              </template>
+            </el-image>
         </div>
         <div class="word">
-            <div class="title">
+            <span class="title">
                 <span>{{conceptInfo.display_name}}</span>
-            </div>
+            </span>
+            <span
+              class="title"
+              v-if="getChineseName(conceptInfo.international.display_name)"
+            >
+              （{{ getChineseName(conceptInfo.international.display_name) }}）
+            </span>
             <div class="description">
                 <span>{{conceptInfo.description}}</span>
             </div>
+            <div
+              class="description"
+              v-if="getChineseName(conceptInfo.international.description)"
+            >
+              （{{ getChineseName(conceptInfo.international.description) }}）
+            </div>
             <div class="counts">
+              <div class="organization">
                 <el-icon style="font-size: 1.1em; font-weight: bolder;"><Document /></el-icon>
                 <span>&nbsp;论文数:&nbsp;{{conceptInfo.works_count}}&nbsp;&nbsp;</span>
+              </div>
+              <div class="organization">
                 <el-icon style="font-size: 1.1em; font-weight: bolder;"><Link /></el-icon>
                 <span>&nbsp;引用数:&nbsp;{{conceptInfo.cited_by_count}}&nbsp;&nbsp;&nbsp;&nbsp;</span>
+              </div>
+              <div class="organization">
                 <span class="hrefs">
                     <a :href="conceptInfo.ids.openalex" style="color: rgb(0, 119, 194)" class="hrefs">
                         <i class="iconfont icon-menu"></i>
@@ -28,6 +53,7 @@
                         <span style="font-size: 1.3em">&nbsp;Wiki</span>
                     </a>
                 </span>
+              </div>
             </div>
         </div>
     </div>
@@ -75,14 +101,20 @@
       </div>
     </div>
   </div>
+  <!-- <div style="white-space: pre">
+    {{ conceptInfo }}
+  </div> -->
 </template>
 
 <script setup>
 import { Concept } from "../../api/concept";
-import PaperAndData from "../../components/Concept/PaperAndData";
+import PaperAndData from "../../components/Concept/PaperAndData.vue";
+import SandboxLoading from "../../components/Loading/SandboxLoading.vue";
 
 const route = useRoute();
-const conceptid = route.params.tokenid;
+const conceptid = reactive({
+  id: route.params.tokenid
+});
 const conceptInfo = ref();
 const conceptPaperList = ref([]);
 const associatedConceptList = ref([]);
@@ -96,15 +128,14 @@ onMounted(() => {
   Concept.GetConceptDetail({
     entity_type: "concepts",
     params: {
-      id: conceptid,
+      id: conceptid.id,
     },
   })
     .then((res) => {
       if (res.data.result == 1) {
-        console.log(conceptid)
+        console.log(conceptid.id)
         conceptInfo.value = res.data.single_data;
         console.log("displayname", conceptInfo.value.display_name)
-        isLoading.value = false;
         UpdateAssociatedConcept(1);
       }
     })
@@ -115,7 +146,7 @@ onMounted(() => {
     entity_type: "works",
     params: {
       filter: {
-        "concepts.id": conceptid,
+        "concepts.id": conceptid.id,
       },
       page: 1,
       per_page: countPerPage,
@@ -123,12 +154,43 @@ onMounted(() => {
   });
 });
 
+function init(){
+ conceptid.id = route.params.tokenid
+  Concept.GetConceptDetail({
+    entity_type: "concepts",
+    params: {
+      id: conceptid.id,
+    },
+  })
+    .then((res) => {
+      if (res.data.result == 1) {
+        console.log(conceptid.id)
+        conceptInfo.value = res.data.single_data;
+        console.log("displayname", conceptInfo.value.display_name)
+        UpdateAssociatedConcept(1);
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  getPaperList({
+    entity_type: "works",
+    params: {
+      filter: {
+        "concepts.id": conceptid.id,
+      },
+      page: 1,
+      per_page: countPerPage,
+    },
+  });
+}
+
 const changePage = async (page) => {
   let data = {
     entity_type: "works",
     params: {
       filter: {
-        "concepts.id": conceptid,
+        "concepts.id": conceptid.id,
       },
       page: page,
       per_page: countPerPage,
@@ -143,6 +205,7 @@ const getPaperList = async (data) => {
       if (res.data.result == 1) {
         pageTotalSize.value = res.data.list_of_data[0].meta.count;
         conceptPaperList.value = res.data.list_of_data[0].results;
+        isLoading.value = false;
       }
     })
     .catch((err) => {
@@ -171,6 +234,14 @@ function jumpTo(id){
   router.push('/client/concept/'+id)
   // location.reload()
 }
+
+const getChineseName = (name) => {
+  return name["zh-cn"] || name["zh-hans"] || name.zh;
+};
+
+watch(()=>route.params.tokenid, (newval)=>{
+  if(newval != undefined) init()
+})
 </script>
 
 <style scoped>
@@ -181,12 +252,15 @@ function jumpTo(id){
   justify-content: center;
   align-items: center;
   background-color: rgba(230, 230, 230, 0.234);
+  padding-bottom: 1%;
 }
 
 .top_card {
   width: 70%;
   margin: 0.5% 0 0.5% 0;
   height: 40%;
+  background-color: rgb(236, 236, 236);
+  box-shadow: 3px 3px 3px 3px #dedede;
 }
 
 .article_data_wrap {
@@ -199,6 +273,11 @@ function jumpTo(id){
   width: 68%;
   margin-right: 2%;
   /* box-shadow: 3px 6px 10px 5px #888888; */
+}
+
+.article_data_wrap:deep(.el-tabs__content) {
+  padding-right: 2vw;
+  overflow: visible;
 }
 
 .article_data_wrap .right {
@@ -245,7 +324,7 @@ function jumpTo(id){
 }
 
 .title {
-    font-size: 1.5em;
+    font-size: 30px;
     /* margin-bottom: 2vh; */
     margin-top: 2vh;
 }
@@ -268,9 +347,18 @@ function jumpTo(id){
 }
 
 .counts {
-    font-size: 0.9em;
     color: rgb(94, 94, 94);
     margin-bottom: 1vh;
+}
+
+.organization {
+  font-size: 15px;
+  height: 30%;
+  margin-bottom: 10px;
+  line-height: 100%;
+  text-align: left;
+  display: flex;
+  align-items: center;
 }
 
 .hrefs {
@@ -284,10 +372,10 @@ function jumpTo(id){
 .word {
     position: relative;
     left: 10%;
-    width: 73vw !important;
+    width: 75%;
     background-color: #fff;
     /* 30px */
-    margin-left: 1.875rem;
+    margin-left: 5%;
     /* 15px */
     margin-top: 0.9375rem;
     padding: 0.9375rem;
@@ -296,16 +384,17 @@ function jumpTo(id){
     word-break: break-word;
     margin-bottom: 2vh;
     padding-left: 5vw;
+    font-family: "Times New Roman", Times, "Microsoft YaHei", serif;
 }
 
 .pic {
     position: absolute;
-    left: 10vw;
-    top: 13vh;
+    left: 11vw;
+    top: 15vh;
     background-color: rgb(0, 0, 0);
     border-radius: 50%;
-    width: 120px;
-    height: 120px;
+    width: 130px;
+    height: 130px;
     z-index: 10;
     overflow: hidden;
     border: #999 solid 1px;
@@ -349,5 +438,41 @@ function jumpTo(id){
 
 .hbb:hover {
     background-color: white;
+}
+
+::v-deep .demo-image__error .image-slot {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background: var(--el-fill-color-light);
+  color: rgb(206, 206, 206);
+  font-size: 30px;
+}
+::v-deep .demo-image__error .image-slot .el-icon {
+  font-size: 30px;
+}
+::v-deep .demo-image__error .block {
+  padding: 30px 0;
+  text-align: center;
+  border-right: solid 1px var(--el-border-color);
+  display: inline-block;
+  width: 49%;
+  box-sizing: border-box;
+  vertical-align: top;
+}
+::v-deep .demo-image__error .demonstration {
+  display: block;
+  color: var(--el-text-color-secondary);
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.erroricon{
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+  color: white;
 }
 </style>
