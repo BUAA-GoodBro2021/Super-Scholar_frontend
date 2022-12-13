@@ -44,15 +44,17 @@ const handleDelete = () => {
 <style lang="scss" scoped>
 a {
     text-decoration: none;
+    color: black;
 }
 
 .active {
     text-decoration: line-through;
 }
-
+.el-card{
+    background-color: #f0f0f0;
+}
 .msgCard {
     margin: 1rem;
-
     .title::before {
         content: "";
         width: 5px;
@@ -60,7 +62,7 @@ a {
         position: absolute;
         top: 0;
         left: 0;
-        background: gray;
+        background: black;
     }
 
     .title {
