@@ -90,12 +90,12 @@ const toFollowList = () => {
     width: 10vw;
 }
 .dropdown-item{
-    height: 5vh;
+    height: 3rem;
 }
 .dropdown-text{
     margin-left: 1vw;
 }
-@media screen and (max-width:928px){
+@media screen and (max-width:1175px){
     .dropdown-text{
         display: none;
     }

@@ -5,7 +5,6 @@ import App from './App.vue'
 import router from './router'
 // 导入element plus的CSS
 import 'element-plus/dist/index.css'
-import 'element-plus/theme-chalk/dark/css-vars.css'
 // reset style sheet
 import "./assets//styles/reset.css"
 // 导入element plus的图标
