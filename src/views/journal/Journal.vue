@@ -15,7 +15,8 @@
   import { Search } from "../../api/search";
   import TopCard from "./TopCard.vue"
   import PaperList from "./PaperList.vue"
-  
+  import {showLoading,hideLoading} from "../../components/Loading/index"
+
   const route = useRoute();
   const journalId = route.params.journalid;
   const journalInfo = ref();
@@ -24,6 +25,7 @@
   
   
   onMounted(() => {
+    showLoading()
     Search.single({
       entity_type: "venues",
       params: {
@@ -33,7 +35,7 @@
     .then((res) => {
         journalInfo.value = res.data.single_data;
         isLoading.value = false;
-        console.log(res.data.single_data)
+        hideLoading()
     })
     .catch((err) => {
         console.log(err);

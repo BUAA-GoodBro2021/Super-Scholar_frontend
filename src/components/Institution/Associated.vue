@@ -26,7 +26,7 @@
       </div>
     </div>
     <div v-else class="empty">没有相关机构</div>
-    <div class="associated-pagination">
+    <div class="pagination-wrap">
       <el-pagination
         layout="prev, pager, next"
         :total="institutionTotalSize"
@@ -91,13 +91,21 @@ const toInstitution = (item) => {
   overflow-y: auto;
 }
 
-.associated-pagination {
+.pagination-wrap {
   margin-top: 5%;
   bottom: 0;
   display: flex;
   justify-content: center;
   width: 100%;
   height: 36px;
+}
+
+:deep(.pagination-wrap .is-active) {
+    color: #d5d3c9 !important;
+}
+
+:deep(.pagination-wrap .el-pager li:hover) {
+    color:rgb(144 144 144);
 }
 
 ::-webkit-scrollbar {
@@ -137,7 +145,7 @@ const toInstitution = (item) => {
 
 .institution-card li {
   list-style: none;
-  margin-right: 20px;
+  margin-right: 5%;
   display: inline-block;
   height: 100%;
   vertical-align: middle;

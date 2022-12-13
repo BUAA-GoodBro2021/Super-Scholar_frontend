@@ -228,7 +228,7 @@ const infoChange = () => {
 
 const UpdateCoAuthor = (page) => {
     coAuthorList.value = []
-    for (let i = 8 * (page - 1); i < 8 * page; i++) {
+    for (let i = 8 * (page - 1); i < 8 * page && i < authorNet.value.length ; i++) {
         coAuthorList.value.push(authorNet.value[i])
     }
     // console.log(coAuthorList.value)
