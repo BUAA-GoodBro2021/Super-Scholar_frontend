@@ -206,7 +206,7 @@
     </transition>
     <!-- 浮窗 -->
     <transition name="up" v-loading="favLoading">
-      <div v-if="starDialogVisible" class="dialog-window">
+      <div v-if="favDialogVisible" class="dialog-window">
         <!-- 标题 -->
         <div class="dialog-title">收藏此文献</div>
         <!-- 文本 -->
@@ -216,7 +216,7 @@
               class="cb" 
               v-for="(collection, index) in collections" 
               :key="index" 
-              @change="starChanged(collection)" 
+              @change="favChanged(collection)" 
               :checked="amInCol.find((col,idx,arr)=>{return col.package_id == collection.id})!=null" 
               size="large" border 
               style="width:95%;margin-bottom:20px;border-raidus:0px"
@@ -237,11 +237,11 @@
         </div>
         <!-- 按钮 -->
         <div class="dialog-btn-wrapper">
-          <button class="dialog-cancel-btn" @click="starDialogVisible = false" style="margin-right: 8px;">
+          <button class="dialog-cancel-btn" @click="favDialogVisible = false" style="margin-right: 8px;">
             取消
             <span></span>
           </button>
-          <button class="dialog-confirm-btn" @click="likeIt();starDialogVisible = false" style="margin-right: 8px;">
+          <button class="dialog-confirm-btn" @click="likeIt();favDialogVisible = false" style="margin-right: 8px;">
             确定
             <span></span>
           </button>
@@ -375,14 +375,71 @@ const favDialogVisible = ref(false)
 const favLoading = ref(true)
 const collections = ref([])
 const amInCol = ref([])
-
+var changedCollection = []
 async function showFav(){
-  favLoading.value = false
+  changedCollection = []
+  collections.value = []
+  amInCol.value = []
+  favLoading.value = true
   favDialogVisible.value = true
-  amInCol.value = await Collection.GetCollectionListByPaper({"work_id":props.item.id.substring(21)})
-  console.log(amInCol.value)
+  const t1 = (await Collection.GetCollectionListByPaper({"work_id":props.item.id.substring(21)})).data.package_list
+  amInCol.value = t1?t1:[]
+  const t2 = (await Collection.GetCollection()).data.package_list
+  collections.value = t2?t2:[]
+  favLoading.value = false
 }
+function favChanged(which){
+  var i = -1
+  if(i = changedCollection.find((col,idx,arr)=>{return col.id == which.id})){
+      changedCollection.splice(i,1)
+  }else{
+      changedCollection.push(which)
+  }
+}
+function likeIt(){
+  for(const cc of changedCollection){
+        console.log(amInCol.value,cc)
+        if(amInCol.value.find((col,idx,arr)=>{return col.package_id == cc.id})){
+            Collection.CancelDocument(
+                {
+                    work_id_list:[props.item.id.substring(21)],
+                    package_id: cc.id
+                }
+            ).then(
+                (res)=>{
+                    ElNotification({
+                        title: "取消收藏成功",
+                        message: "成功将"+props.item.display_name+"移出收藏夹",
+                        type: "success",
+                        duration: 1000
+                    })
+                    
+                    favLoading.value = true
+                    
+                }
+            )
+        }else{
+            Collection.AddDocument(
+                {
+                    work_id:props.item.id.substring(21),
+                    package_id: cc.id
+                }
+            ).then(
+                (res)=>{
+                    ElNotification({
+                    title: "收藏成功",
+                    message: "成功将"+props.item.display_name+"加入收藏夹",
+                    type: "success",
+                    duration: 1000
+                })
+                
+                favLoading.value = true
 
+              }
+            )
+        }
+    }
+}
 </script>
 
 <style scoped>
