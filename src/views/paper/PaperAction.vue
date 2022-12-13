@@ -1,5 +1,5 @@
 <template>
-    <el-row style="width:100%;height:100%;padding:0px" align="middle">
+    <el-row style="width:100%;height:100%;padding:0px" align="middle" justify="space-around" :gutter="40">
         <el-col :sm="24" :md="12" :xl="6">
           <el-tooltip
             class="box-item"
@@ -7,17 +7,7 @@
             content="下载PDF"
             placement="bottom"
           >
-            <el-button type="primary" class="btn" size="large" :disabled="paperInfo.open_access.is_oa==-1" @click="download"><el-icon size="large"><Download /></el-icon></el-button>
-          </el-tooltip>
-        </el-col>
-        <el-col :sm="24" :md="12" :xl="6">
-          <el-tooltip
-            class="box-item"
-            effect="dark"
-            content="收藏"
-            placement="bottom"
-          >
-            <el-button type="success" class="btn" @click="star" size="large"><el-icon size="large"><Star v-if="amInList.length == 0"/><StarFilled v-else/></el-icon></el-button>
+            <el-button type="primary" class="btn"  :disabled="paperInfo.open_access.is_oa==-1" @click="download"><el-icon color="black" size="large"><Download /></el-icon></el-button>
           </el-tooltip>
         </el-col>
         <el-col :sm="24" :md="12" :xl="6">
@@ -27,7 +17,17 @@
             content="跳转到OpenAlex"
             placement="bottom"
           >
-            <el-button type="danger" class="btn" size="large" @click="openAlex"><el-icon size="large"><View /></el-icon></el-button>
+            <el-button type="danger" class="btn"  @click="openAlex"><el-icon  color="black" size="large"><View /></el-icon></el-button>
+          </el-tooltip>
+        </el-col>
+        <el-col :sm="24" :md="12" :xl="6">
+          <el-tooltip
+            class="box-item"
+            effect="dark"
+            content="收藏"
+            placement="bottom"
+          >
+            <el-button type="success" class="btn" @click="star"><el-icon color="black" size="large"><Star v-if="amInList.length == 0"/><StarFilled v-else/></el-icon></el-button>
           </el-tooltip>
         </el-col>
         <el-col :sm="24" :md="12" :xl="6">
@@ -37,7 +37,7 @@
             content="获取BiBTeX引用"
             placement="bottom"
           >
-            <el-button type="warning"  class="btn" size="large" @click="getBiBTeX(paperInfo), bibtexDialogVisible = true"><el-icon size="large"><Share /></el-icon></el-button>
+            <el-button type="warning"  class="btn" @click="getBiBTeX(paperInfo), bibtexDialogVisible = true"><el-icon color="black" size="large"><Share /></el-icon></el-button>
           </el-tooltip>
         </el-col>
     </el-row>
@@ -230,7 +230,7 @@ function starChanged(which){
     }else{
         changedCollection.push(which)
     }
-    console.log(changedCollection)
+    
 }
 
 
@@ -280,13 +280,13 @@ const getBiBTeX = (paperInfo) => {
 <style>
 .btn{
     border-radius:0px;
-    background-color: rgb(162, 143, 42);
+    background-color: #DBE9EF;
     transition: all 0.1s;
     border:0.5px white solid
 }
 .btn:hover{
-  background-color: rgb(255, 237, 132);
-  box-shadow: 0 0.3125rem 0.5rem rgb(255, 238, 0);
+  background-color: rgb(153, 194, 231);
+  box-shadow: 0 0.3125rem 0.5rem rgb(75, 154, 207);
 }
 .card{
     border-radius:0px;

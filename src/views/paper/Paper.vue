@@ -3,10 +3,10 @@
         <div class="top_card">
             <div class=" name_card">
                 <div style="display:flex">
-                    <div style="width:70%">
+                    <div style="width:78%">
                         <PaperBriefVue :paperInfo="paperInfo" v-if="paperInfo"/>
                     </div>
-                    <div style="width:28%;margin-left:2%">
+                    <div style="width:18%;margin-left:4%">
                         <PaperActionVue :paperInfo="paperInfo" v-if="paperInfo"></PaperActionVue>
                     </div>
                 </div>

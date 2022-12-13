@@ -9,7 +9,7 @@
             </template>
             <el-scrollbar max-height="80vh">
                 
-                    <div v-for="(item, index) in paperInfo.concepts" :key="index" class="href_text card-concepts-wrap" :style="{borderColor:getColor(item.score)}" @click="gotoConcept(item)">
+                    <div v-for="(item, index) in paperInfo.concepts" :key="index" class="href_text card-concepts-wrap" :style="{backgroundColor:getColor(item.score)}" @click="gotoConcept(item)">
                         {{item.display_name}}
                     </div>
                 
@@ -46,7 +46,7 @@ const props = defineProps({
 })
 function getColor(s){
     if(s>0.5){
-        return "#000"
+        return "#444";
     }else if(s>0.3){
         return "#888"
     }else if(s>0.1){
@@ -100,7 +100,7 @@ onMounted(() => {
     width: 90%;
     height: 40px;
     line-height: 40px;
-    border-left:10px rgb(202, 202, 202) solid;
+    border-left:10px #dedede solid;
     padding-left:5px
 }
 .href_text {
@@ -116,7 +116,7 @@ onMounted(() => {
 }
 .card-concepts-wrap {
     float: left;
-    
+    color:white;
     margin-right: 10px;
     margin-bottom: 5px;
     padding: 3px 5px;
@@ -139,6 +139,16 @@ onMounted(() => {
     border-left: 5px #8f8f89 solid;
     padding: 3px;
     margin-bottom:5px;
-    box-shadow: 1px 1px 1px 1px #dedede;
+    box-shadow: 1px 1px 1px 1px  rgb(202, 202, 202);
+  }
+  .el-button.is-disabled{
+    background-color: white;
+    border-color: red;
+    transition: all 0.1s;
+  }
+  .el-button.is-disabled:focus, .el-button.is-disabled:hover{
+    background-color: white;
+    border-color: red;
+    filter: blur(1px);
   }
 </style>
