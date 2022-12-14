@@ -148,7 +148,7 @@ function gotoUser(concept){
     window.open(href, "_blank");
 }
 </script>
-<style>
+<style scoped>
 .author-avatar {
   width: 3rem;
   height: 3rem;

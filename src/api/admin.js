@@ -47,4 +47,10 @@ export class Admin {
       data:JSON.stringify(data),
     });
   }
+  static async managerDealUploadPdf(data) {
+    return service(url.managerDealUploadPdf, {
+      method: "post",
+      data,
+    })
+  }
 }

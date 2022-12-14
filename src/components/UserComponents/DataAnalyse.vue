@@ -413,7 +413,7 @@ const initChart2 = () => {
                 chart2DialogData.value = node.data.coArticles
                 chart2Dialog.value = true
             } else {
-                isloading.value = true
+                loading.value = true
                 getArticles(node.data)
             }
         } else if (node.dataType == 'node') {
@@ -454,7 +454,7 @@ const getArticles = (data) => {
 
     chart2Dialog.value = true
     Collection.GetDocumentList(tdata).then((res) => {
-        isloading.value = false
+        loading.value = false
         if (res.data.result == 1) {
             chart2DialogData.value = []
             chart2DialogData.value.push(...res.data.list_of_data[0].results)
@@ -486,7 +486,7 @@ const toArticle = (item) => {
 }
 
 </script>
-<style>
+<style scoped>
 .data-wrap {
     height: 100%;
     width: 100%;
@@ -591,6 +591,8 @@ const toArticle = (item) => {
     font-size: 15px;
     font-weight: 800;
     cursor: default;
+    /* display: block; */
+    min-width: 30px;
 }
 
 .document_title:hover {

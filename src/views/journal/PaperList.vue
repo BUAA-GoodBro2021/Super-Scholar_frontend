@@ -95,6 +95,8 @@ function updateData(){
         paperList.value = res.data.list_of_data[0].results
         loading.value = false
         total.value = res.data.list_of_data[0].meta.count
+        if(total.value>10000)
+            total.value = 10000
         nextTick(
         ()=>{
             var chartDom;
