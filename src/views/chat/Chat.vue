@@ -200,7 +200,10 @@ background-color: transparent !important;
   height: 50px;
   width: 50px;
   background-color: #f7f7f7;
-}
+  }
+  .chat-button:hover{
+    background-color: #f0f0f0;
+  }
 }
 
 .chat-avatar{
