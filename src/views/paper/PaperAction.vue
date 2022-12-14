@@ -284,7 +284,7 @@ const getBiBTeX = (paperInfo) => {
   border: none;
 }
 
-.btn:hover {
+.btn:hover, .btn:focus {
   background-color: #d7d7d7;
   cursor: pointer;
   outline: none;
