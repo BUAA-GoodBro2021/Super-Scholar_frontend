@@ -1,6 +1,6 @@
 <template>
     <div class="collection-body">
-        <div class="video-container" v-show="pageOne">            
+        <div class="video-container" v-show="pageOne">
             <el-card shadow="hover" style="width: 100%; height: 100%;">
                 <div class="content-wrap">
                     <!-- 按钮与面包屑 -->
@@ -175,11 +175,12 @@
                         <div class="document-wrap">
                             <ul class="search-result__list">
                                 <!-- 单个搜索结果卡片 -->
-                                <li v-for="(item, index) in filterWorkList" :key="index" class="result-item">
-                                    <WorksResCardVue :item="item" :class="{ active: item.active }"
-                                        :notInCollection="false" />
-                                    <i class="icon-work-selected" :class="{ workiconactive: item.active }"
-                                        @click="SelectItem(item)"></i>
+                                <li v-for="(item, index) in filterWorkList" :key="index" class="result-item"
+                                    :class="{ workiconactive: item.active }">
+                                    <div :class="{ documentactive: item.active }">
+                                        <WorksResCardVue :item="item" :notInCollection="false" />
+                                    </div>
+                                    <i class="icon-work-selected" @click="SelectItem(item)"></i>
                                 </li>
                             </ul>
                         </div>
@@ -234,6 +235,7 @@
     </div>
 </template>
 <script setup>
+import SandboxLoading from "../../components/Loading/SandboxLoading.vue";
 import { ArrowRight, Plus, Edit, Delete, Search } from '@element-plus/icons-vue';
 import { sliderEmits } from 'element-plus';
 import { Collection } from '../../api/collect'
@@ -290,6 +292,7 @@ const files = ref([
         name: 'Harboure'
     },
 ])
+const isLoading = ref(true)
 
 onMounted(() => {
     getCollectionList()
@@ -307,6 +310,7 @@ const resetSelect = () => {
 // ReStart
 const getCollectionList = async () => {
     Collection.GetCollection().then((res) => {
+        isLoading.value = false
         if (res.data.result == 1) {
             // active预处理 赋值 filterfiles赋值
             files.value = []
@@ -542,6 +546,7 @@ const dbClickOpenFile = (item) => {
     resetSelect()
     //获取文献列表
     fileNow.value = item // 记录当前文件夹
+    isLoading.value = true
     getDocumentList()
 }
 
@@ -596,6 +601,7 @@ const getDocumentList = () => {
         }
     }
     Collection.GetDocumentList(data).then((res) => {
+        isLoading.value = false
         if (res.data.result == 1) {
             // active预处理 赋值 filterfiles赋值
             workList.value.push(...res.data.list_of_data[0].results)
@@ -857,6 +863,11 @@ const toConcept = (item) => {
     border-radius: 8px;
 }
 
+:deep(.video-container .video-main .active) {
+    border: 2px solid rgb(162, 143, 42);
+    border-radius: 8px;
+}
+
 .video-container .video-main .active .icon-file-selected {
     position: absolute;
     right: 5px;
@@ -900,7 +911,7 @@ const toConcept = (item) => {
 }
 
 /* icon-work选中的时候 */
-.video-container .video-main .workiconactive {
+.video-container .video-main .workiconactive .icon-work-selected {
     position: absolute;
     right: 5px;
     top: 1.625rem;
@@ -908,13 +919,15 @@ const toConcept = (item) => {
     width: 2rem;
     height: 2rem;
     background-size: 100% 100%;
+    /* pointer-events: none; */
     background-image: url(../../assets/icons/select.svg);
+    opacity: 1;
+}
+
+.video-container .video-main .workiconactive:hover .icon-work-selected {
     opacity: 1 !important;
 }
 
-.video-container .video-main .active:hover .icon-work-selected {
-    opacity: 1 !important;
-}
 
 .video-container .video-main .result-item {
     position: relative
@@ -980,7 +993,12 @@ const toConcept = (item) => {
     margin-left: 2px;
 }
 
-.video-container .video-main .result-item-card:hover {
+:deep(.video-container .video-main .documentactive .result-item-card) {
+    border: 1px solid rgb(162, 143, 42);
+    border-radius: 8px;
+}
+
+:deep(.video-container .video-main .result-item-card:hover) {
     background-color: #f1f5fa;
 }
 
@@ -996,7 +1014,7 @@ const toConcept = (item) => {
 }
 
 /* 鼠标悬浮时文献勾选图标透明度发生变化 */
-.video-container .video-main .result-item:hover .icon-work-selected {
+:deep(.video-container .video-main .result-item:hover .icon-work-selected) {
     opacity: 0.3;
 }
 
@@ -1025,6 +1043,7 @@ const toConcept = (item) => {
 
 .right-btn:hover {
     background-color: rgba(162, 144, 42, 0.75);
+    font-size: 0.8rem !important;
 }
 
 .search-btn {

@@ -1,4 +1,7 @@
 <template>
+    <div v-if="isLoading">
+        <SandboxLoading />
+    </div>
     <div class="collection-body">
         <div class="video-container">
             <el-card shadow="hover" style="width: 100%; height: 100%;">
@@ -50,7 +53,7 @@
             <!-- 删除弹出框 -->
             <el-dialog v-model="deleteDialog">
                 <template #header center>
-                    <span class="dialog-title">确定删除？</span>
+                    <span class="dialog-title">确定取消关注？</span>
                 </template>
                 <div style="display: flex; justify-content: center; ">
                     <el-button @click="deleteUser()" type="danger">确定</el-button>
@@ -61,6 +64,7 @@
     </div>
 </template>
 <script setup>
+import SandboxLoading from "../../components/Loading/SandboxLoading.vue";
 import { ArrowRight, Plus, Edit, Delete, Search } from '@element-plus/icons-vue';
 import { sliderEmits } from 'element-plus';
 import { User } from '../../api/userDetail'
@@ -69,6 +73,7 @@ const keyWord = ref('') //搜索框的输入字符串
 const breadcrumbList = ref(['root']) //面包屑list
 const loading = ref(false) //是否加载
 const deleteDialog = ref(false)
+const isLoading = ref(true)
 
 const userNow = ref()
 const filterusers = ref([]) // 过滤后的文件夹
@@ -120,6 +125,7 @@ const getAuthorEntityList = async () => {
         }
     }
     User.GetAuthorEntity(data).then((res) => {
+        isLoading.value = false
         if (res.data.result == 1) {
             users.value = []
             filterusers.value = []

@@ -1,4 +1,7 @@
 <template>
+    <div v-if="isLoading">
+        <SandboxLoading />
+    </div>
     <div class="personal-wrap">
         <div class="avatar_wrap">
             <AvaterWrapVue :personAccount="0" :userInfo="userInfo" :claimed="1" :openAlexAccount="1"
@@ -19,6 +22,7 @@
     </div>
 </template>
 <script setup>
+import SandboxLoading from "../../components/Loading/SandboxLoading.vue";
 import ClaimPortalVue from './ClaimPortal.vue';
 import AvaterWrapVue from '../../components/UserComponents/AvaterWrap.vue';
 import ArticleAndDataVue from '../../components/UserComponents/ArticleAndData.vue';
@@ -29,6 +33,8 @@ import { ElNotification } from "element-plus";
 import { watch, inject} from 'vue';
 import { UserFilled } from '@element-plus/icons-vue';
 const globalStore = useGlobalStore();
+const isLoading = ref(true)
+const info = ref(0)
 
 
 const route = useRoute()
@@ -70,7 +76,11 @@ onMounted(() => {
 })
 
 watch(() => route.params.tokenid, (newval) => {
-    if(newval != undefined) init() // 可能跳转到别的路由
+    if(newval != undefined) {
+        info.value = 0
+        isLoading.value = true
+        init() 
+    }// 可能跳转到别的路由
 })
 
 const init = () => {
@@ -93,6 +103,8 @@ const init = () => {
 
 const getFollowList = async () => {
     User.GetFollowList({}).then((res) => {
+        info.value++
+        if(info.value == 4) isLoading.value = false
         if (res.data.result == 1) {
             // todo 根据关注列表确定follow字段
             userInfo.value.is_follow = false 
@@ -128,6 +140,8 @@ const getOpenAlexAuthor = async () => {
             "id": openAlexId.value
         }
     }).then((res) => {
+        info.value++
+        if(info.value == 4) isLoading.value = false
         if (res.data.result == 1) {
             userInfo.value.counts_by_year = res.data.single_data.counts_by_year
             userInfo.value.open_alex_name = res.data.single_data.display_name
@@ -156,6 +170,8 @@ const getOpenAlexAuthor = async () => {
 
 const getDocumentList = async (data) => {
     User.GetAuthorDocumentListById(data).then((res) => {
+        info.value++
+        if(info.value == 4) isLoading.value = false
         if (res.data.result == 1) {
             pageTotalSize.value = res.data.list_of_data[0].meta.count
             userInfo.value.documentList = res.data.list_of_data[0].results
@@ -181,6 +197,8 @@ const getAuthorNet = async () => {
     User.GetAuthorNetById({
         author_id: openAlexId.value
     }).then((res) => {
+        info.value++
+        if(info.value == 4) isLoading.value = false
         if (res.data.result == 1) {
             authorNet.value = res.data.cooperation_author_list
             authorTotalSize.value = res.data.cooperation_author_count
