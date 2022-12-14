@@ -15,27 +15,27 @@
                <div class="box">
                   <WorkCountVue />
                   <div class="title">论文</div>
-                  <div class="data">{{ outputWork.toFixed(0) }}</div>
+                  <div class="data">{{ toThousands(outputWork.toFixed(0)) }}</div>
                </div>
                <div class="box">
                   <AuthorCountVue />
                   <div class="title">学者</div>
-                  <div class="data">{{ outputAuthor.toFixed(0) }}</div>
+                  <div class="data">{{ toThousands(outputAuthor.toFixed(0)) }}</div>
                </div>
                <div class="box">
                   <VenueCountVue />
                   <div class="title">期刊</div>
-                  <div class="data">{{ outputVenue.toFixed(0) }}</div>
+                  <div class="data">{{ toThousands(outputVenue.toFixed(0)) }}</div>
                </div>
                <div class="box">
                   <InstitutionCountVue />
                   <div class="title">机构</div>
-                  <div class="data">{{ outputInstitution.toFixed(0) }}</div>
+                  <div class="data">{{ toThousands(outputInstitution.toFixed(0)) }}</div>
                </div>
                <div class="box">
                   <ConceptCountVue />
                   <div class="title">领域</div>
-                  <div class="data">{{ outputConcept.toFixed(0) }}</div>
+                  <div class="data">{{ toThousands(outputConcept.toFixed(0)) }}</div>
                </div>
             </div>
             <div class="earth">
@@ -45,6 +45,7 @@
          </div>
 </template>
 <script setup>
+import { toThousands } from "../../utils/index.js"
 import { TransitionPresets, useTransition } from "@vueuse/core";
 import { Search } from "../../api/search.js";
 import { useRouter } from 'vue-router';

@@ -116,7 +116,7 @@
             
             <!-- TODO 添加收藏夹的浮窗 -->
             <li v-if="notInCollection">
-              <div class="card-tool-btn">
+              <div class="card-tool-btn" @click="showFav">
                 <i class="iconfont icon-folderplus-fill"></i>
                 <span class="card-btn-hint">
                   <span class="card-btn-hint-arrow"></span>
@@ -196,6 +196,60 @@
       </div>
     </transition>
   </teleport>
+
+  <teleport to='body' >
+    <!-- 蒙版 -->
+    <transition name="fade">
+      <div v-if="favDialogVisible" 
+        class="dialog-container" 
+        @click="favDialogVisible = false"></div>
+    </transition>
+    <!-- 浮窗 -->
+    <transition name="up" v-loading="favLoading">
+      <div v-if="favDialogVisible" class="dialog-window">
+        <!-- 标题 -->
+        <div class="dialog-title">收藏此文献</div>
+        <!-- 文本 -->
+        <div v-if="collections.length != 0" class="dialog-content fav" style="white-space: pre-wrap;">
+            <el-scrollbar max-height="400px">
+            <el-checkbox
+              v-for="(collection, index) in collections" 
+              :key="index" 
+              @change="favChanged(collection)" 
+              :checked="amInCol.find((col,idx,arr)=>{return col.package_id == collection.id})!=null" 
+              size="large"
+              border
+              style="width:90%;margin-bottom:20px;margin-left:20px"
+            >
+                <el-tag
+                    type="info"
+                    effect="light"
+                    round
+                >{{collection.sum}}</el-tag>
+                &nbsp;&nbsp;&nbsp;
+                {{collection.name}}
+                
+            </el-checkbox>
+        </el-scrollbar>
+        </div>
+        <div v-else>
+          您还没有创建收藏夹。
+        </div>
+        <!-- 按钮 -->
+        <div class="dialog-btn-wrapper">
+          <button class="dialog-cancel-btn" @click="favDialogVisible = false" style="margin-right: 8px;">
+            取消
+            <span></span>
+          </button>
+          <button class="dialog-confirm-btn" @click="likeIt();favDialogVisible = false" style="margin-right: 8px;">
+            确定
+            <span></span>
+          </button>
+        </div>
+      </div>
+    </transition>
+  </teleport>
+
 </template>
 
 <script setup>
@@ -226,11 +280,19 @@ const props = defineProps({
  */
  const jumpToPaperPage = (openAlexPaperId) => {
   console.log(openAlexPaperId);
-  router.push({
-    name: "PaperDetail",
-    params: {paperid: openAlexPaperId}
-  });
-}
+  // router.push({
+  //   name: "PaperDetail",
+  //   params: {paperid: openAlexPaperId}
+  // });
+  if (openAlexPaperId) {
+    const newPage = router.resolve({
+      name: "PaperDetail",
+      params: {paperid: openAlexPaperId},
+    });
+    window.open(newPage.href, '_blank');
+  }
+};
+
 /**
  * 跳转到作者详情页
  * 每一个item.authorships[i].author.id用于跳转到作者详情页---A2164292938 √
@@ -239,12 +301,14 @@ const props = defineProps({
 const jumpToAuthorPage = (openAlexAuthorId) => {
   console.log(openAlexAuthorId);
   if (openAlexAuthorId) {
-    router.push({
+    const newPage = router.resolve({
       name: 'OpenAlexAuthorDetail',
-      params: {tokenid: openAlexAuthorId}
+      params: {tokenid: openAlexAuthorId},
     });
+    window.open(newPage.href, '_blank');
   }
 };
+
 /**
  * 跳转到期刊详情页
  * item.host_venue.id用于跳转到期刊-- V1983995261 √
@@ -254,12 +318,14 @@ const jumpToAuthorPage = (openAlexAuthorId) => {
 const jumpToVenuePage = (openAlexVenueId) => {
   console.log(openAlexVenueId);
   if (openAlexVenueId) {
-    router.push({
+    const newPage = router.resolve({
       name: 'JournalDetail',
-      params: {journalid: openAlexVenueId}
+      params: {journalid: openAlexVenueId},
     });
+    window.open(newPage.href, '_blank');
   }
 };
+
 /**
  * 跳转到领域详情页
  * 每一个item.concept[i].id用于跳转到领域详情页-- C2778805511 √
@@ -267,26 +333,33 @@ const jumpToVenuePage = (openAlexVenueId) => {
  */
 const jumpToConceptPage = (openAlexConceptId) => {
   console.log(openAlexConceptId);
-  router.push({
-    name: 'ConceptDetail',
-    params: {tokenid: openAlexConceptId}
-  });
+  if (openAlexConceptId) {
+    const newPage = router.resolve({
+      name: 'ConceptDetail',
+      params: {tokenid: openAlexConceptId},
+    });
+    window.open(newPage.href, '_blank');
+  }
 };
+
 /**
  * 跳转到PDF在线预览网页
  * @param {String[URL]} pdfURL PDF在线预览网页
  */
 const jumpToPDFOnlinePage = (pdfURL) => {
   // console.log(pdfURL);
-  window.location.href = pdfURL;
+  window.open(pdfURL, '_blank');
+  // window.location.href = pdfURL;
 };
+
 /**
  * 跳转到论文源网址
  * @param {String[URL]} webURL 论文源网址
  */
 const jumpToWorkSourceWeb = (webURL) => {
   // console.log(webURL);
-  window.location.href = webURL;
+  window.open(webURL, '_blank');
+  // window.location.href = webURL;
 };
 
 // #endregion 卡片内部交互函数
@@ -316,9 +389,68 @@ const getBiBTeX = (paperInfo) => {
   return bibtex.value;
 };
 
-// 收藏夹浮窗
-
-
+// 收藏
+const favDialogVisible = ref(false)
+const favLoading = ref(true)
+const collections = ref([])
+const amInCol = ref([])
+var changedCollection = []
+async function showFav(){
+  changedCollection = []
+  collections.value = []
+  amInCol.value = []
+  favLoading.value = true
+  favDialogVisible.value = true
+  const t1 = (await Collection.GetCollectionListByPaper({"work_id":props.item.id.substring(21)})).data.package_list
+  amInCol.value = t1?t1:[]
+  const t2 = (await Collection.GetCollection()).data.package_list
+  collections.value = t2?t2:[]
+  favLoading.value = false
+}
+const favChanged = (which) => {
+  var i = -1
+  if(i = changedCollection.find((col,idx,arr)=>{return col.id == which.id})) {
+    changedCollection.splice(i,1);
+  }
+  else {
+    changedCollection.push(which);
+  }
+}
+const likeIt = () => {
+  for(const cc of changedCollection) {
+    console.log(amInCol.value,cc)
+    if(amInCol.value.find((col,idx,arr)=>{return col.package_id == cc.id})) {
+      Collection.CancelDocument({
+        work_id_list:[props.item.id.substring(21)],
+        package_id: cc.id
+      })
+      .then((res)=>{
+        ElNotification({
+          title: "取消收藏成功",
+          message: "成功将"+props.item.display_name+"移出收藏夹",
+          type: "success",
+          duration: 1000
+        });
+        favLoading.value = true;
+      })
+    }
+    else {
+      Collection.AddDocument({
+        work_id:props.item.id.substring(21),
+        package_id: cc.id
+      })
+      .then((res)=>{
+        ElNotification({
+          title: "收藏成功",
+          message: "成功将"+props.item.display_name+"加入收藏夹",
+          type: "success",
+          duration: 1000
+        })
+        favLoading.value = true;
+      });
+    }
+  }
+}
 </script>
 
 <style scoped>
@@ -525,12 +657,6 @@ a:focus {
   color: black;
 }
 
-.cb.el-checkbox.is-bordered.is-checked{
-  border-color: black;
-}
-.cb /deep/ .el-checkbox__inner{
-  background-color: #000;
-}
 /* #endregion 对话框 */
 .result-item-card {
   /* 30px */
@@ -825,5 +951,24 @@ img {
   box-sizing: border-box;
 }
 /* #endregion 卡片底部右侧快捷操作 */
+
+:deep(.fav .el-checkbox__inner){
+  background-color: #fff;
+}
+:deep(.fav .el-checkbox__input.is-checked .el-checkbox__inner) {
+  background-color: black;
+  border-color: black;
+}
+:deep(.fav .el-checkbox__inner:hover) {
+  border-color: black;
+}
+:deep(.fav .el-checkbox__input.is-checked+.el-checkbox__label) {
+  color: black;
+  font-weight: bold;
+}
+:deep(.fav .el-checkbox.is-bordered.is-checked){
+  border-color:black;
+}
+/* #endregion 收藏弹窗 */
 
 </style>

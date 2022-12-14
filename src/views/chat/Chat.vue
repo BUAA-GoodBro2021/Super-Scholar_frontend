@@ -27,12 +27,12 @@
       </div>
       <div class="chat-input">
         <el-input v-model="newRequest" @keydown.enter="sendRequest" placeholder="基于chatGPT,您忠实的学术助手">
-          <template #append>
-            <el-icon @click="sendRequest">
+        </el-input>
+        <div class="chat-button" @click="sendRequest">
+          <el-icon style="width: 50px;height:50px;">
               <Promotion />
             </el-icon>
-          </template>
-        </el-input>
+        </div>
       </div>
     </div>
   </div>
@@ -192,7 +192,20 @@ background-color: transparent !important;
   .el-input{
     height:100%;
   }
+  .chat-button{
+  position: absolute;
+  top:0;
+  right: 0;
+  bottom: calc(10% - 20px);
+  height: 50px;
+  width: 50px;
+  background-color: #f7f7f7;
+  }
+  .chat-button:hover{
+    background-color: #f0f0f0;
+  }
 }
+
 .chat-avatar{
   position: relative;
   right:calc(50% - 20px);
