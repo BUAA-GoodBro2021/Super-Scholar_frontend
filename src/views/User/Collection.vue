@@ -1078,12 +1078,12 @@ const toConcept = (item) => {
     background-color: rgba(164, 41, 41, 0.658);
 }
 
-:deep(.el-button:hover) {
+/* :deep(.el-button:hover) {
     background-color: #a0cfff;
 }
 
 .delete-btn:hover {
     background-color: rgba(255, 0, 0, 0.358) !important;
-}
+} */
 
 </style>
