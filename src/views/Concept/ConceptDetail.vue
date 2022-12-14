@@ -422,7 +422,7 @@ watch(()=>route.params.tokenid, (newval)=>{
     top: 70px;
 }
 .rightBox{
-    width: 30%;
+    width: 25%;
     background-color: rgb(247, 247, 247);
     border-radius: 3px;
     box-shadow: 2px 2px 2px 2px #dedede;
