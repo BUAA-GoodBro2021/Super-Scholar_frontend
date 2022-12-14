@@ -39,9 +39,9 @@ const sortBy = ref("")
 const sortSeq = ref("")
 const { proxy, ctx } = getCurrentInstance()
 const _this = ctx
-emit:[
+const emit = defineEmits([
     "IKnowTotal"
-]
+])
 
 function updateData(){
     loading.value = true
@@ -65,7 +65,7 @@ function updateData(){
         paperList.value = res.data.list_of_data[0].results
         loading.value = false
         total.value = res.data.list_of_data[0].meta.count
-        _this.$emit("IKnowTotal",total.value)
+        emit("IKnowTotal",total.value)
     })
 }
 
