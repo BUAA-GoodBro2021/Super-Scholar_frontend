@@ -210,16 +210,16 @@
         <!-- 标题 -->
         <div class="dialog-title">收藏此文献</div>
         <!-- 文本 -->
-        <div v-if="collections.length != 0" class="dialog-content" style="white-space: pre-wrap;">
+        <div v-if="collections.length != 0" class="dialog-content fav" style="white-space: pre-wrap;">
             <el-scrollbar max-height="400px">
-            <el-checkbox 
-              class="cb" 
+            <el-checkbox
               v-for="(collection, index) in collections" 
               :key="index" 
               @change="favChanged(collection)" 
               :checked="amInCol.find((col,idx,arr)=>{return col.package_id == collection.id})!=null" 
-              size="large" border 
-              style="width:95%;margin-bottom:20px;border-raidus:0px"
+              size="large"
+              border
+              style="width:90%;margin-bottom:20px;margin-left:20px"
             >
                 <el-tag
                     type="info"
@@ -280,11 +280,19 @@ const props = defineProps({
  */
  const jumpToPaperPage = (openAlexPaperId) => {
   console.log(openAlexPaperId);
-  router.push({
-    name: "PaperDetail",
-    params: {paperid: openAlexPaperId}
-  });
-}
+  // router.push({
+  //   name: "PaperDetail",
+  //   params: {paperid: openAlexPaperId}
+  // });
+  if (openAlexPaperId) {
+    const newPage = router.resolve({
+      name: "PaperDetail",
+      params: {paperid: openAlexPaperId},
+    });
+    window.open(newPage.href, '_blank');
+  }
+};
+
 /**
  * 跳转到作者详情页
  * 每一个item.authorships[i].author.id用于跳转到作者详情页---A2164292938 √
@@ -293,12 +301,14 @@ const props = defineProps({
 const jumpToAuthorPage = (openAlexAuthorId) => {
   console.log(openAlexAuthorId);
   if (openAlexAuthorId) {
-    router.push({
+    const newPage = router.resolve({
       name: 'OpenAlexAuthorDetail',
-      params: {tokenid: openAlexAuthorId}
+      params: {tokenid: openAlexAuthorId},
     });
+    window.open(newPage.href, '_blank');
   }
 };
+
 /**
  * 跳转到期刊详情页
  * item.host_venue.id用于跳转到期刊-- V1983995261 √
@@ -308,12 +318,14 @@ const jumpToAuthorPage = (openAlexAuthorId) => {
 const jumpToVenuePage = (openAlexVenueId) => {
   console.log(openAlexVenueId);
   if (openAlexVenueId) {
-    router.push({
+    const newPage = router.resolve({
       name: 'JournalDetail',
-      params: {journalid: openAlexVenueId}
+      params: {journalid: openAlexVenueId},
     });
+    window.open(newPage.href, '_blank');
   }
 };
+
 /**
  * 跳转到领域详情页
  * 每一个item.concept[i].id用于跳转到领域详情页-- C2778805511 √
@@ -321,26 +333,33 @@ const jumpToVenuePage = (openAlexVenueId) => {
  */
 const jumpToConceptPage = (openAlexConceptId) => {
   console.log(openAlexConceptId);
-  router.push({
-    name: 'ConceptDetail',
-    params: {tokenid: openAlexConceptId}
-  });
+  if (openAlexConceptId) {
+    const newPage = router.resolve({
+      name: 'ConceptDetail',
+      params: {tokenid: openAlexConceptId},
+    });
+    window.open(newPage.href, '_blank');
+  }
 };
+
 /**
  * 跳转到PDF在线预览网页
  * @param {String[URL]} pdfURL PDF在线预览网页
  */
 const jumpToPDFOnlinePage = (pdfURL) => {
   // console.log(pdfURL);
-  window.location.href = pdfURL;
+  window.open(pdfURL, '_blank');
+  // window.location.href = pdfURL;
 };
+
 /**
  * 跳转到论文源网址
  * @param {String[URL]} webURL 论文源网址
  */
 const jumpToWorkSourceWeb = (webURL) => {
   // console.log(webURL);
-  window.location.href = webURL;
+  window.open(webURL, '_blank');
+  // window.location.href = webURL;
 };
 
 // #endregion 卡片内部交互函数
@@ -388,57 +407,49 @@ async function showFav(){
   collections.value = t2?t2:[]
   favLoading.value = false
 }
-function favChanged(which){
+const favChanged = (which) => {
   var i = -1
-  if(i = changedCollection.find((col,idx,arr)=>{return col.id == which.id})){
-      changedCollection.splice(i,1)
-  }else{
-      changedCollection.push(which)
+  if(i = changedCollection.find((col,idx,arr)=>{return col.id == which.id})) {
+    changedCollection.splice(i,1);
+  }
+  else {
+    changedCollection.push(which);
   }
 }
-function likeIt(){
-  for(const cc of changedCollection){
-        console.log(amInCol.value,cc)
-        if(amInCol.value.find((col,idx,arr)=>{return col.package_id == cc.id})){
-            Collection.CancelDocument(
-                {
-                    work_id_list:[props.item.id.substring(21)],
-                    package_id: cc.id
-                }
-            ).then(
-                (res)=>{
-                    ElNotification({
-                        title: "取消收藏成功",
-                        message: "成功将"+props.item.display_name+"移出收藏夹",
-                        type: "success",
-                        duration: 1000
-                    })
-                    
-                    favLoading.value = true
-                    
-                }
-            )
-        }else{
-            Collection.AddDocument(
-                {
-                    work_id:props.item.id.substring(21),
-                    package_id: cc.id
-                }
-            ).then(
-                (res)=>{
-                    ElNotification({
-                    title: "收藏成功",
-                    message: "成功将"+props.item.display_name+"加入收藏夹",
-                    type: "success",
-                    duration: 1000
-                })
-                
-                favLoading.value = true
-
-              }
-            )
-        }
+const likeIt = () => {
+  for(const cc of changedCollection) {
+    console.log(amInCol.value,cc)
+    if(amInCol.value.find((col,idx,arr)=>{return col.package_id == cc.id})) {
+      Collection.CancelDocument({
+        work_id_list:[props.item.id.substring(21)],
+        package_id: cc.id
+      })
+      .then((res)=>{
+        ElNotification({
+          title: "取消收藏成功",
+          message: "成功将"+props.item.display_name+"移出收藏夹",
+          type: "success",
+          duration: 1000
+        });
+        favLoading.value = true;
+      })
     }
+    else {
+      Collection.AddDocument({
+        work_id:props.item.id.substring(21),
+        package_id: cc.id
+      })
+      .then((res)=>{
+        ElNotification({
+          title: "收藏成功",
+          message: "成功将"+props.item.display_name+"加入收藏夹",
+          type: "success",
+          duration: 1000
+        })
+        favLoading.value = true;
+      });
+    }
+  }
 }
 </script>
 
@@ -646,12 +657,6 @@ a:focus {
   color: black;
 }
 
-.cb.el-checkbox.is-bordered.is-checked{
-  border-color: black;
-}
-.cb /deep/ .el-checkbox__inner{
-  background-color: #000;
-}
 /* #endregion 对话框 */
 .result-item-card {
   /* 30px */
@@ -946,5 +951,24 @@ img {
   box-sizing: border-box;
 }
 /* #endregion 卡片底部右侧快捷操作 */
+
+:deep(.fav .el-checkbox__inner){
+  background-color: #fff;
+}
+:deep(.fav .el-checkbox__input.is-checked .el-checkbox__inner) {
+  background-color: black;
+  border-color: black;
+}
+:deep(.fav .el-checkbox__inner:hover) {
+  border-color: black;
+}
+:deep(.fav .el-checkbox__input.is-checked+.el-checkbox__label) {
+  color: black;
+  font-weight: bold;
+}
+:deep(.fav .el-checkbox.is-bordered.is-checked){
+  border-color:black;
+}
+/* #endregion 收藏弹窗 */
 
 </style>

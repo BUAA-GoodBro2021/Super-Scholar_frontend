@@ -1,26 +1,26 @@
 <template>
-    <el-row style="width:100%;height:100%;padding:0px" align="middle" justify="space-around" :gutter="40">
-        <el-col :sm="24" :md="12" :xl="6">
+    <el-row style="width:100%;height:100%;padding:0px" align="middle" justify="space-around">
+        <el-col :sm="24" :lg="12" :xl="6">
           <el-tooltip
             class="box-item"
             effect="dark"
             content="下载PDF"
             placement="bottom"
           >
-            <el-button type="primary" class="btn"  :disabled="paperInfo.open_access.is_oa==-1" @click="download"><el-icon color="black" size="large"><Download /></el-icon></el-button>
+            <el-button :type="paperInfo.open_access.is_oa==-1?'danger':'success'" class="btn"  :disabled="paperInfo.open_access.is_oa==-1" @click="download"><el-icon color="black" size="large"><Download /></el-icon></el-button>
           </el-tooltip>
         </el-col>
-        <el-col :sm="24" :md="12" :xl="6">
+        <el-col :sm="24" :lg="12" :xl="6">
           <el-tooltip
             class="box-item"
             effect="dark"
             content="跳转到OpenAlex"
             placement="bottom"
           >
-            <el-button type="danger" class="btn"  @click="openAlex"><el-icon  color="black" size="large"><View /></el-icon></el-button>
+            <el-button type="success" class="btn"  @click="openAlex"><el-icon  color="black" size="large"><View /></el-icon></el-button>
           </el-tooltip>
         </el-col>
-        <el-col :sm="24" :md="12" :xl="6">
+        <el-col :sm="24" :lg="12" :xl="6">
           <el-tooltip
             class="box-item"
             effect="dark"
@@ -30,14 +30,14 @@
             <el-button type="success" class="btn" @click="star"><el-icon color="black" size="large"><Star v-if="amInList.length == 0"/><StarFilled v-else/></el-icon></el-button>
           </el-tooltip>
         </el-col>
-        <el-col :sm="24" :md="12" :xl="6">
+        <el-col :sm="24" :lg="12" :xl="6">
           <el-tooltip
             class="box-item"
             effect="dark"
             content="获取BiBTeX引用"
             placement="bottom"
           >
-            <el-button type="warning"  class="btn" @click="getBiBTeX(paperInfo), bibtexDialogVisible = true"><el-icon color="black" size="large"><Share /></el-icon></el-button>
+            <el-button type="success"  class="btn" @click="getBiBTeX(paperInfo), bibtexDialogVisible = true"><el-icon color="black" size="large"><Share /></el-icon></el-button>
           </el-tooltip>
         </el-col>
     </el-row>
@@ -83,7 +83,8 @@
             <!-- 文本 -->
             <div v-if="collections.length != 0" class="dialog-content" style="white-space: pre-wrap;">
                 <el-scrollbar max-height="400px">
-                <el-checkbox class="cb" v-for="(collection, index) in collections" :key="index" @change="starChanged(collection)" :checked="amInList.find((col,idx,arr)=>{return col.package_id == collection.id})!=null" size="large" border style="width:95%;margin-bottom:20px;border-raidus:0px">
+                  
+                <el-checkbox class="cb" v-for="(collection, index) in collections" :key="index" @change="starChanged(collection)" :checked="amInList.find((col,idx,arr)=>{return col.package_id == collection.id})!=null" size="large" style="width:90%;margin-bottom:20px;margin-left:20px;" border>
                     <el-tag
                         type="info"
                         effect="light"
@@ -461,10 +462,21 @@ const getBiBTeX = (paperInfo) => {
 .dialog-cancel-btn:hover {
   color: black;
 }
-.cb.el-checkbox.is-bordered.is-checked{
+.el-checkbox__inner{
+  background-color: #fff;
+}
+.el-checkbox__input.is-checked .el-checkbox__inner {
+  background-color: black;
   border-color: black;
 }
-.cb /deep/ .el-checkbox__inner{
-  background-color: #000;
+.el-checkbox__inner:hover {
+  border-color: black;
+}
+.el-checkbox__input.is-checked+.el-checkbox__label {
+  color: black;
+  font-weight: bold;
+}
+.el-checkbox.is-bordered.is-checked {
+  border-color:black;
 }
 </style>

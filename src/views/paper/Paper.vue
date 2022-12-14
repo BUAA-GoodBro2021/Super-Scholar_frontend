@@ -2,11 +2,11 @@
     <div class="common_layout">
         <div class="top_card">
             <div class=" name_card">
-                <div style="display:flex">
-                    <div style="width:78%">
+                <div style="display:flex;width:100%">
+                    <div style="width:78%;float:left">
                         <PaperBriefVue :paperInfo="paperInfo" v-if="paperInfo"/>
                     </div>
-                    <div style="width:18%;margin-left:4%">
+                    <div style="width:18%;margin-left:4%;float:right;">
                         <PaperActionVue :paperInfo="paperInfo" v-if="paperInfo"></PaperActionVue>
                     </div>
                 </div>

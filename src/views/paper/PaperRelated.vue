@@ -92,7 +92,7 @@ onMounted(() => {
         })
     })
 </script>
-<style>
+<style scoped>
 .ctitle {
     font-size: 18px;
     font-weight: 800;
