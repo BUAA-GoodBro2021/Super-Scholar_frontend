@@ -46,7 +46,7 @@ function chartResize(){
 
 }
 
-onRenderTriggered(() => {
+onMounted(() => {
     if(citeChart)
         return;
     nextTick(
