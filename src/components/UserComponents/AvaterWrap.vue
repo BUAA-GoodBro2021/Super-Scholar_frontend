@@ -439,7 +439,7 @@ watch(() => props.userInfo.is_follow, (newVal) => {
 })
 
 </script>
-<style>
+<style scoped>
 /* 整体的height和width由外层调整 */
 .avatar_main_wrap {
     width: 100%;

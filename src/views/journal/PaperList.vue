@@ -67,9 +67,6 @@ const sortBy = ref("cited_by_count")
 const sortSeq = ref("desc")
 const { proxy, ctx } = getCurrentInstance()
 const _this = ctx
-emit:[
-    "IKnowTotal"
-]
 const paperCharts = []
 
 
@@ -98,7 +95,6 @@ function updateData(){
         paperList.value = res.data.list_of_data[0].results
         loading.value = false
         total.value = res.data.list_of_data[0].meta.count
-        _this.$emit("IKnowTotal",total.value)
         nextTick(
         ()=>{
             var chartDom;

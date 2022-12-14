@@ -10,14 +10,14 @@
                     <template #header>
                         <span class="dialog-title">与{{ nodedata[choseLine].value }}合著作品如下</span>
                     </template>
-                    <div class="dialog-wrap">
+                    <div class="dialog-wrap" v-loading="loading">
                         <div v-for="(item, index) in chart2DialogData" :key="index">
                             <!-- <span class="document_title document_index">{{ (index + 1) + '. ' }}</span>
                             <WorksResCard :item="item" /> -->
                             <div class="document-title-wrap">
                                 <!-- <span class="document_title document_index">{{ (index + 1) + '. ' }}</span>&nbsp;&nbsp;
                                 <span class="document_title" @click="toArticle(item)">{{ item.work_name }}</span> -->
-                                <span class="document_title document_index">{{ (index + 1) + '. ' }}</span>
+                                <span class="document_index">{{ (index + 1) + '. ' }}</span>
                                 <WorksResCard :item="item" />
                             </div>
                             <!-- <div class="authors_wrap">
@@ -42,6 +42,7 @@ import WorksResCard from '../../views/search/WorksResCard.vue'
 import { Collection } from '../../api/collect'
 // import { nextTick, reactive, readonly } from "vue"
 const router = useRouter()
+const loading = ref(true)
 
 const props = defineProps({
     dataCountByYear: Object,
@@ -412,6 +413,7 @@ const initChart2 = () => {
                 chart2DialogData.value = node.data.coArticles
                 chart2Dialog.value = true
             } else {
+                loading.value = true
                 getArticles(node.data)
             }
         } else if (node.dataType == 'node') {
@@ -452,6 +454,7 @@ const getArticles = (data) => {
 
     chart2Dialog.value = true
     Collection.GetDocumentList(tdata).then((res) => {
+        loading.value = false
         if (res.data.result == 1) {
             chart2DialogData.value = []
             chart2DialogData.value.push(...res.data.list_of_data[0].results)
@@ -483,7 +486,7 @@ const toArticle = (item) => {
 }
 
 </script>
-<style>
+<style scoped>
 .data-wrap {
     height: 100%;
     width: 100%;
@@ -573,7 +576,8 @@ const toArticle = (item) => {
 .document_title {
     margin-top: .9375rem;
     font-size: 15px;
-    line-height: 30px;
+    /* line-height: 30px; */
+    white-space: nowrap;
     text-align: left;
     height: auto;
     display: block;
@@ -584,12 +588,15 @@ const toArticle = (item) => {
 }
 
 .document_index {
+    font-size: 15px;
     font-weight: 800;
     cursor: default;
+    /* display: block; */
+    min-width: 30px;
 }
 
 .document_title:hover {
-    color: rgb(162, 143, 42);
+    /* color: rgb(162, 143, 42); */
 }
 
 .authors_wrap {

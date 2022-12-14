@@ -90,7 +90,7 @@ const toFollowList = () => {
     router.push({ name: "FollowList" });
 }
 </script>
-<style lang="scss" >
+<style lang="scss" scoped>
 .dropdown {
     width: 10vw;
 }

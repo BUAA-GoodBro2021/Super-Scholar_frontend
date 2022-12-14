@@ -158,7 +158,7 @@ const rules = reactive({
         { regexp: "/^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\d{8}$/", message: '请输入合法的电话号码', trigger: 'blur' }
     ],
     organization: [
-        { required: true, message: '请输入您的手机号码', trigger: 'blur' },
+        { required: true, message: '请输入您所在单位', trigger: 'blur' },
     ],
     content: [
 
@@ -581,5 +581,9 @@ const toPersonalPage = () => {
 
 .el-divider--horizontal {
     margin: 0;
+}
+
+:deep(.el-button:hover) {
+    background-color: #a0cfff;
 }
 </style>

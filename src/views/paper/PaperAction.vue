@@ -269,7 +269,7 @@ const getBiBTeX = (paperInfo) => {
   return bibtex.value;
 };
 </script>
-<style>
+<style scoped>
 .btn.is-disabled {
   background-color: #d7d7d7;
 }
