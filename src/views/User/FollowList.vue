@@ -88,6 +88,7 @@ const getAuthorList = async () => {
     User.GetFollowList({}).then((res) => {
         if (res.data.result == 1) {
             // active预处理 赋值 filterusers赋值
+            if(res.data.follow_id_list.length == 0) isLoading.value = false
             userids.value = []
             userids.value.push(...res.data.follow_id_list)
             getAuthorEntityList()
@@ -510,4 +511,5 @@ const toOrganization = (item) => {
     font-size: 12px;
     text-align: center;
 }
+
 </style>

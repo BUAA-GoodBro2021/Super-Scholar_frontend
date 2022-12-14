@@ -131,13 +131,14 @@ const CancelPdf = () => {
         work_id: document.value.id.substring(21),
         author_id: props.author_id
     }).then((res) => {
+        cancelPdfDialog.value = false
         if (res.data.result == 1) {
             emit("pageChange", pageCurrent.value)
         } else {
             ElNotification({
-                title: "很遗憾",
+                title: "不是自己上传的pdf无法删除",
                 message: res.message,
-                type: "error",
+                type: "warning",
                 duration: 3000
             })
         }

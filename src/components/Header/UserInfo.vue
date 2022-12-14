@@ -90,7 +90,7 @@ const toFollowList = () => {
     router.push({ name: "FollowList" });
 }
 </script>
-<style lang="scss" >
+<style lang="scss">
 .dropdown {
     width: 10vw;
 }
@@ -120,7 +120,7 @@ const toFollowList = () => {
     border: none;
 }
 
-.el-button:hover {
-    background-color: transparent;
-}
+// .el-button:hover {
+//     background-color: transparent;
+// }
 </style>

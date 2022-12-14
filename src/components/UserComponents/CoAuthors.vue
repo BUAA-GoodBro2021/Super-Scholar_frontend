@@ -29,7 +29,7 @@
             <el-pagination layout="prev, pager, next" :pager-count="5" :total="authorTotalSize" @current-change="PageChange()"
                 v-model:current-page="pageCurrent" hide-on-single-page :page-sizes="[1, 2, 3, 4, 5, 6, 7, 8]"/>
         </div>
-        <div class="empty" v-if="claimed == 0">
+        <div class="empty" v-if="claimed != 1">
             该用户尚未认证
         </div>
     </div>
