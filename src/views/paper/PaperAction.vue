@@ -7,7 +7,7 @@
             content="下载PDF"
             placement="bottom"
           >
-            <el-button type="primary" class="btn"  :disabled="paperInfo.open_access.is_oa==-1" @click="download"><el-icon color="black" size="large"><Download /></el-icon></el-button>
+            <el-button type="danger" class="btn"  :disabled="paperInfo.open_access.is_oa==-1" @click="download"><el-icon color="black" size="large"><Download /></el-icon></el-button>
           </el-tooltip>
         </el-col>
         <el-col :sm="24" :md="12" :xl="6">
@@ -17,7 +17,7 @@
             content="跳转到OpenAlex"
             placement="bottom"
           >
-            <el-button type="danger" class="btn"  @click="openAlex"><el-icon  color="black" size="large"><View /></el-icon></el-button>
+            <el-button type="success" class="btn"  @click="openAlex"><el-icon  color="black" size="large"><View /></el-icon></el-button>
           </el-tooltip>
         </el-col>
         <el-col :sm="24" :md="12" :xl="6">
@@ -37,7 +37,7 @@
             content="获取BiBTeX引用"
             placement="bottom"
           >
-            <el-button type="warning"  class="btn" @click="getBiBTeX(paperInfo), bibtexDialogVisible = true"><el-icon color="black" size="large"><Share /></el-icon></el-button>
+            <el-button type="success"  class="btn" @click="getBiBTeX(paperInfo), bibtexDialogVisible = true"><el-icon color="black" size="large"><Share /></el-icon></el-button>
           </el-tooltip>
         </el-col>
     </el-row>
