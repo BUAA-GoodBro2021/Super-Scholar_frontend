@@ -25,7 +25,7 @@
             box-shadow: 2px 2px 2px 2px #dedede;
             padding-top: 3vh;
             padding-left: 3vw"> -->
-            <el-row>
+            <el-row v-if="requestData.totalApply">
                 <el-col
                 v-for.sync="(o, index) in requestData.list.slice((pages.currentPage*6 - 6), (pages.currentPage*6))"
                 :key="o"
@@ -86,7 +86,7 @@
                     </el-card>
                 </el-col>
             </el-row>
-            <div class="paginationBox">
+            <div class="paginationBox" v-if="requestData.totalApply">
                 <el-pagination
                     background
                     layout="prev, pager, next"
@@ -95,6 +95,7 @@
                     class="pagination"
                 ></el-pagination>
             </div>
+            <div v-if="requestData.totalApply == 0" style="color: white; font-size: 1.3em">空</div>
         <!-- </el-checkbox-group> -->
     </div>
 </template>

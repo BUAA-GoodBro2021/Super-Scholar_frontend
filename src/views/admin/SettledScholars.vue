@@ -16,7 +16,7 @@
         box-shadow: 2px 2px 2px 2px #dedede;
         padding-top: 3vh;
         padding-left: 3vw"> -->
-        <el-row>
+        <el-row v-if="requestData.totalUser">
             <el-col
             v-for.sync="(o, index) in requestData.user.slice((pages.currentPage*9 - 9), (pages.currentPage*9))"
             :key="o"
@@ -54,7 +54,7 @@
                 </el-card>
             </el-col>
         </el-row>
-        <div class="paginationBox">
+        <div class="paginationBox" v-if="requestData.totalUser">
             <el-pagination
                 background
                 layout="prev, pager, next"
@@ -63,6 +63,7 @@
                 class="pagination"
             ></el-pagination>
         </div>
+        <div v-if="requestData.totalUser == 0" style="color: white; font-size: 1.3em">空</div>
     </div>
 </template>
 
