@@ -54,6 +54,11 @@
                </div>
             </div>
          </div>
+         <div class="client-footer">
+            <p>京ICP备2022007189号-2</p>
+            <p>Copyright © 2021-2022 Super2021.</p>
+            <p>All Rights Reserved. Super2021 版权所有</p>
+         </div>
       </div>
    </div>
 </template>
@@ -118,6 +123,12 @@ onMounted(() => {
 .client-body {
    margin-top: 64px;
    height: calc(100vh - 64px);
+}
+.client-footer {
+   padding: 2rem;
+   text-align: center;
+   background-color: whitesmoke;
+   color: gray;
 }
 .el-card{
    background-color: #f0f0f0;
