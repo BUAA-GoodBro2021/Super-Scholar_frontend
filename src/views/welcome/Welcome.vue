@@ -129,6 +129,7 @@ onMounted(() => {
    text-align: center;
    background-color: whitesmoke;
    color: gray;
+   font-size: small;
 }
 .el-card{
    background-color: #f0f0f0;

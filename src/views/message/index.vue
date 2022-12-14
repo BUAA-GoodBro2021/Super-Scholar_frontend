@@ -32,7 +32,7 @@
                      :msg="item">
                   </MessageCard>
                <div v-if="systemList.length===0">
-                  暂无消息捏
+                  暂无消息
                </div>
             </template>
             <template v-else>
@@ -43,7 +43,7 @@
                      :msg="item">
                   </MessageCard>
                <div v-if="userList.length===0">
-                  暂无消息捏
+                  暂无消息
                </div>
             </template>
          </div>
@@ -51,7 +51,6 @@
    </div>
 </template>
 <script setup>
-import { Delete } from "@element-plus/icons-vue";
 import { ElNotification, ElMessageBox } from "element-plus";
 import { Message } from "../../api/message";
 import MessageCard from "./MessageCard.vue";
@@ -131,6 +130,7 @@ const getList = ()=>{
    })
 }
 const handleDelete = ()=>{
+   console.log("delete")
    ElMessageBox.confirm(
         "您确定删除选中消息么?",
         {
