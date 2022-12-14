@@ -199,7 +199,8 @@ onMounted(() => {
                position: absolute;
                right:3rem;
                top: 1rem;
-         }
+               z-index: 100;
+      }
       .chat-content{
          margin-top: 1rem;
          padding: 2rem;
