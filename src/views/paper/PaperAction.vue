@@ -477,13 +477,22 @@ const getBiBTeX = (paperInfo) => {
 .dialog-cancel-btn:hover {
   color: black;
 }
-
-.cb.el-checkbox.is-bordered.is-checked {
+.el-checkbox__inner{
+  background-color: #fff;
+}
+.el-checkbox__input.is-checked .el-checkbox__inner {
+  background-color: black;
   border-color: black;
 }
-
-.cb /deep/ .el-checkbox__inner {
-  background-color: #000;
+.el-checkbox__inner:hover {
+  border-color: black;
+}
+.el-checkbox__input.is-checked+.el-checkbox__label {
+  color: black;
+  font-weight: bold;
+}
+.el-checkbox.is-bordered.is-checked {
+  border-color:black;
 }
 /* #endregion 对话框结束 */
 </style>
