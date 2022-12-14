@@ -1,6 +1,6 @@
 <template>
-    <el-row style="width:100%;height:100%;padding:0px" align="middle" justify="space-around" :gutter="40">
-        <el-col :sm="24" :md="12" :xl="6">
+    <el-row style="width:100%;height:100%;padding:0px" align="middle" justify="space-around">
+        <el-col :sm="24" :lg="12" :xl="6">
           <el-tooltip
             class="box-item"
             effect="dark"
@@ -10,7 +10,7 @@
             <el-button :type="paperInfo.open_access.is_oa==-1?'danger':'success'" class="btn"  :disabled="paperInfo.open_access.is_oa==-1" @click="download"><el-icon color="black" size="large"><Download /></el-icon></el-button>
           </el-tooltip>
         </el-col>
-        <el-col :sm="24" :md="12" :xl="6">
+        <el-col :sm="24" :lg="12" :xl="6">
           <el-tooltip
             class="box-item"
             effect="dark"
@@ -20,7 +20,7 @@
             <el-button type="success" class="btn"  @click="openAlex"><el-icon  color="black" size="large"><View /></el-icon></el-button>
           </el-tooltip>
         </el-col>
-        <el-col :sm="24" :md="12" :xl="6">
+        <el-col :sm="24" :lg="12" :xl="6">
           <el-tooltip
             class="box-item"
             effect="dark"
@@ -30,7 +30,7 @@
             <el-button type="success" class="btn" @click="star"><el-icon color="black" size="large"><Star v-if="amInList.length == 0"/><StarFilled v-else/></el-icon></el-button>
           </el-tooltip>
         </el-col>
-        <el-col :sm="24" :md="12" :xl="6">
+        <el-col :sm="24" :lg="12" :xl="6">
           <el-tooltip
             class="box-item"
             effect="dark"
