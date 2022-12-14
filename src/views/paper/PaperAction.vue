@@ -83,7 +83,8 @@
             <!-- 文本 -->
             <div v-if="collections.length != 0" class="dialog-content" style="white-space: pre-wrap;">
                 <el-scrollbar max-height="400px">
-                <el-checkbox class="cb" v-for="(collection, index) in collections" :key="index" @change="starChanged(collection)" :checked="amInList.find((col,idx,arr)=>{return col.package_id == collection.id})!=null" size="large" style="width:95%;margin-bottom:20px;margin-left:20px">
+                  
+                <el-checkbox class="cb" v-for="(collection, index) in collections" :key="index" @change="starChanged(collection)" :checked="amInList.find((col,idx,arr)=>{return col.package_id == collection.id})!=null" size="large" style="width:90%;margin-bottom:20px;margin-left:20px;" border>
                     <el-tag
                         type="info"
                         effect="light"
@@ -474,5 +475,8 @@ const getBiBTeX = (paperInfo) => {
 .el-checkbox__input.is-checked+.el-checkbox__label {
   color: black;
   font-weight: bold;
+}
+.el-checkbox.is-bordered.is-checked {
+  border-color:black;
 }
 </style>
