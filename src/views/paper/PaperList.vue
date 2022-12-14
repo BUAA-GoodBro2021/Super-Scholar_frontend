@@ -3,7 +3,11 @@
         <el-table :data="paperList" @sort-change="sortChange">
             <el-table-column prop="display_name" label="标题">
                 <template #default="scope">
-                    <div class="authors_wrap href_text" @click="gotoPaper(scope.row)" v-html="scope.row.display_name">
+                    <a v-if="scope.row.display_name" :href="'/client/paper/'+scope.row.id.substring(21)" style="text-decoration:none" target="_blank">
+                        <div class="authors_wrap href_text"  v-html="scope.row.display_name"></div>
+                    </a>
+                    <div v-else style="color:#bbb;font-style:italic">
+                        暂无数据
                     </div>
                 </template>
             </el-table-column>
@@ -11,7 +15,9 @@
                 <template #default="scope">
                     <div class="authors_wrap">
                         <span class="document_authors" v-for="(item, index) in scope.row.authorships" :key="index">
-                            <span v-if="item.author_position=='first'" @click="gotoAuthorPage(item.author)" class="href_text">{{item.author.display_name}}</span>
+                            <a :href="'/client/openalex/author/'+item.author.id.substring(21)" style="text-decoration:none" target="_blank">
+                                <span v-if="item.author_position=='first'" @click="gotoAuthorPage(item.author)" class="href_text">{{item.author.display_name}}</span>
+                            </a>
                         </span>
                     </div>
                 </template>
@@ -39,9 +45,9 @@ const sortBy = ref("")
 const sortSeq = ref("")
 const { proxy, ctx } = getCurrentInstance()
 const _this = ctx
-emit:[
+const emit = defineEmits([
     "IKnowTotal"
-]
+])
 
 function updateData(){
     loading.value = true
@@ -65,7 +71,7 @@ function updateData(){
         paperList.value = res.data.list_of_data[0].results
         loading.value = false
         total.value = res.data.list_of_data[0].meta.count
-        _this.$emit("IKnowTotal",total.value)
+        emit("IKnowTotal",total.value)
     })
 }
 
