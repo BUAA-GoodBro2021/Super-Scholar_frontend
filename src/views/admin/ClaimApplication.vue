@@ -95,7 +95,9 @@
                     class="pagination"
                 ></el-pagination>
             </div>
-            <div v-if="requestData.totalApply == 0" style="color: white; font-size: 1.3em">空</div>
+            <div v-if="requestData.totalApply == 0" style="color: white; font-size: 1.3em; height: 100%;">
+                <ElEmpty description="暂无申请"/>
+            </div>
         <!-- </el-checkbox-group> -->
     </div>
 </template>
@@ -103,6 +105,7 @@
 <script setup>
 import { ref,reactive } from 'vue';
 import {Admin} from "../../api/admin";
+import { ElEmpty } from "element-plus";
 const requestData = reactive({
     msg: "",
     list:[],

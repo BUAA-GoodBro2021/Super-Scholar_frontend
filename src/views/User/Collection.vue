@@ -7,7 +7,7 @@
                     <div class="video-header clearfix">
                         <div class="header-top">
                             <!-- 新建文件夹 需要处理进入到收藏夹内部时候 -->
-                            <button class="right-btn addBtn" @click="addConfirm()" v-if="pageOne">
+                            <!-- <button class="right-btn addBtn" @click="addConfirm()" v-if="pageOne">
                                 {{ '新建收藏夹' }}
                             </button>
                             <button class="right-btn returnBtn" @click="backToRoot(true)" v-if="!pageOne">
@@ -24,44 +24,44 @@
                                     <Delete />
                                 </el-icon>
                                 {{ '删除' }}
-                            </button>
-                            <!-- <el-button type="primary" @click="addConfirm()" v-if="pageOne">
+                            </button> -->
+                            <el-button type="primary" @click="addConfirm()" v-if="pageOne">
                                 {{ '新建收藏夹' }}
-                            </el-button> -->
-                            <!-- <el-button type="primary" @click="backToRoot(true)" v-if="!pageOne">
+                            </el-button>
+                            <el-button type="primary" @click="backToRoot(true)" v-if="!pageOne">
                                 {{ '返回上一级' }}
-                            </el-button> -->
+                            </el-button>
                             <!-- 重命名 -->
-                            <!-- <el-button v-show="pageOne && hasSelect" style="margin-left:10px" type="primary"
+                            <el-button v-show="pageOne && hasSelect" style="margin-left:10px" type="primary"
                                 @click="ChangeNameConfirm()" :disabled="(selects.length != 1)">
                                 <el-icon>
                                     <Edit />
                                 </el-icon>
                                 {{ '重命名' }}
-                            </el-button> -->
+                            </el-button>
 
                             <!-- 删除 -->
-                            <!-- <el-button v-show="hasSelect" style="margin-left:10px" @click="(deleteDialog = true)"
+                            <el-button v-show="hasSelect" style="margin-left:10px" @click="(deleteDialog = true)" class="delete-btn"
                                 type="danger">
                                 <el-icon>
                                     <Delete />
                                 </el-icon>
                                 {{ '删除' }}
-                            </el-button> -->
+                            </el-button>
                             <div class="fr">
                                 <el-input v-model="keyWord" :placeholder="'名称'" style="width:150px;margin-left:10px;"
                                     clearable @clear="resetItems()"></el-input>
                                 <!-- 查询 -->
-                                <button class="right-btn search-btn" @click="searchItems()">
+                                <!-- <button class="right-btn search-btn" @click="searchItems()">
                                     <el-icon>
                                         <Search />
                                     </el-icon>{{ '查询' }}
-                                </button>
-                                <!-- <el-button type="primary" style="margin-left:2px" @click="searchItems()">
+                                </button> -->
+                                <el-button type="primary" style="margin-left:2px" @click="searchItems()">
                                     <el-icon>
                                         <Search />
                                     </el-icon>{{ '查询' }}
-                                </el-button> -->
+                                </el-button>
                             </div>
                         </div>
 
@@ -103,7 +103,7 @@
                     <div class="video-header clearfix video-header-sticky">
                         <div class="header-top">
                             <!-- 新建文件夹 需要处理进入到收藏夹内部时候 -->
-                            <button class="right-btn addBtn" @click="addConfirm()" v-if="pageOne">
+                            <!-- <button class="right-btn addBtn" @click="addConfirm()" v-if="pageOne">
                                 {{ '新建收藏夹' }}
                             </button>
                             <button class="right-btn returnBtn" @click="backToRoot(true)" v-if="!pageOne">
@@ -120,44 +120,44 @@
                                     <Delete />
                                 </el-icon>
                                 {{ '删除' }}
-                            </button>
-                            <!-- <el-button type="primary" @click="addConfirm()" v-if="pageOne">
+                            </button> -->
+                            <el-button type="primary" @click="addConfirm()" v-if="pageOne">
                                 {{ '新建收藏夹' }}
-                            </el-button> -->
-                            <!-- <el-button type="primary" @click="backToRoot(true)" v-if="!pageOne">
+                            </el-button>
+                            <el-button type="primary" @click="backToRoot(true)" v-if="!pageOne">
                                 {{ '返回上一级' }}
-                            </el-button> -->
+                            </el-button>
                             <!-- 重命名 -->
-                            <!-- <el-button v-show="pageOne && hasSelect" style="margin-left:10px" type="primary"
+                            <el-button v-show="pageOne && hasSelect" style="margin-left:10px" type="primary"
                                 @click="ChangeNameConfirm()" :disabled="(selects.length != 1)">
                                 <el-icon>
                                     <Edit />
                                 </el-icon>
                                 {{ '重命名' }}
-                            </el-button> -->
+                            </el-button>
 
                             <!-- 删除 -->
-                            <!-- <el-button v-show="hasSelect" style="margin-left:10px" @click="(deleteDialog = true)"
+                            <el-button v-show="hasSelect" style="margin-left:10px" @click="(deleteDialog = true)" class="delete-btn"
                                 type="danger">
                                 <el-icon>
                                     <Delete />
                                 </el-icon>
                                 {{ '删除' }}
-                            </el-button> -->
+                            </el-button>
                             <div class="fr">
                                 <el-input v-model="keyWord" :placeholder="'名称'" style="width:150px;margin-left:10px;"
                                     clearable @clear="resetItems()"></el-input>
                                 <!-- 查询 -->
-                                <button class="right-btn search-btn" @click="searchItems()">
+                                <!-- <button class="right-btn search-btn" @click="searchItems()">
                                     <el-icon>
                                         <Search />
                                     </el-icon>{{ '查询' }}
-                                </button>
-                                <!-- <el-button type="primary" style="margin-left:2px" @click="searchItems()">
+                                </button> -->
+                                <el-button type="primary" style="margin-left:2px" @click="searchItems()">
                                     <el-icon>
                                         <Search />
                                     </el-icon>{{ '查询' }}
-                                </el-button> -->
+                                </el-button>
                             </div>
                         </div>
 
@@ -195,12 +195,14 @@
             </template>
             <el-input v-model="changeName" max="10" show-word-limit></el-input>
             <div style="display: flex; justify-content: center; margin-top: 20px; ">
-                <button class="right-btn search-btn" @click="handleChangeName()">
+                <el-button @click="handleChangeName()" type="primary">确定</el-button>
+                <el-button @click="changeDialog = false">取消</el-button>
+                <!-- <button class="right-btn search-btn" @click="handleChangeName()">
                     {{ '确定' }}
                 </button>
                 <button class="right-btn search-btn" @click="changeDialog = false">
                     {{ '取消' }}
-                </button>
+                </button> -->
             </div>
         </el-dialog>
         <!-- 新增弹出框 -->
@@ -210,12 +212,14 @@
             </template>
             <el-input v-model="changeName" max="10" show-word-limit></el-input>
             <div style="display: flex; justify-content: center; margin-top: 20px;">
-                <button class="right-btn search-btn" @click="addFolder()">
+                <el-button @click="addFolder()" type="primary">确定</el-button>
+                <el-button @click="addDialog = false"> 取消</el-button>
+                <!-- <button class="right-btn search-btn" @click="addFolder()">
                     {{ '确定' }}
                 </button>
                 <button class="right-btn search-btn" @click="addDialog = false">
                     {{ '取消' }}
-                </button>
+                </button> -->
             </div>
         </el-dialog>
         <!-- 删除弹出框 -->
@@ -224,12 +228,14 @@
                 <span class="dialog-title">确定删除？</span>
             </template>
             <div style="display: flex; justify-content: center; ">
-                <button class="right-btn deleteBtn" @click="deleteFile()">
+                <el-button @click="deleteFile()" type="danger" class="delete-btn">确定</el-button>
+                <el-button @click="deleteDialog = false">取消</el-button>
+                <!-- <button class="right-btn deleteBtn" @click="deleteFile()">
                     {{ '删除' }}
                 </button>
                 <button class="right-btn" @click="deleteDialog = false">
                     {{ '取消' }}
-                </button>
+                </button> -->
             </div>
         </el-dialog>
     </div>
@@ -786,7 +792,7 @@ const toConcept = (item) => {
     width: 90px;
     height: 80px;
     /* background-image: var(folderImage);*/
-    background-image: url('../../assets/images/data-storage.png');
+    background-image: url('../../assets/icons/folder2.svg');
     background-size: 100% 100%;
 }
 
@@ -806,7 +812,8 @@ const toConcept = (item) => {
 }
 
 .video-container .video-main .list-item .file-name:hover {
-    color: rgb(162, 143, 42);
+    /* color: rgb(162, 143, 42); */
+    color: #409eff;
 }
 
 .video-container .video-main .hover-cover {
@@ -859,12 +866,14 @@ const toConcept = (item) => {
 }
 
 .video-container .video-main .active {
-    border: 2px solid rgb(162, 143, 42);
+    /* border: 2px solid rgb(162, 143, 42); */
+    border: 2px solid #409eff;
     border-radius: 8px;
 }
 
 :deep(.video-container .video-main .active) {
-    border: 2px solid rgb(162, 143, 42);
+    /* border: 2px solid rgb(162, 143, 42); */
+    border: 2px solid #409eff;
     border-radius: 8px;
 }
 
@@ -906,7 +915,8 @@ const toConcept = (item) => {
 
 /* todo */
 .video-container .video-main .active {
-    border: 1px solid rgb(162, 143, 42);
+    /* border: 1px solid rgb(162, 143, 42); */
+    border: 1px solid #409eff;
     border-radius: 8px;
 }
 
@@ -938,17 +948,6 @@ const toConcept = (item) => {
     top: .9735rem;
 }
 
-:deep(.video-container .video-main .el-checkbox__inner) {
-    border-color: black;
-}
-
-:deep(.video-container .video-main .checkboxactive .el-checkbox__inner) {
-    border: none
-}
-
-:deep(.video-container .video-main .el-checkbox__inner .is-checked .el-checkbox__inner) {
-    border-color: rgb(162, 143, 42);
-}
 
 .video-container .video-main .resultitemactive {
     background-color: #f1f5fa;
@@ -994,7 +993,8 @@ const toConcept = (item) => {
 }
 
 :deep(.video-container .video-main .documentactive .result-item-card) {
-    border: 1px solid rgb(162, 143, 42);
+    /* border: 1px solid rgb(162, 143, 42); */
+    border: 1px solid #409eff;
     border-radius: 8px;
 }
 
@@ -1078,11 +1078,12 @@ const toConcept = (item) => {
     background-color: rgba(164, 41, 41, 0.658);
 }
 
-:deep(.is-focus) {
-    box-shadow: 0 0 0 1px rgb(162, 143, 42) inset;
+:deep(.el-button:hover) {
+    background-color: #a0cfff;
 }
 
-:deep(.fr .el-input__wrapper) {
-    border-radius: 1px;
+.delete-btn:hover {
+    background-color: rgba(255, 0, 0, 0.358) !important;
 }
+
 </style>
