@@ -3,15 +3,18 @@
         <el-table :data="paperList" @sort-change="sortChange">
             <el-table-column prop="display_name" label="标题">
                 <template #default="scope">
-                    <div class="authors_wrap href_text" @click="gotoPaper(scope.row)" v-html="scope.row.display_name">
-                    </div>
+                    <a :href="'/client/paper/'+scope.row.id.substring(21)" target="_blank">
+                        <div class="authors_wrap href_text"  v-html="scope.row.display_name"></div>
+                    </a>
                 </template>
             </el-table-column>
             <el-table-column prop="authorships" label="第一作者" width="100px" align="center">
                 <template #default="scope">
                     <div class="authors_wrap">
                         <span class="document_authors" v-for="(item, index) in scope.row.authorships" :key="index">
-                            <span v-if="item.author_position=='first'" @click="gotoAuthorPage(item.author)" class="href_text">{{item.author.display_name}}</span>
+                            <a :href="'/client/openalex/author/'+item.author.id.substring(21)" target="_blank">
+                                <span v-if="item.author_position=='first'" @click="gotoAuthorPage(item.author)" class="href_text">{{item.author.display_name}}</span>
+                            </a>
                         </span>
                     </div>
                 </template>
