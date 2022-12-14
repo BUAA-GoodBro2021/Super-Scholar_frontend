@@ -1,3 +1,4 @@
+import { isFunction } from '@vueuse/core';
 import { ElNotification } from 'element-plus';
 import { createRouter, createWebHistory } from 'vue-router'
 import {useGlobalStore} from "../stores/global"
@@ -164,6 +165,15 @@ router.beforeEach((to,from)=>{
         duration: 3000
       })
       return{name:"Login"};
+    }
+    if(to.meta.requiresAdmin&&!globalStore.isAdmin){
+        ElNotification({
+          title: "很遗憾",
+          message: "您没有相关权限",
+          type: "error",
+          duration: 3000
+        })
+        return {name:"Welcome"};
     }
 })
 export default router

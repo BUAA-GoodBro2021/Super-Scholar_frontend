@@ -83,6 +83,7 @@ const disabled = computed(()=>{
 const login = ()=>{
 	Account.login(loginForm.value).then((res)=>{
 		if(res.data.result===1){
+			console.log("Login",res.data);
 			globalStore.setToken(res.data.token);
 			globalStore.setUserInfo(res.data.user);
 			searchStore.setSearchHistory(res.data.history_list);
@@ -92,6 +93,9 @@ const login = ()=>{
 				type: "success",
 				duration: 3000
 			});
+			if(res.data.user.is_super){
+				router.push({path:"/admin"});
+			}
 			router.push({name:"Welcome"})
 		}
 		else{
