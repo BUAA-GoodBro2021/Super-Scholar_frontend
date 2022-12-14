@@ -7,7 +7,7 @@
             content="下载PDF"
             placement="bottom"
           >
-            <el-button type="danger" class="btn"  :disabled="paperInfo.open_access.is_oa==-1" @click="download"><el-icon color="black" size="large"><Download /></el-icon></el-button>
+            <el-button :type="paperInfo.open_access.is_oa==-1?'danger':'success'" class="btn"  :disabled="paperInfo.open_access.is_oa==-1" @click="download"><el-icon color="black" size="large"><Download /></el-icon></el-button>
           </el-tooltip>
         </el-col>
         <el-col :sm="24" :md="12" :xl="6">
@@ -83,7 +83,7 @@
             <!-- 文本 -->
             <div v-if="collections.length != 0" class="dialog-content" style="white-space: pre-wrap;">
                 <el-scrollbar max-height="400px">
-                <el-checkbox class="cb" v-for="(collection, index) in collections" :key="index" @change="starChanged(collection)" :checked="amInList.find((col,idx,arr)=>{return col.package_id == collection.id})!=null" size="large" border style="width:95%;margin-bottom:20px;border-raidus:0px">
+                <el-checkbox class="cb" v-for="(collection, index) in collections" :key="index" @change="starChanged(collection)" :checked="amInList.find((col,idx,arr)=>{return col.package_id == collection.id})!=null" size="large" style="width:95%;margin-bottom:20px;margin-left:20px">
                     <el-tag
                         type="info"
                         effect="light"
@@ -461,10 +461,18 @@ const getBiBTeX = (paperInfo) => {
 .dialog-cancel-btn:hover {
   color: black;
 }
-.cb.el-checkbox.is-bordered.is-checked{
+.el-checkbox__inner{
+  background-color: #fff;
+}
+.el-checkbox__input.is-checked .el-checkbox__inner {
+  background-color: black;
   border-color: black;
 }
-.cb /deep/ .el-checkbox__inner{
-  background-color: #000;
+.el-checkbox__inner:hover {
+  border-color: black;
+}
+.el-checkbox__input.is-checked+.el-checkbox__label {
+  color: black;
+  font-weight: bold;
 }
 </style>

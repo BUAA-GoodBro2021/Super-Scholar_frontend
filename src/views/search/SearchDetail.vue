@@ -875,6 +875,9 @@ const handleFinalSearch = (searchText, searchEntityType) => {
 </script>
 
 <style>
+.el-checkbox__inner{
+  background-color: #fff;
+}
 .el-checkbox__input.is-checked .el-checkbox__inner {
   background-color: black;
   border-color: black;

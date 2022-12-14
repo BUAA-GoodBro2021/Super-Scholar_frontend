@@ -212,14 +212,13 @@
         <!-- 文本 -->
         <div v-if="collections.length != 0" class="dialog-content" style="white-space: pre-wrap;">
             <el-scrollbar max-height="400px">
-            <el-checkbox 
-              class="cb" 
+            <el-checkbox
               v-for="(collection, index) in collections" 
               :key="index" 
               @change="favChanged(collection)" 
               :checked="amInCol.find((col,idx,arr)=>{return col.package_id == collection.id})!=null" 
-              size="large" border 
-              style="width:95%;margin-bottom:20px;border-raidus:0px"
+              size="large"
+              style="width:95%;margin-bottom:20px;margin-left:20px"
             >
                 <el-tag
                     type="info"
@@ -657,12 +656,6 @@ a:focus {
   color: black;
 }
 
-.cb.el-checkbox.is-bordered.is-checked{
-  border-color: black;
-}
-.cb /deep/ .el-checkbox__inner{
-  background-color: #000;
-}
 /* #endregion 对话框 */
 .result-item-card {
   /* 30px */
@@ -957,5 +950,4 @@ img {
   box-sizing: border-box;
 }
 /* #endregion 卡片底部右侧快捷操作 */
-
 </style>
