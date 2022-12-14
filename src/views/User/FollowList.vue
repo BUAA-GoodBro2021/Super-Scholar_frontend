@@ -512,7 +512,4 @@ const toOrganization = (item) => {
     text-align: center;
 }
 
-:deep(.el-button:hover) {
-    background-color: #a0cfff;
-}
 </style>
