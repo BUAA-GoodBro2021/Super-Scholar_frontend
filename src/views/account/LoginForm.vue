@@ -92,7 +92,10 @@ const login = ()=>{
 				type: "success",
 				duration: 3000
 			});
-			router.push({name:"Welcome"})
+			if(res.data.user.is_super){
+				router.push({path:"/admin"});
+			}
+			else router.push({name:"Welcome"})
 		}
 		else{
 			ElNotification({
