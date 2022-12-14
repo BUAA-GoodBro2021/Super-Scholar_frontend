@@ -53,6 +53,7 @@ export default defineConfig({
         /[\\/]\.nuxt[\\/]/,
       ],
       resolvers: [ElementPlusResolver()],
+      directoryAsNamespace: true,
     }),
     // vite 项目的 template 使用 svg
     createSvgIconsPlugin({
