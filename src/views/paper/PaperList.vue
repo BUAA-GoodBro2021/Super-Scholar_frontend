@@ -72,6 +72,8 @@ function updateData(){
         loading.value = false
         total.value = res.data.list_of_data[0].meta.count
         emit("IKnowTotal",total.value)
+        if(total.value>10000)
+            total.value = 10000
     })
 }
 
