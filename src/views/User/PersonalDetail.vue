@@ -1,4 +1,7 @@
 <template>
+    <div v-if="isLoading">
+        <SandboxLoading />
+    </div>
     <div class="personal-wrap">
         <div class="avatar_wrap">
             <AvaterWrapVue :personAccount="1" :userInfo="userInfo" :claimed="claimed" :openAlexAccount="0"
@@ -19,6 +22,7 @@
     </div>
 </template>
 <script setup>
+import SandboxLoading from "../../components/Loading/SandboxLoading.vue";
 import ClaimPortalVue from './ClaimPortal.vue';
 import AvaterWrapVue from '../../components/UserComponents/AvaterWrap.vue';
 import ArticleAndDataVue from '../../components/UserComponents/ArticleAndData.vue';
@@ -28,6 +32,7 @@ import { User } from "../../api/userDetail"
 import { ElNotification } from "element-plus";
 import { UserFilled } from '@element-plus/icons-vue';
 const globalStore = useGlobalStore();
+const isLoading = ref(true)
 
 
 const route = useRoute()
@@ -64,6 +69,7 @@ const authorTotalSize = ref(5)
 const coAuthorList = ref([])
 // const docummentList = ref([])
 
+const info = ref(0)
 
 onMounted(() => {
     getAccountType(1)
@@ -101,6 +107,8 @@ const getAccountType = (type) => {
                 getDocumentList(data)
                 getOpenAlexAuthor()
                 getAuthorNet()
+            } else {
+                isLoading.value = false
             }
         } else {
             ElNotification({
@@ -127,6 +135,8 @@ const getOpenAlexAuthor = async () => {
             "id": replyUser.value.open_alex_id
         }
     }).then((res) => {
+        info.value ++
+        if(info.value == 3) isLoading.value = false
         if (res.data.result == 1) {
             userInfo.value.counts_by_year = res.data.single_data.counts_by_year
             userInfo.value.open_alex_name = res.data.single_data.display_name
@@ -152,6 +162,8 @@ const getOpenAlexAuthor = async () => {
 
 const getDocumentList = async (data) => {
     User.GetAuthorDocumentListById(data).then((res) => {
+        info.value ++
+        if(info.value == 3) isLoading.value = false
         if (res.data.result == 1) {
             pageTotalSize.value = res.data.list_of_data[0].meta.count
             userInfo.value.documentList = res.data.list_of_data[0].results
@@ -177,6 +189,8 @@ const getAuthorNet = async () => {
     User.GetAuthorNetById({
         author_id: replyUser.value.open_alex_id
     }).then((res) => {
+        info.value ++
+        if(info.value == 3) isLoading.value = false
         if (res.data.result == 1) {
             authorNet.value = res.data.cooperation_author_list
             authorTotalSize.value = res.data.cooperation_author_count

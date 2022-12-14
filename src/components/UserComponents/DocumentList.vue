@@ -350,42 +350,48 @@ const preProcess = (number) => {
 }
 
 .document-btn:hover {
-    background-color: rgba(87, 147, 211, 0.798);
+    background-color: rgb(100, 111, 123);
 }
 
 .no-pdf-btn {
     /**黄金之风 */
     /* background-color: rgb(164, 41, 41); */
-    background-color: rgb(211, 176, 87);
+    /* background-color: rgb(211, 176, 87); */
+    background-color: #9c9c9c;
     cursor: default;
 }
 
 .no-pdf-btn:hover {
     /**黄金之风 */
     /* background-color: rgba(164, 41, 41, 0.83); */
-    background-color: rgba(211, 176, 87, 0.893);
+    /* background-color: rgba(211, 176, 87, 0.893); */
+    /* background-color: #767676; */
 }
 
 .check-pdf-btn {
-    background-color: rgb(211, 176, 87);
+    /* background-color: rgb(211, 176, 87); */
+    background-color: #9c9c9c;
     cursor: default;
 }
 
 .check-pdf-btn:hover {
-    background-color: rgba(211, 176, 87, 0.893);
+    /* background-color: rgba(211, 176, 87, 0.893); */
+    background-color: #9c9c9c;
 }
 
 .to-pdf-btn {
     /**黄金之风 */
-    /* background-color: rgb(162, 143, 42); */
-    background-color: #9c9c9c;
+    background-color: rgb(152 139 70);
+    /* background-color: #9c9c9c; */
+    /* background-color: rgb(47 44 27); */
     cursor: pointer;
 }
 
 .to-pdf-btn:hover{
     /**黄金之风 */
-    /* background-color: rgba(211, 176, 87, 0.893); */
-    background-color: #767676;
+    background-color: rgba(152 ,139 ,70, 0.793);
+    /* background-color: #767676; */
+    /* background-color: rgba(47, 44, 27, 0.697); */
 }
 
 </style>
