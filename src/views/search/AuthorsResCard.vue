@@ -156,9 +156,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { useClipboard } from '@vueuse/core';
 import { highlightText, toThousands } from '../../utils/index.js';
 
 const router = useRouter();
@@ -176,42 +174,33 @@ const props = defineProps({
  * 每一个item.authorships[i].author.id用于跳转到作者详情页---A2164292938 √
  * @param {String} openAlexAuthorId 作者的openAlexId
  */
-const jumpToAuthorPage = (openAlexAuthorId) => {
+ const jumpToAuthorPage = (openAlexAuthorId) => {
   console.log(openAlexAuthorId);
   if (openAlexAuthorId) {
-    router.push({
+    const newPage = router.resolve({
       name: 'OpenAlexAuthorDetail',
-      params: {tokenid: openAlexAuthorId}
+      params: {tokenid: openAlexAuthorId},
     });
+    window.open(newPage.href, '_blank');
   }
 };
-/**
- * 跳转到期刊详情页
- * item.host_venue.id用于跳转到期刊-- V1983995261 √
- * （这个可能host_venue整个为空，也可能只有这个字段为空）
- * @param {String} openAlexVenueId 作为论文来源的期刊/会议的openAlexId
- */
-const jumpToVenuePage = (openAlexVenueId) => {
-  console.log(openAlexVenueId);
-  if (openAlexVenueId) {
-    router.push({
-      name: 'JournalDetail',
-      params: {journalid: openAlexAuthorId}
-    });
-  }
-};
+
 /**
  * 跳转到领域详情页
  * 每一个item.concept[i].id用于跳转到领域详情页-- C2778805511 √
  * @param {String} openAlexConceptId 论文领域的openAlexId
  */
-const jumpToConceptPage = (openAlexConceptId) => {
+ const jumpToConceptPage = (openAlexConceptId) => {
   console.log(openAlexConceptId);
-  router.push({
-    name: 'ConceptDetail',
-    params: {tokenid: openAlexConceptId}
-  });
+  if (openAlexConceptId) {
+    const newPage = router.resolve({
+      name: 'ConceptDetail',
+      params: {tokenid: openAlexConceptId},
+    });
+    window.open(newPage.href, '_blank');
+  }
 };
+
 /**
  * 跳转到机构详情页
  * 每一个item.last_known_institution.id用于跳转到机构详情页-- I4200000001
@@ -219,26 +208,13 @@ const jumpToConceptPage = (openAlexConceptId) => {
  */
  const jumpToInstitutionPage = (openAlexInstitutionId) => {
   console.log(openAlexInstitutionId);
-  router.push({
-    name: 'InstitutionDetail',
-    params: {institutionid: openAlexInstitutionId}
-  });
-};
-/**
- * 跳转到PDF在线预览网页
- * @param {String[URL]} pdfURL PDF在线预览网页
- */
-const jumpToPDFOnlinePage = (pdfURL) => {
-  // console.log(pdfURL);
-  window.location.href = pdfURL;
-};
-/**
- * 跳转到论文源网址
- * @param {String[URL]} webURL 论文源网址
- */
-const jumpToWorkSourceWeb = (webURL) => {
-  // console.log(webURL);
-  window.location.href = webURL;
+  if (openAlexInstitutionId) {
+    const newPage = router.resolve({
+      name: 'InstitutionDetail',
+      params: {institutionid: openAlexInstitutionId},
+    });
+    window.open(newPage.href, '_blank');
+  }
 };
 
 // #endregion 卡片内部交互函数
