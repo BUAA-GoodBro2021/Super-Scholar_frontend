@@ -486,7 +486,7 @@ const toArticle = (item) => {
 }
 
 </script>
-<style>
+<style scoped>
 .data-wrap {
     height: 100%;
     width: 100%;

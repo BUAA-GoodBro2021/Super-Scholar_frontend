@@ -195,7 +195,7 @@ function refuse(uid, num){
 }
 </script>
 
-<style>
+<style scoped>
 
 .bottom {
   margin-top: 13px;

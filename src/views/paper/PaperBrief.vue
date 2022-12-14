@@ -164,7 +164,7 @@ export default defineComponent({
 });
 
 </script>
-<style>
+<style scoped>
 .authors{
     margin-bottom: 10px;
 }

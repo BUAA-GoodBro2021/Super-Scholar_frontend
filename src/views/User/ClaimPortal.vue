@@ -582,4 +582,8 @@ const toPersonalPage = () => {
 .el-divider--horizontal {
     margin: 0;
 }
+
+:deep(.el-button:hover) {
+    background-color: #a0cfff;
+}
 </style>
