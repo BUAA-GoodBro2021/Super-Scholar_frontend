@@ -63,7 +63,7 @@
                 </span>
               </div>
               <div class="organization">
-                总论文数：{{ institutionInfo.works_count }}
+                总论文数：{{  institutionInfo.works_count }}
               </div>
               <div class="organization">
                 论文总引用数：{{ institutionInfo.cited_by_count }}
@@ -115,6 +115,9 @@ const gotoConcept = (concept) => {
 };
 
 const getChineseName = (name) => {
+  if (name == null) {
+    return null;
+  }
   return name["zh-cn"] || name["zh-hans"] || name.zh;
 };
 </script>

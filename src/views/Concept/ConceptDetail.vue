@@ -248,6 +248,9 @@ function jumpTo(id){
 }
 
 const getChineseName = (name) => {
+  if (name == null) {
+    return null;
+  }
   return name["zh-cn"] || name["zh-hans"] || name.zh;
 };
 
