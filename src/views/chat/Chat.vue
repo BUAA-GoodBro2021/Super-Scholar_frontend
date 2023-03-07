@@ -47,7 +47,8 @@ import GPTUrl from "../../assets/images/chat.png"
 import "highlight.js/styles/atom-one-dark.css";
 import SandboxLoading from '../../components/Loading/SandboxLoading.vue';
 const configuration = new Configuration({
-  apiKey: "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",
+  //从openAI获取
+  apiKey: "",
 });
 const globalStore = useGlobalStore();
 const circleUrl = globalStore.userInfo.avatar_url;
